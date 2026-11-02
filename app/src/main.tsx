@@ -11,6 +11,7 @@ import '@fontsource/amiri/arabic-400.css'
 import './styles.css'
 import './styles-v2.css'
 import './styles-study.css'
+import './styles-library.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

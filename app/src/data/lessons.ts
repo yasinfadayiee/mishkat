@@ -1,4 +1,5 @@
 import { lessons2 } from './lessons2.ts'
+import { mirror } from './mirror.ts'
 import { sharh } from './sharh.ts'
 import type { Lesson } from './types'
 
@@ -678,7 +679,7 @@ export const CHAPTERS = [
   { id: 'wisdom', title: 'خرد و خانواده', subtitle: 'تصمیم، دانش و خانه', lessons: ['consult', 'gratitude', 'knowledge-wealth', 'say-idk', 'lessons-life', 'three-hours', 'parents', 'young-heart'] },
 ]
 
-const pool = [...base, ...lessons2].map((l) => (sharh[l.id] ? { ...l, sharh: sharh[l.id] } : l))
+const pool: Lesson[] = [...base, ...lessons2].map((l) => ({ ...l, sharh: sharh[l.id], mirror: mirror[l.id] }))
 export const lessons: Lesson[] = CHAPTERS.flatMap((c) => c.lessons)
   .map((id) => pool.find((l) => l.id === id))
   .filter((l): l is Lesson => !!l)

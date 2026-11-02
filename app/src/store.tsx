@@ -14,6 +14,15 @@ export interface JournalEntry {
   date: string
 }
 
+/** متن نشان‌شده در قرآن یا کتاب‌ها */
+export interface Mark {
+  /** q:سوره:آیه یا b:کتاب:شناسه */
+  key: string
+  title: string
+  text: string
+  at: string
+}
+
 export interface Progress {
   onboarded: boolean
   name: string
@@ -28,6 +37,7 @@ export interface Progress {
   programs: Record<string, { startedAt: string }>
   /** درس‌های نشان‌شده برای مطالعهٔ دوباره */
   saved: string[]
+  marks: Mark[]
 }
 
 const KEY = 'mishkat.progress.v1'
@@ -44,6 +54,7 @@ const initial: Progress = {
   journal: [],
   programs: {},
   saved: [],
+  marks: [],
 }
 
 function load(): Progress {
@@ -94,6 +105,7 @@ interface Store {
   toggleCheckin: (lessonId: string) => void
   addJournal: (lessonId: string, text: string) => void
   toggleSaved: (lessonId: string) => void
+  toggleMark: (m: Omit<Mark, 'at'>) => void
   streak: number
 }
 
@@ -139,6 +151,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }),
       addJournal: (lessonId, text) =>
         set((x) => ({ ...x, journal: [{ lessonId, text, date: today }, ...x.journal] })),
+      toggleMark: (m) =>
+        set((x) => ({ ...x, marks: x.marks.some((k) => k.key === m.key) ? x.marks.filter((k) => k.key !== m.key) : [{ ...m, at: today }, ...x.marks] })),
       toggleSaved: (lessonId) =>
         set((x) => ({ ...x, saved: x.saved.includes(lessonId) ? x.saved.filter((i) => i !== lessonId) : [lessonId, ...x.saved] })),
     }

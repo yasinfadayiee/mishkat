@@ -17,14 +17,17 @@ const walk = (dir) => {
   }
 }
 walk(dist)
+// کتاب‌ها (ده‌ها مگابایت) از پیش دانلود نمی‌شوند؛ هر کتاب بار اول که باز شود ذخیره می‌شود
+const shell = files.filter((f) => !f.startsWith('books/') || f === 'books/index.json' || f === 'books/quran/index.json')
 
 const hash = crypto.createHash('sha1')
+// نسخه به همهٔ فایل‌ها (کتاب‌ها هم) بستگی دارد تا ترجمهٔ تازه جای نسخهٔ ذخیره‌شده را بگیرد
 for (const f of files.sort()) hash.update(f).update(fs.readFileSync(path.join(dist, f)))
 const version = hash.digest('hex').slice(0, 10)
 
 const sw = `// ساخته‌شده با scripts/make-sw.mjs — دستی ویرایش نشود
 const CACHE = 'mishkat-${version}'
-const FILES = ${JSON.stringify(['./', ...files.map((f) => './' + f)])}
+const FILES = ${JSON.stringify(['./', ...shell.map((f) => './' + f)])}
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()))
@@ -43,10 +46,18 @@ self.addEventListener('fetch', (e) => {
     caches.match(req, { ignoreSearch: true }).then(
       (hit) =>
         hit ||
-        fetch(req).catch(() => (req.mode === 'navigate' ? caches.match('./') : Response.error())),
+        fetch(req)
+          .then((res) => {
+            if (res.ok && new URL(req.url).pathname.includes('/books/')) {
+              const copy = res.clone()
+              caches.open(CACHE).then((c) => c.put(req, copy))
+            }
+            return res
+          })
+          .catch(() => (req.mode === 'navigate' ? caches.match('./') : Response.error())),
     ),
   )
 })
 `
 fs.writeFileSync(path.join(dist, 'sw.js'), sw)
-console.log(`sw.js: ${files.length} فایل، نسخهٔ ${version}`)
+console.log(`sw.js: ${shell.length} فایل از پیش، نسخهٔ ${version}`)

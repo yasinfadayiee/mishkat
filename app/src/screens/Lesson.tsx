@@ -1,10 +1,10 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { chapterOf, lessons } from '../data/lessons'
 import type { Lesson, Word } from '../data/types'
 import { fa, useStore } from '../store'
 import { LightDust, Ornament } from '../fx'
-import { ArabicText, GradingChip, Icon, Recitation, Sparks } from '../ui'
+import { ArabicText, GradingChip, Icon, Recitation } from '../ui'
 
 const CARTOUCHE = 'M50,0 C58,5 70,7 84,7 C93,7 100,13 100,22 L100,78 C100,87 93,93 84,93 C70,93 58,95 50,100 C42,95 30,93 16,93 C7,93 0,87 0,78 L0,22 C0,13 7,7 16,7 C30,7 42,5 50,0 Z'
 const kindLabel = { quran: 'قرآن کریم', nahj: 'نهج‌البلاغه', hadith: 'حدیث' }
@@ -57,7 +57,7 @@ function Section({ id, icon, kicker, title, children }: { id: string; icon: keyo
 }
 
 export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) {
-  const { completeLesson, adoptHabit, addJournal, toggleSaved, p, streak } = useStore()
+  const { completeLesson, adoptHabit, addJournal, toggleSaved, p } = useStore()
   const isSaved = p.saved.includes(lesson.id)
   const scroller = useRef<HTMLDivElement>(null)
   const [progress, setProgress] = useState(0)
@@ -80,7 +80,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
         ['sharh', sh ? 'شرح جمله‌به‌جمله' : 'واژه‌ها'],
         ...(sh?.misread.length ? [['misread', 'برداشت نادرست']] : []),
         ['lessons', 'درس‌ها'],
-        ['life', 'در زندگی'],
+        ...(lesson.mirror ? [['life', 'آینهٔ زندگی']] : []),
         ...(lesson.parallels.length ? [['parallels', 'هم‌صدا']] : []),
         ['act', 'عمل'],
       ] as [string, string][],
@@ -337,12 +337,32 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
             ))}
           </Section>
 
-          <Section id="life" icon="life" kicker="داستان کوتاه" title={lesson.example.title}>
-            <div className="tale">
-              <div className="tale-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
-              <p className="prose">{lesson.example.body}</p>
-            </div>
-          </Section>
+          {lesson.mirror && (
+            <Section id="life" icon="life" kicker="خودت را در این سخن ببین" title="در آینهٔ زندگی تو">
+              <p className="prose lead-sm">{lesson.mirror.intro}</p>
+              <ul className="mirror-moments">
+                {lesson.mirror.moments.map((m, k) => (
+                  <li key={k}>{m}</li>
+                ))}
+              </ul>
+              <div className="mirror-box">
+                <h3 className="sp-h">از خودت بپرس</h3>
+                {lesson.mirror.signs.map((q, k) => (
+                  <p key={k} className="mirror-q">
+                    {q}
+                  </p>
+                ))}
+              </div>
+              <div className="mirror-box turn">
+                <h3 className="sp-h">{Icon.target} دفعهٔ بعد</h3>
+                <ol>
+                  {lesson.mirror.turn.map((t, k) => (
+                    <li key={k}>{t}</li>
+                  ))}
+                </ol>
+              </div>
+            </Section>
+          )}
 
           {lesson.parallels.length > 0 && (
             <Section id="parallels" icon="link" kicker="این سخن تنها نیست" title="هم‌صدا با این کلام">
@@ -393,40 +413,14 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
 
           <div className="study-end">
             <Ornament width={160} />
-            <button className="btn btn-gold" onClick={finish}>
-              {p.completed[lesson.id] ? 'دوباره خواندم؛ چراغ را روشن کن' : 'این درس را آموختم'}
+            <button className={`btn ${done || p.completed[lesson.id] ? 'btn-ghost' : 'btn-gold'}`} onClick={finish}>
+              {done || p.completed[lesson.id] ? <>{Icon.check} خوانده شد</> : 'علامت بزن: این درس را خواندم'}
             </button>
             <p className="muted tiny">پیش‌نویس شرح‌ها هنوز در انتظار تأیید کارشناس است؛ متن‌های عربی با منبع تطبیق داده شده‌اند.</p>
           </div>
         </div>
       </div>
 
-      <AnimatePresence>
-        {done && (
-          <motion.div className="finish-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <Sparks show />
-            <div className="finish">
-              <motion.div className="big-lamp" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 12 }}>
-                <img src="icons/hero-lamp.webp" alt="" style={{ filter: `brightness(${0.85 + Math.min(streak, 10) * 0.03})` }} />
-              </motion.div>
-              <h2 className="h1" style={{ color: 'var(--gold)' }}>
-                چراغت روشن‌تر شد
-              </h2>
-              <p className="muted" style={{ fontSize: 16 }}>
-                {streak > 1 ? `${fa(streak)} روز پیاپی با نورِ کلام همراه بوده‌ای.` : 'اولین قدم برداشته شد. فردا هم منتظرت هستیم.'}
-              </p>
-              <div className="card" style={{ padding: 18, textAlign: 'right', marginTop: 18 }}>
-                <div className="eyebrow">امروز یادت بماند</div>
-                <ArabicText kind={s.kind} text={s.arabic} />
-                <p style={{ margin: 0, color: 'var(--ink-2)', fontSize: 14.5 }}>{sh ? sh.essence : s.translation}</p>
-              </div>
-              <button className="btn btn-gold" style={{ width: '100%', marginTop: 18 }} onClick={onClose}>
-                بازگشت به خانه
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   )
 }

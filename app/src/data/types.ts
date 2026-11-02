@@ -73,6 +73,14 @@ export interface Sharh {
   misread: { wrong: string; right: string }[]
 }
 
+/** «در آینهٔ زندگی تو»: به‌جای داستان یک شخصیت، خواننده زندگی خودش را می‌سنجد */
+export interface Mirror {
+  intro: string
+  moments: string[]
+  signs: string[]
+  turn: string[]
+}
+
 export type ReviewState = 'verified' | 'draft'
 
 export interface Lesson {
@@ -91,6 +99,7 @@ export interface Lesson {
   /** دیگر نمایش داده نمی‌شود؛ برنامه آزمون ندارد */
   quiz?: Quiz
   sharh?: Sharh
+  mirror?: Mirror
   practice: Practice
   reflect: string
   review: { sourceText: ReviewState; explanation: ReviewState }

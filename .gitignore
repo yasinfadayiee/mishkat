@@ -8,3 +8,4 @@ app/android/.gradle/
 app/android/local.properties
 app/android/app/src/main/assets/public/
 *.log
+app/public/books/

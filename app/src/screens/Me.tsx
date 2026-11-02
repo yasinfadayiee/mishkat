@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
-import { CHAPTERS, lessonById, lessons } from '../data/lessons'
-import { activeDays, dayKey, fa, useStore, type ThemeId } from '../store'
-import { PageHero } from '../fx'
+import { lessonById, lessons } from '../data/lessons'
+import { fa, useStore, type ThemeId } from '../store'
 import { Icon } from '../ui'
 
 const THEMES: { id: ThemeId; name: string; colors: string[] }[] = [
@@ -10,74 +9,44 @@ const THEMES: { id: ThemeId; name: string; colors: string[] }[] = [
   { id: 'parchment', name: 'کاغذ کاهی', colors: ['#f7efdf', '#0e7a5c', '#9a6f27'] },
 ]
 
-export function Me({ goTo, openLesson }: { goTo: (t: 'trust') => void; openLesson: (id: string) => void }) {
-  const { p, set, streak } = useStore()
-  const active = activeDays(p)
-  const days = Array.from({ length: 28 }, (_, k) => {
-    const d = new Date()
-    d.setDate(d.getDate() - (27 - k))
-    return dayKey(d)
-  })
-  const completed = Object.keys(p.completed).length
+/** یادداشت‌ها: نشان‌ها، دفتر، تمرین‌ها و تنظیمات */
+export function Me({ goTo, openLesson, openMark }: { goTo: (t: 'trust') => void; openLesson: (id: string) => void; openMark: (key: string) => void }) {
+  const { p, set } = useStore()
+  const read = lessons.filter((l) => p.completed[l.id]).length
 
   return (
-    <>
-      <PageHero art="art/splash.webp" eyebrow="مسیر من" title={p.name || 'همراه مشکات'}>
-        <p>{streak ? `چراغت ${fa(streak)} روز است که روشن مانده.` : 'با اولین درس، چراغت را روشن کن.'}</p>
-      </PageHero>
+    <div className="fade-up">
+      <header className="quiet-head">
+        <div className="eyebrow">یادداشت‌های من</div>
+        <h1 className="h1">{p.name ? `دفتر ${p.name}` : 'دفتر من'}</h1>
+        <p className="muted">
+          {fa(p.marks.length)} متن نشان‌شده · {fa(p.journal.length)} یادداشت · {fa(read)} از {fa(lessons.length)} درس‌نامه خوانده شده
+        </p>
+      </header>
 
-      <div className="grid three" style={{ marginTop: 20, gridTemplateColumns: 'repeat(3,1fr)' }}>
-        <div className="card stat">
-          <b>{fa(streak)}</b>
-          <span>روز پیاپی</span>
+      <section className="shelf">
+        <div className="shelf-head">
+          <h2>متن‌های نشان‌شده</h2>
+          <small>آیه‌ها و حدیث‌هایی که نشان کرده‌ای</small>
         </div>
-        <div className="card stat">
-          <b>
-            {fa(completed)}/{fa(lessons.length)}
-          </b>
-          <span>درس کامل</span>
-        </div>
-        <div className="card stat">
-          <b>{fa(p.habits.length)}</b>
-          <span>تمرین فعال</span>
-        </div>
-      </div>
-
-      <section className="section">
-        <div className="section-head">
-          <h2 className="h2">پیشرفت در منزل‌ها</h2>
-          <span className="muted" style={{ fontSize: 13 }}>
-            پنج منزل، چهل ایستگاه
-          </span>
-        </div>
-        <div className="card chapter-progress">
-          {CHAPTERS.map((c, k) => {
-            const n = c.lessons.filter((id) => p.completed[id]).length
-            return (
-              <div key={c.id} className={`cp-row ${n === c.lessons.length ? 'full' : ''}`}>
-                <span className="cp-n">{fa(k + 1)}</span>
-                <div className="cp-body">
-                  <div className="cp-top">
-                    <b>{c.title}</b>
-                    <small>
-                      {fa(n)} از {fa(c.lessons.length)}
-                    </small>
-                  </div>
-                  <i>
-                    <b style={{ width: `${(n / c.lessons.length) * 100}%` }} />
-                  </i>
-                  <small className="muted">{c.subtitle}</small>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        {p.marks.length === 0 ? (
+          <p className="muted">هنگام خواندن قرآن یا کتاب‌ها، با دکمهٔ نشان، متن را این‌جا نگه دار.</p>
+        ) : (
+          <div className="marks">
+            {p.marks.map((m) => (
+              <button key={m.key} className="mark-row" onClick={() => openMark(m.key)}>
+                <small>{m.title}</small>
+                <p>{m.text.length > 220 ? `${m.text.slice(0, 220)}…` : m.text}</p>
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {p.saved.length > 0 && (
-        <section className="section">
-          <div className="section-head">
-            <h2 className="h2">نشان‌شده‌ها</h2>
+        <section className="shelf">
+          <div className="shelf-head">
+            <h2>درس‌نامه‌های نشان‌شده</h2>
           </div>
           <div className="saved-row">
             {p.saved.map((id) => {
@@ -96,51 +65,30 @@ export function Me({ goTo, openLesson }: { goTo: (t: 'trust') => void; openLesso
         </section>
       )}
 
-      <section className="section">
-        <div className="section-head">
-          <h2 className="h2">چهار هفتهٔ اخیر</h2>
-          <span className="muted" style={{ fontSize: 13 }}>
-            هر خانهٔ طلایی = یک روز مطالعه یا تمرین
-          </span>
-        </div>
-        <div className="card" style={{ padding: 18, maxWidth: 380 }}>
-          <div className="heat">
-            {days.map((d) => (
-              <i key={d} className={`${active.has(d) ? 'on' : ''} ${d === dayKey() ? 'today' : ''}`} title={new Date(d).toLocaleDateString('fa-IR')} />
+      {p.habits.length > 0 && (
+        <section className="shelf">
+          <div className="shelf-head">
+            <h2>تمرین‌هایی که پذیرفته‌ام</h2>
+          </div>
+          <ul className="habit-list">
+            {p.habits.map((h) => (
+              <li key={h.lessonId}>
+                <span>{h.short}</span>
+                <button className="link-btn" onClick={() => openLesson(h.lessonId)}>
+                  {lessonById(h.lessonId)?.title} ←
+                </button>
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
+          </ul>
+        </section>
+      )}
 
-      <section className="section">
-        <h2 className="h2" style={{ marginBottom: 12 }}>
-          پوستهٔ برنامه
-        </h2>
-        <div className="grid three">
-          {THEMES.map((t) => (
-            <button key={t.id} className={`theme-swatch ${p.theme === t.id ? 'on' : ''}`} onClick={() => set((x) => ({ ...x, theme: t.id }))}>
-              <span className="dots" style={{ paddingLeft: 6 }}>
-                {t.colors.map((c) => (
-                  <i key={c} style={{ background: c }} />
-                ))}
-              </span>
-              <b style={{ flex: 1 }}>{t.name}</b>
-              {p.theme === t.id && <span style={{ color: 'var(--gold)', width: 20 }}>{Icon.check}</span>}
-            </button>
-          ))}
+      <section className="shelf">
+        <div className="shelf-head">
+          <h2>دفتر یادداشت</h2>
         </div>
-      </section>
-
-      <section className="section">
-        <h2 className="h2" style={{ marginBottom: 12 }}>
-          دفتر خلوت من
-        </h2>
         {p.journal.length === 0 ? (
-          <div className="card" style={{ padding: 20 }}>
-            <p className="muted" style={{ margin: 0 }}>
-              هنوز یادداشتی ننوشته‌ای. در پایان هر درس، یک سؤال برای خلوت با خودت هست.
-            </p>
-          </div>
+          <p className="muted">پایان هر درس‌نامه یک پرسش برای خلوت با خودت هست؛ پاسخ‌هایت این‌جا می‌ماند.</p>
         ) : (
           <div className="grid two">
             {p.journal.map((j, k) => (
@@ -156,17 +104,40 @@ export function Me({ goTo, openLesson }: { goTo: (t: 'trust') => void; openLesso
         )}
       </section>
 
-      <section className="section">
+      <section className="shelf">
+        <div className="shelf-head">
+          <h2>تنظیمات</h2>
+        </div>
+        <label className="name-field">
+          <span>نام تو</span>
+          <input value={p.name} onChange={(e) => set((x) => ({ ...x, name: e.target.value }))} placeholder="اختیاری" />
+        </label>
+        <div className="grid three" style={{ marginTop: 12 }}>
+          {THEMES.map((t) => (
+            <button key={t.id} className={`theme-swatch ${p.theme === t.id ? 'on' : ''}`} onClick={() => set((x) => ({ ...x, theme: t.id }))}>
+              <span className="dots" style={{ paddingLeft: 6 }}>
+                {t.colors.map((c) => (
+                  <i key={c} style={{ background: c }} />
+                ))}
+              </span>
+              <b style={{ flex: 1 }}>{t.name}</b>
+              {p.theme === t.id && <span style={{ color: 'var(--gold)', width: 20 }}>{Icon.check}</span>}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="shelf">
         <button className="card trust-banner" onClick={() => goTo('trust')}>
           <span className="shield">{Icon.shield}</span>
           <span style={{ flex: 1 }}>
             <b style={{ display: 'block' }}>زنجیرهٔ اعتبار مشکات</b>
-            <small className="muted">منابع، روش تطبیق و وضعیت بازبینی هر درس</small>
+            <small className="muted">منابع، روش تطبیق و وضعیت بازبینی</small>
           </span>
           <span style={{ color: 'var(--gold)' }}>←</span>
         </button>
       </section>
-    </>
+    </div>
   )
 }
 
@@ -181,9 +152,9 @@ export function Trust({ back }: { back: () => void }) {
       <p className="muted">کسی که بر اساس این متن‌ها زندگی‌اش را تغییر می‌دهد، حق دارد بداند هر جمله از کجا آمده است. برای همین مشکات چهار قانون دارد:</p>
 
       {[
-        ['متن اصلی دست نمی‌خورد', 'متن آیات عیناً از نسخهٔ عثمانی «تنزیل» آورده می‌شود. احادیث از پایگاه «ثقلین» (کافی، نهج‌البلاغه، امالی) و صحیح بخاری و مسلم گرفته می‌شود؛ فقط گاهی اعرابِ ناقص برای خوانایی کامل شده است. یک برنامهٔ بازبین خودکار، پیش از هر انتشار، همهٔ متن‌ها را حرف‌به‌حرف با منبع مقایسه می‌کند.'],
+        ['متن اصلی دست نمی‌خورد', 'متن آیات عیناً از نسخهٔ عثمانی «تنزیل» آورده می‌شود. متن ۳۹ کتاب حدیث شیعه (کتب اربعه، نهج‌البلاغه، آثار شیخ صدوق و دیگران) عیناً از پایگاه «ثقلین»، صحیفهٔ سجادیه از ویکی‌نبشتهٔ عربی، و صحیح بخاری و مسلم از نسخهٔ عمومی آن‌ها آمده است. فایل کتاب‌ها مستقیم از همین منابع ساخته می‌شود و متن عربی هرگز دستی ویرایش نمی‌شود؛ متن‌های درس‌نامه‌ها هم پیش از هر انتشار با یک بازبین خودکار، حرف‌به‌حرف با منبع مقایسه می‌شوند.'],
         ['درجهٔ سند پنهان نمی‌شود', 'برای احادیث کافی، نظر علامه مجلسی در «مرآة العقول» دربارهٔ سند (صحیح، حسن، مجهول، ضعیف) کنار حدیث نمایش داده می‌شود؛ حتی وقتی ضعیف است. حدیث ضعیف‌السند فقط به‌عنوان شاهد کنار آیه یا روایت معتبر می‌آید.'],
-        ['ترجمه و توضیح از هم جدا هستند', 'ترجمه همیشه با نام مترجم می‌آید. شرح جمله‌به‌جمله، نکته‌ها و مثال‌ها برداشت و توضیح است، نه متن معصوم، و به‌روشنی از متن اصلی جدا نشان داده می‌شود.'],
+        ['ترجمه و توضیح از هم جدا هستند', 'ترجمهٔ قرآن از آیت‌الله مکارم شیرازی است. ترجمهٔ فارسی احادیث، «توضیح ساده»، شرح جمله‌به‌جمله و پرسش‌های «آینه» پیش‌نویس تیم مشکات است؛ برداشت و توضیح است، نه متن معصوم، و جدا از متن اصلی نشان داده می‌شود.'],
         ['هر توضیح، پیش از انتشار عمومی بازبینی می‌شود', 'توضیحات و مثال‌ها پیش‌نویس تیم مشکات است و پیش از انتشار عمومی باید به تأیید کارشناس دینی برسد. هر کس می‌تواند با دکمهٔ «تطبیق با منبع» متن را خودش ببیند.'],
       ].map(([t, b], k) => (
         <motion.div key={k} className="card point" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.08 }}>

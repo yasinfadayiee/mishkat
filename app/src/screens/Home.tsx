@@ -1,10 +1,10 @@
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useState } from 'react'
-import { CHAPTERS, lessonById, lessons } from '../data/lessons'
-import { programs, situations } from '../data/paths'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { lastPlace, loadBook, loadIndex, loadSurahs, type BookMeta, type Item, type Place, type SurahMeta } from '../books'
+import { lessonById, lessons } from '../data/lessons'
+import { situations } from '../data/paths'
 import type { Situation } from '../data/types'
-import { ArchFrame, LightDust, Ornament, Stars, Tilt, skyPhase } from '../fx'
-import { dayKey, fa, useStore } from '../store'
+import { fa, useStore } from '../store'
 import { ArabicText, Icon, Sheet } from '../ui'
 
 function greeting() {
@@ -17,326 +17,218 @@ function greeting() {
 
 function dates() {
   const d = new Date()
-  const shamsi = d.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
+  const shamsi = d.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
   let qamari = ''
   try {
-    qamari = d.toLocaleDateString('fa-IR-u-ca-islamic-umalqura', { day: 'numeric', month: 'long' })
+    qamari = d.toLocaleDateString('fa-IR-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' })
   } catch {
     /* تقویم قمری پشتیبانی نشد */
   }
   return { shamsi, qamari }
 }
 
-/** درس امروز: اولین درسِ تمام‌نشده؛ اگر همه تمام شده، چرخشی بر اساس روز */
+const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000)
+
+/** درس‌نامهٔ امروز: اولین درسِ نخوانده؛ اگر همه خوانده شده، چرخشی بر اساس روز */
 export function todaysLesson(completed: Record<string, string>) {
-  const open = lessons.find((l) => !completed[l.id])
-  if (open) return open
-  const day = Math.floor(Date.now() / 86400000)
-  return lessons[day % lessons.length]
+  return lessons.find((l) => !completed[l.id]) ?? lessons[today % lessons.length]
 }
 
-export function LessonCard({ id, onOpen, done }: { id: string; onOpen: (id: string) => void; done?: boolean }) {
-  const l = lessonById(id)!
-  return (
-    <button className="lesson-arch" onClick={() => onOpen(id)}>
-      <ArchFrame>
-        <div className="lesson-arch-art" style={{ backgroundImage: `url(${l.cover})` }} />
-        <div className="lesson-arch-shade" />
-        {done && <span className="done-badge">{Icon.check}</span>}
-        <div className="lesson-arch-body">
-          <small>{l.topic}</small>
-          <b>{l.title}</b>
-        </div>
-      </ArchFrame>
-      <span className="lesson-arch-meta">
-        {fa(l.minutes)} دقیقه · {l.source.kind === 'quran' ? 'قرآن' : l.source.kind === 'nahj' ? 'نهج‌البلاغه' : 'حدیث'}
-      </span>
-    </button>
-  )
+/** سخن امروز از حکمت‌های ترجمه‌شدهٔ نهج‌البلاغه */
+function useSaying() {
+  const [s, setS] = useState<{ item: Item; label: string; sec: number; ch: number } | null>(null)
+  useEffect(() => {
+    loadBook('Nahj-al-Balagha-Radi')
+      .then((b) => {
+        const pool = b.sections.flatMap((sec, si) => sec.chapters.flatMap((c, ci) => c.items.filter((i) => i.fa && i.ar.split(' ').length < 40).map((item) => ({ item, label: `نهج‌البلاغه، ${sec.t.startsWith('حکمت') ? 'حکمت' : sec.t.startsWith('نامه') ? 'نامهٔ' : 'خطبهٔ'} ${fa(item.n ?? 0)}`, sec: si, ch: ci }))))
+        if (pool.length) setS(pool[(today * 7) % pool.length])
+      })
+      .catch(() => setS(null))
+  }, [])
+  return s
 }
 
-/** مسیر نور: هر منزل، هشت ایستگاه روی یک راهِ پیچ‌درپیچ */
-function JourneyPath({ onOpen }: { onOpen: (id: string) => void }) {
+/** آیهٔ امروز: از آیه‌های برگزیدهٔ درس‌نامه‌ها، تا آیه بیرون از سیاقش نیاید */
+function useAyah() {
+  const pool = lessons.flatMap((l) => [
+    ...(l.source.kind === 'quran' ? [{ ar: l.source.arabic, fa: l.source.translation, ref: l.source.verifyUrl }] : []),
+    ...l.parallels.filter((x) => x.school === 'quran').map((x) => ({ ar: x.arabic, fa: x.translation, ref: x.verifyUrl })),
+  ])
+  const a = pool[(today * 5) % pool.length]
+  const [n, ayah] = (a.ref.split('#')[1] ?? '1:1').split(':')
+  return { ar: a.ar, fa: a.fa, n: Number(n), ayah: ayah.replace(/\d/g, (d) => fa(Number(d))) }
+}
+
+export function Home({
+  openLesson,
+  openQuran,
+  openBook,
+  openPlace,
+  goTo,
+}: {
+  openLesson: (id: string) => void
+  openQuran: (n?: number) => void
+  openBook: (b: BookMeta, sec?: number, ch?: number) => void
+  openPlace: (p: Place) => void
+  goTo: (tab: 'library' | 'trust') => void
+}) {
   const { p } = useStore()
-  const firstOpen = CHAPTERS.findIndex((c) => c.lessons.some((id) => lessonById(id) && !p.completed[id]))
-  const [ci, setCi] = useState(firstOpen === -1 ? 0 : firstOpen)
-  const chapter = CHAPTERS[ci]
-  const items = chapter.lessons.map((id) => lessonById(id)).filter((l) => !!l)
-  const offset = CHAPTERS.slice(0, ci).reduce((n, c) => n + c.lessons.length, 0)
-  const current = items.findIndex((l) => !p.completed[l!.id])
-  const xs = [50, 76, 50, 24]
-  const step = 175
-  const pts = items.map((_, i) => ({ x: xs[i % xs.length], y: 150 + i * step }))
-  const d = pts.reduce((acc, pt, i) => {
-    if (i === 0) return `M${pt.x} ${pt.y}`
-    const prev = pts[i - 1]
-    const my = (prev.y + pt.y) / 2
-    return `${acc} C${prev.x} ${my} ${pt.x} ${my} ${pt.x} ${pt.y}`
-  }, '')
-  const height = 150 + (items.length - 1) * step + 100
-  const doneUpTo = current === -1 ? items.length - 1 : current
-
-  return (
-    <>
-      <div className="scroller chapter-row">
-        {CHAPTERS.map((c, k) => {
-          const done = c.lessons.filter((id) => p.completed[id]).length
-          return (
-            <button key={c.id} className={`chapter-chip ${k === ci ? 'on' : ''}`} onClick={() => setCi(k)}>
-              <small>منزل {fa(k + 1)}</small>
-              <b>{c.title}</b>
-              <span className="chapter-bar">
-                <i style={{ width: `${(done / c.lessons.length) * 100}%` }} />
-              </span>
-            </button>
-          )
-        })}
-      </div>
-      <div className="journey" style={{ height }} key={chapter.id}>
-        <div className="journey-bg" style={{ backgroundImage: 'url(art/home-night.webp)' }} />
-        <div className="journey-title">
-          <span className="gold-text">منزل {fa(ci + 1)}: {chapter.title}</span>
-          <small>{chapter.subtitle}</small>
-        </div>
-        <svg className="journey-line" viewBox={`0 0 100 ${height}`} preserveAspectRatio="none" aria-hidden>
-          <defs>
-            <linearGradient id="pathGlow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#fff0c2" />
-              <stop offset="1" stopColor="#b98b3f" />
-            </linearGradient>
-          </defs>
-          <path d={d} fill="none" stroke="var(--line-strong)" strokeWidth="10" strokeLinecap="round" vectorEffect="non-scaling-stroke" opacity=".35" />
-          <path d={d} fill="none" stroke="var(--gold)" strokeWidth="2" strokeDasharray="2 9" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          <motion.path
-            d={d}
-            fill="none"
-            stroke="url(#pathGlow)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(255,200,110,.8))' }}
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: Math.max(0.02, doneUpTo / Math.max(1, items.length - 1)) }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.6, ease: 'easeInOut' }}
-          />
-        </svg>
-        {items.map((l, i) => {
-          const state = p.completed[l!.id] ? 'done' : i === current ? 'current' : 'next'
-          return (
-            <motion.button
-              key={l!.id}
-              className={`node node-${state}`}
-              style={{ left: `${pts[i].x}%`, top: pts[i].y }}
-              onClick={() => onOpen(l!.id)}
-              initial={{ opacity: 0, scale: 0.7 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ type: 'spring', damping: 14, delay: 0.05 }}
-            >
-              <span className="node-ring">
-                <span className="node-art" style={{ backgroundImage: `url(${l!.cover})` }} />
-                {state === 'done' && <span className="node-check">{Icon.check}</span>}
-              </span>
-              {state === 'current' && <span className="node-flag">اینجا هستی</span>}
-              <span className="node-label">
-                <small>ایستگاه {fa(offset + i + 1)}</small>
-                {l!.title}
-              </span>
-            </motion.button>
-          )
-        })}
-      </div>
-    </>
-  )
-}
-
-export function Home({ openLesson, goTo }: { openLesson: (id: string) => void; goTo: (tab: 'paths' | 'trust') => void }) {
-  const { p, streak, toggleCheckin } = useStore()
-  const [sit, setSit] = useState<Situation | null>(null)
-  const today = todaysLesson(p.completed)
-  const doneToday = p.checkins[dayKey()] ?? []
-  const habitsDone = p.habits.filter((h) => doneToday.includes(h.lessonId)).length
-  const phase = skyPhase()
   const { shamsi, qamari } = dates()
-  const { scrollY } = useScroll()
-  const artY = useTransform(scrollY, [0, 600], [0, 140])
-  const skyY = useTransform(scrollY, [0, 600], [0, 60])
-  const shortOnes = lessons.filter((l) => l.source.arabic.length < 140)
-  const wordLesson = shortOnes[Math.floor(Date.now() / 86400000) % shortOnes.length]
-  const word = wordLesson.source
+  const [sit, setSit] = useState<Situation | null>(null)
+  const [books, setBooks] = useState<BookMeta[]>([])
+  const place = lastPlace()
+  const lesson = todaysLesson(p.completed)
+  const saying = useSaying()
+  const ayah = useAyah()
+  const [surahs, setSurahs] = useState<SurahMeta[]>([])
+  useEffect(() => {
+    loadSurahs()
+      .then(setSurahs)
+      .catch(() => setSurahs([]))
+    loadIndex()
+      .then((x) => setBooks(x.books))
+      .catch(() => setBooks([]))
+  }, [])
+  const nahj = books.find((b) => b.id === 'Nahj-al-Balagha-Radi')
+  const featured = ['Nahj-al-Balagha-Radi', 'sahifa', 'Al-Kafi-Volume-2-Kulayni', 'Risalat-al-Huquq-Abidin', 'Al-Khisal-Saduq', 'Al-Amali-Saduq'].map((id) => books.find((b) => b.id === id)).filter((b): b is BookMeta => !!b)
 
   return (
-    <div className="home">
-      <section className={`scene has-art phase-${phase}`}>
-        <motion.div className="scene-sky" style={{ y: skyY }} />
-        {phase !== 'day' && <Stars count={phase === 'night' ? 150 : 60} />}
-        {phase === 'night' && <div className="scene-moon" />}
-        <motion.div className="scene-art" style={{ y: artY, backgroundImage: 'url(art/home-night.webp)' }} />
-        <LightDust density={36} />
-        <div className="scene-fade" />
-        <div className="scene-content">
-          <div className="scene-top">
-            <div>
-              <div className="scene-date">
-                {shamsi}
-                {qamari && <span> · {qamari}</span>}
-              </div>
-              <div className="scene-hello">
-                {greeting()}
-                {p.name ? `، ${p.name}` : ''}
-              </div>
-            </div>
-            <div className="streak-badge" title="روزهای پیاپی">
-              <span className="streak-lamp" style={{ filter: `brightness(${streak ? 1 : 0.55}) saturate(${streak ? 1.1 : 0.5})` }}>
-                <img src="icons/hero-lamp.webp" alt="" />
-              </span>
-              <b>{fa(streak)}</b>
-              <small>روز</small>
-            </div>
+    <div className="home2">
+      <header className="masthead">
+        <div className="masthead-art" style={{ backgroundImage: "url(art/home-night.webp)" }} />
+        <div className="masthead-fade" />
+        <div className="masthead-text">
+          <div className="mast-date">
+            {shamsi}
+            {qamari && <span> · {qamari}</span>}
           </div>
-          <motion.h1 className="scene-title" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }}>
-            امروز یک چراغ
-            <br />
-            <span className="gold-text">برای زندگی‌ات</span>
-          </motion.h1>
+          <div className="mast-hi">
+            {greeting()}
+            {p.name ? `، ${p.name}` : ''}
+          </div>
+          <h1>
+            کتابخانهٔ <span className="gold-text">مشکات</span>
+          </h1>
+          <p>قرآن، نهج‌البلاغه و کتاب‌های حدیث؛ کامل، مستند و به زبان امروز.</p>
         </div>
-      </section>
+      </header>
 
-      <div className="home-body">
-        <motion.div className="today" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.25 }}>
-          <Tilt className="today-tilt">
-            <button className="today-card" onClick={() => openLesson(today.id)}>
-              <ArchFrame glow>
-                <div className="today-art" style={{ backgroundImage: `url(${today.cover})` }} />
-                <div className="today-shade" />
-                <div className="today-body">
-                  <span className="chip chip-glass">✦ درس امروز · {fa(today.minutes + (today.sharh ? today.sharh.parts.length * 2 : 0))} دقیقه</span>
-                  <h2>{today.title}</h2>
-                  <p>{today.subtitle}</p>
-                  <span className="btn btn-gold btn-shine">
-                    {p.completed[today.id] ? 'خواندن دوباره' : 'خواندن درس'} {Icon.play}
-                  </span>
-                </div>
-              </ArchFrame>
-            </button>
-          </Tilt>
-        </motion.div>
-
-        {today.sharh && (
-          <motion.button className="today-essence" onClick={() => openLesson(today.id)} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45 }}>
-            <span className="te-kicker">آنچه امروز می‌فهمی</span>
-            <p>{today.sharh.essence}</p>
-            <span className="te-meta">
-              {Icon.teacher} {fa(today.sharh.parts.length)} جمله، یکی‌یکی شرح داده شده
+      <div className="home2-body">
+        {place && (
+          <button className="continue-card" onClick={() => openPlace(place)}>
+            <span className="cc-icon">{Icon.book}</span>
+            <span className="cc-text">
+              <small>ادامهٔ مطالعه</small>
+              <b>{place.title}</b>
+              <span>{place.label}</span>
             </span>
-          </motion.button>
+            <span className="cc-go">{Icon.next}</span>
+          </button>
         )}
 
-        <section className="section">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">معلمِ لحظه‌ها</div>
-              <h2 className="h2">الان چه حالی داری؟</h2>
-            </div>
-          </div>
-          <div className="scroller mood-row">
-            {situations.map((s, k) => (
-              <motion.button key={s.id} className="mood" onClick={() => setSit(s)} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: k * 0.05 }}>
-                <span className="mood-emoji">{s.emoji}</span>
-                <span>{s.label}</span>
-              </motion.button>
-            ))}
-          </div>
-        </section>
+        <div className="daily-grid">
+          {ayah && (
+            <motion.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="dc-kicker">آیهٔ امروز</div>
+              <ArabicText kind="quran" text={ayah.ar} className="dc-ar" />
+              <p className="dc-fa">{ayah.fa}</p>
+              <footer>
+                <span>{surahs[ayah.n - 1] && `سورهٔ ${surahs[ayah.n - 1].name}، آیهٔ ${ayah.ayah}`}</span>
+                <button className="link-btn" onClick={() => openQuran(ayah.n)}>
+                  خواندن سوره ←
+                </button>
+              </footer>
+            </motion.article>
+          )}
+          {saying && (
+            <motion.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+              <div className="dc-kicker">سخن امروز · امام علی (ع)</div>
+              <ArabicText kind="hadith" text={saying.item.ar} className="dc-ar" />
+              <p className="dc-fa">{saying.item.fa}</p>
+              {saying.item.nt && <p className="dc-note">{saying.item.nt}</p>}
+              {saying.item.mr && (
+                <p className="dc-mirror">
+                  {Icon.life} {saying.item.mr}
+                </p>
+              )}
+              <footer>
+                <span>{saying.label}</span>
+                {nahj && (
+                  <button className="link-btn" onClick={() => openBook(nahj, saying.sec, saying.ch)}>
+                    در کتاب ←
+                  </button>
+                )}
+              </footer>
+            </motion.article>
+          )}
+        </div>
 
-        <section className="section">
-          <div className="word-card card">
-            <div className="word-card-bg" style={{ backgroundImage: `url(${wordLesson.cover})` }} />
-            <div className="eyebrow" style={{ justifyContent: 'center' }}>
-              کلام روز
-            </div>
-            <Ornament />
-            <ArabicText kind={word.kind} text={word.arabic} className="word-card-text" />
-            <p className="word-card-fa">{word.translation}</p>
-            <div className="word-card-ref">
-              {word.speaker ? `${word.speaker} · ` : ''}
-              {word.ref}
-            </div>
-          </div>
-        </section>
-
-        {p.habits.length > 0 && (
-          <section className="section">
-            <div className="section-head">
-              <div>
-                <div className="eyebrow">عمل، نه فقط خواندن</div>
-                <h2 className="h2">تمرین‌های امروز</h2>
-              </div>
-              <span className="chip ok">
-                {fa(habitsDone)} از {fa(p.habits.length)}
-              </span>
-            </div>
-            <div className="grid two">
-              {p.habits.map((h) => {
-                const done = doneToday.includes(h.lessonId)
-                return (
-                  <motion.button key={h.lessonId} className={`habit ${done ? 'done' : ''}`} onClick={() => toggleCheckin(h.lessonId)} whileTap={{ scale: 0.97 }}>
-                    <span className="tick">{done && Icon.check}</span>
-                    <span style={{ flex: 1 }}>
-                      <span className="habit-text" style={{ display: 'block', fontWeight: 600 }}>
-                        {h.short}
-                      </span>
-                      <small className="muted">از درس «{lessonById(h.lessonId)?.title}»</small>
-                    </span>
-                  </motion.button>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        <section className="section">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">قدم‌به‌قدم</div>
-              <h2 className="h2">مسیر نور</h2>
-            </div>
-            <span className="chip">
-              {fa(Object.keys(p.completed).length)} از {fa(lessons.length)} ایستگاه
-            </span>
-          </div>
-          <JourneyPath onOpen={openLesson} />
-        </section>
-
-        <section className="section">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">چهل روز تا یک عادت تازه</div>
-              <h2 className="h2">چله‌ها</h2>
-            </div>
-            <button className="link" onClick={() => goTo('paths')}>
-              همه ←
+        <section className="home-sec">
+          <div className="hs-head">
+            <h2>درس‌نامهٔ امروز</h2>
+            <button className="link-btn" onClick={() => goTo('library')}>
+              همهٔ درس‌نامه‌ها ←
             </button>
           </div>
-          <div className="scroller">
-            {programs.map((pr) => (
-              <button key={pr.id} className="chelle-card" onClick={() => goTo('paths')} style={{ ['--hue' as string]: pr.hue }}>
-                <span className="chelle-num">{fa(pr.days)}</span>
-                <span className="chelle-glow" />
-                <b>{pr.title}</b>
-                <small>{pr.tagline}</small>
+          <button className="lesson-feature" onClick={() => openLesson(lesson.id)}>
+            <span className="lf-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
+            <span className="lf-text">
+              <small>
+                {lesson.topic} · {lesson.source.ref}
+              </small>
+              <b>{lesson.title}</b>
+              {lesson.sharh && <span>{lesson.sharh.essence}</span>}
+              <em>
+                {lesson.sharh ? `شرح ${fa(lesson.sharh.parts.length)} جمله، یکی‌یکی` : lesson.subtitle}
+                {p.completed[lesson.id] && ' · خوانده شده'}
+              </em>
+            </span>
+          </button>
+        </section>
+
+        <section className="home-sec">
+          <div className="hs-head">
+            <h2>وقتی…</h2>
+            <small className="muted">از موقعیت زندگی‌ات، به متنی که دربارهٔ آن است</small>
+          </div>
+          <div className="situations">
+            {situations.map((s) => (
+              <button key={s.id} onClick={() => setSit(s)}>
+                {s.label}
               </button>
             ))}
           </div>
         </section>
 
-        <section className="section">
+        <section className="home-sec">
+          <div className="hs-head">
+            <h2>کتاب‌های برگزیده</h2>
+            <button className="link-btn" onClick={() => goTo('library')}>
+              کتابخانه ←
+            </button>
+          </div>
+          <div className="featured">
+            <button className="feat-book quran-book" onClick={() => openQuran()}>
+              <b>قرآن کریم</b>
+              <small>۱۱۴ سوره · ترجمهٔ کامل</small>
+            </button>
+            {featured.map((b) => (
+              <button key={b.id} className="feat-book" onClick={() => openBook(b)}>
+                <b>{b.title}</b>
+                <small>
+                  {fa(b.count)} متن{b.translated ? ` · ${fa(b.translated)} با ترجمه` : ''}
+                </small>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="home-sec">
           <button className="card trust-banner" onClick={() => goTo('trust')}>
             <span className="shield">{Icon.shield}</span>
             <span style={{ flex: 1 }}>
-              <b style={{ display: 'block' }}>هر کلمه، با سند</b>
-              <small className="muted">متن آیات و روایات عیناً از منابع معتبر، با درجهٔ اعتبار و لینک تطبیق. ببین چطور.</small>
+              <b style={{ display: 'block' }}>هر متن، با سند</b>
+              <small className="muted">منبع هر آیه و حدیث، درجهٔ سند، و این‌که کدام بخش ترجمه یا توضیح است</small>
             </span>
             <span style={{ color: 'var(--gold)' }}>←</span>
           </button>
@@ -346,28 +238,24 @@ export function Home({ openLesson, goTo }: { openLesson: (id: string) => void; g
       <Sheet open={!!sit} onClose={() => setSit(null)}>
         {sit && (
           <>
-            <div className="eyebrow">
-              {sit.emoji} {sit.label}
-            </div>
-            <h3 className="h2" style={{ margin: '6px 0 4px' }}>
-              این درس‌ها برای همین لحظه است
+            <h3 className="h2" style={{ marginTop: 4 }}>
+              {sit.label}
             </h3>
-            <p className="muted" style={{ marginTop: 0, fontSize: 14 }}>
-              چند دقیقه وقت بگذار؛ معلم کنارت است.
+            <p className="muted" style={{ marginTop: 0 }}>
+              این درس‌نامه‌ها دربارهٔ همین موقعیت‌اند:
             </p>
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              {sit.lessons.filter((id) => lessonById(id)).map((id) => (
-                <LessonCard
-                  key={id}
-                  id={id}
-                  done={!!p.completed[id]}
-                  onOpen={(x) => {
-                    setSit(null)
-                    openLesson(x)
-                  }}
-                />
+            {sit.lessons
+              .map((id) => lessonById(id))
+              .filter((l) => !!l)
+              .map((l) => (
+                <button key={l!.id} className="sheet-lesson" onClick={() => (setSit(null), openLesson(l!.id))}>
+                  <span className="sl-art" style={{ backgroundImage: `url(${l!.cover})` }} />
+                  <span>
+                    <b>{l!.title}</b>
+                    <small>{l!.source.ref}</small>
+                  </span>
+                </button>
               ))}
-            </div>
           </>
         )}
       </Sheet>
