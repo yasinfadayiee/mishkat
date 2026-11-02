@@ -38,8 +38,9 @@ for (const l of lessons) {
   if (!Array.isArray(x.misread) || !x.misread.length) errs.push('برداشت نادرست ندارد')
   for (const t of prose(x)) {
     if (HARAKAT.test(t)) errs.push(`متن عربیِ اعراب‌دار در توضیح: ${t.slice(0, 70)}…`)
-    // نام گویندهٔ خود متن مجاز است
-    for (const b of BANNED) if (t.includes(b) && !(l.source.speaker ?? '').includes(b)) errs.push(`واژهٔ «${b}» در توضیح (احتمال نقل بی‌سند): ${t.slice(0, 90)}…`)
+    // نام گوینده و واژه‌های خود ترجمهٔ متن مجاز است
+    const own = `${l.source.speaker ?? ''} ${l.source.translation}`
+    for (const b of BANNED) if (t.includes(b) && !own.includes(b)) errs.push(`واژهٔ «${b}» در توضیح (احتمال نقل بی‌سند): ${t.slice(0, 90)}…`)
   }
   if (errs.length) problems.push(`${l.id}:\n - ${errs.join('\n - ')}`)
   else out[l.id] = { essence: x.essence.trim(), parts: x.parts.map(({ ar, fa, plain, deep, life }) => ({ ar, fa: fa.trim(), plain: plain.trim(), deep: deep.trim(), life: life.trim() })), misread: x.misread }
