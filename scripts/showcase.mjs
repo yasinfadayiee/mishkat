@@ -90,7 +90,7 @@ try {
   await ev(`[...document.querySelectorAll('.book-tile')].find((b) => b.textContent.includes('نهج‌البلاغه')).click(); 1`)
   await sleep(2200)
   await shot('08-book')
-  await ev(`[...document.querySelectorAll('.toc button')].find((b) => b.textContent.includes('حکمت')).click(); 1`)
+  await ev(`[...document.querySelectorAll('.toc button')].find((b) => b.textContent.includes('نامهٔ ۳۱')).click(); 1`)
   await sleep(2200)
   await shot('09-chapter')
   await click('.reader .icon-btn')

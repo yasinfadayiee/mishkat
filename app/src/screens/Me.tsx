@@ -195,6 +195,12 @@ export function Trust({ back }: { back: () => void }) {
         <div>
           تلاوت: مشاری راشد العفاسی، از <a href="https://everyayah.com" target="_blank" rel="noreferrer">EveryAyah.com</a>
         </div>
+        <div>
+          غررالحکم و تحف‌العقول: پیکرهٔ آزاد <a href="https://github.com/OpenITI" target="_blank" rel="noreferrer">OpenITI</a> · صحیفهٔ سجادیه: <a href="https://ar.wikisource.org/wiki/الصحيفة_السجادية" target="_blank" rel="noreferrer">ویکی‌نبشتهٔ عربی</a>
+        </div>
+        <div dir="ltr" style={{ textAlign: 'left', fontSize: 12.5, color: 'var(--muted)', marginTop: 8 }}>
+          Quran text: Tanzil Quran Text (Uthmani, Version 1.1). Copyright (C) 2007-2021 Tanzil Project. License: Creative Commons Attribution 3.0. This copy of the text may be used in any website or application, provided that its source (Tanzil Project) is clearly indicated, and a link is made to tanzil.net to enable users to keep track of changes. Translation: Naser Makarem Shirazi, via tanzil.net (non-commercial use).
+        </div>
       </div>
     </div>
   )

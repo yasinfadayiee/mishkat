@@ -25,7 +25,8 @@ input.forEach((x, k) => {
   if (words(y.fa) < 0.6 * words(x.ar)) short.push(`${x.id} (${words(x.ar)}→${words(y.fa)})`)
   for (const t of [y.note ?? '', y.mirror ?? '']) {
     if (HARAKAT.test(t)) problems.push(`${x.id}: عربی اعراب‌دار در توضیح`)
-    for (const b of BANNED) if (t.includes(b)) problems.push(`${x.id}: «${b}» در توضیح — ${t.slice(0, 80)}`)
+    // واژه‌ای که در خود ترجمهٔ متن هست، در توضیحش هم مجاز است
+    for (const b of BANNED) if (t.includes(b) && !y.fa.includes(b)) problems.push(`${x.id}: «${b}» در توضیح — ${t.slice(0, 80)}`)
   }
   const book = x.book ?? bookArg
   ;(byBook[book] ??= []).push({ id: x.id, fa: y.fa.trim(), note: (y.note ?? '').trim(), mirror: (y.mirror ?? '').trim() })

@@ -24,6 +24,14 @@ if (fs.existsSync(tf)) {
   for (const t of titlesEn) if (byId.get(t.id)) titleFa.set(t.en, byId.get(t.id))
 }
 const fa = (en) => titleFa.get((en ?? '').trim()) ?? ''
+// عنوان‌های عربی و انگلیسیِ غرر، تحف و صحیحین → فارسی (اگر ترجمه‌اش آمده باشد)
+const title2 = new Map()
+const t2 = path.join(trDir, 'titles2-fa.json')
+if (fs.existsSync(t2)) {
+  const byId = new Map(read(t2).map((x) => [x.id, x.fa]))
+  for (const t of read(path.join(root, 'corpus', 'titles2-src.json'))) if (byId.get(t.id)) title2.set(t.ar, byId.get(t.id))
+}
+const fa2 = (t) => (t && title2.get(t)) || t
 
 // ترجمهٔ متن‌ها: content/translations/<bookId>/*.json → { id: {fa, note, mirror} }
 const translations = (bookId) => {
@@ -138,8 +146,74 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
   for (const s of sections) s.chapters = s.chapters.filter((c) => c.items.length)
   const kept = sections.filter((s) => s.chapters.length)
   const count = kept.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.items.length, 0), 0)
+  for (const s of kept) {
+    s.t = fa2(s.t)
+    for (const c of s.chapters) Object.assign(c, { t: fa2(c.t), ta: fa2(c.ta) })
+  }
   write('ghurar.json', { id: 'ghurar', sections: kept })
   index.books.push({ id: 'ghurar', kind: 'book', title: 'غررالحکم و دررالکلم', author: 'گردآوری عبدالواحد آمدی (د. ۵۱۰ ق)', shelf: 'nahj', desc: 'سخنان کوتاه امیرالمؤمنین (ع)، در ترتیب موضوعی (تصنیف غررالحکم). متن عربی از پیکرهٔ آزاد OpenITI.', count, translated: tr.size, order: 2, source: 'https://github.com/OpenITI/0500AH' })
+}
+
+/* ───────── تحف‌العقول (OpenITI) ───────── */
+{
+  const lines = fs.readFileSync(path.join(raw, 'tuhaf.mARkdown'), 'utf8').split('\n')
+  const tr = translations('tuhaf')
+  // آغاز بخش هر معصوم در فایل (شمارهٔ سطر)
+  const parts = [
+    [1, 'سخنان پیامبر (ص)'],
+    [1075, 'سخنان امیرالمؤمنین علی (ع)'],
+    [4020, 'سخنان امام حسن (ع)'],
+    [4248, 'سخنان امام حسین (ع)'],
+    [4462, 'سخنان امام سجاد (ع)'],
+    [5126, 'سخنان امام باقر (ع)'],
+    [5469, 'سخنان امام صادق (ع)'],
+    [7101, 'سخنان امام کاظم (ع)'],
+    [7702, 'سخنان امام رضا (ع)'],
+    [8364, 'سخنان امام جواد (ع)'],
+    [8497, 'سخنان امام هادی (ع)'],
+    [9058, 'سخنان امام حسن عسکری (ع)'],
+  ]
+  const clean = (t) =>
+    t
+      .replace(/\bms\d+\b/g, '')
+      .replace(/PageV\d+P\d+/g, '')
+      .replace(/\(\d+\)|\(\*\)/g, '')
+      .replace(/\[بسم الله الرحمن الرحيم\]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+  const paras = []
+  let cur = null
+  lines.forEach((l, k) => {
+    if (l.startsWith('# ')) {
+      if (cur) paras.push(cur)
+      cur = { line: k + 1, text: l.slice(2) }
+    } else if (l.startsWith('~~') && cur) cur.text += ' ' + l.slice(2)
+  })
+  if (cur) paras.push(cur)
+  const sections = parts.map(([, t]) => ({ t, chapters: [{ t: 'آغاز بخش', items: [] }] }))
+  sections[0].chapters[0].t = 'مقدمهٔ مؤلف'
+  let id = 0
+  for (const p of paras) {
+    if (/^\s*(#\s*)?PageV/.test(p.text) || /^\s*\(\d+\)/.test(p.text)) continue // شمارهٔ صفحه و پاورقی
+    const si = parts.findLastIndex(([line]) => p.line >= line)
+    const sec = sections[si]
+    let text = p.text
+    // «* (ومن كلامه …) *» در آغاز بند، عنوان باب تازه است
+    const m = text.match(/^\s*\*\s*\(([^)]{3,120})\)\s*\*\s*(.*)$/)
+    if (m) {
+      sec.chapters.push({ t: clean(m[1]), items: [] })
+      text = m[2]
+    }
+    text = clean(text)
+    if (text.split(' ').length < 3) continue
+    id++
+    const t = tr.get(id)
+    sec.chapters.at(-1).items.push({ i: id, ar: text, ...(t && { fa: t.fa, nt: t.note, mr: t.mirror }) })
+  }
+  for (const s of sections) s.chapters = s.chapters.filter((c) => c.items.length)
+  for (const s of sections) for (const c of s.chapters) c.t = fa2(c.t)
+  write('tuhaf.json', { id: 'tuhaf', sections })
+  index.books.push({ id: 'tuhaf', kind: 'book', title: 'تحف‌العقول', author: 'ابن شعبهٔ حرانی (سدهٔ چهارم ق)', shelf: 'other', desc: 'سخنان پیامبر (ص) و یازده امام (ع): وصیت‌ها، نامه‌ها و سخنان کوتاه. متن عربی از پیکرهٔ آزاد OpenITI.', count: id, translated: tr.size, order: 0, source: 'https://github.com/OpenITI/0400AH' })
 }
 
 /* ───────── کتاب‌های ثقلین ───────── */
@@ -173,10 +247,12 @@ for (const [bookId, meta] of Object.entries(BOOKS)) {
     sections.sort((a, b) => order.indexOf(a.en) - order.indexOf(b.en))
     for (const sec of sections) {
       sec.t = { Sermons: 'خطبه‌ها', Letters: 'نامه‌ها', Sayings: 'حکمت‌ها (سخنان کوتاه)' }[sec.en] ?? sec.t
-      for (const c of sec.chapters) {
-        const n = Number(c.key.split(':')[1])
-        for (const it of c.items) it.n = n
-      }
+      // فقط حکمت‌ها شمارهٔ خودشان را نشان می‌دهند؛ بندهای خطبه و نامه شمارهٔ بند می‌گیرند
+      if (sec.en === 'Sayings')
+        for (const c of sec.chapters) {
+          const n = Number(c.key.split(':')[1])
+          for (const it of c.items) it.n = n
+        }
       if (sec.en === 'Sayings') {
         const pages = []
         for (const c of sec.chapters) {
@@ -210,9 +286,26 @@ for (const [col, title] of [
     if (!ch || ch.b !== b) chapters.push((ch = { b, t: `کتاب ${b.toLocaleString('fa-IR')}`, ta: d.metadata.sections?.[b] ?? '', items: [] }))
     ch.items.push({ i: h.hadithnumber, ar: h.text.trim(), u: `https://sunnah.com/${col}:${h.hadithnumber}` })
   }
-  for (const c of chapters) delete c.b
+  for (const c of chapters) {
+    delete c.b
+    c.ta = fa2(c.ta)
+  }
   write(`${col}.json`, { id: col, sections: [{ t: '', chapters }] })
   index.books.push({ id: col, kind: 'book', title, author: col === 'bukhari' ? 'محمد بن اسماعیل بخاری (د. ۲۵۶ ق)' : 'مسلم بن حجاج نیشابوری (د. ۲۶۱ ق)', shelf: 'sunni', desc: 'از مهم‌ترین منابع حدیثی اهل سنت؛ فقط متن عربی.', count: d.hadiths.length, translated: 0, source: 'https://sunnah.com' })
+}
+
+// نمایهٔ جست‌وجو: ترجمهٔ فارسی قرآن و همهٔ متن‌های ترجمه‌شده — [کتاب، بخش، باب، شمارهٔ متن، متن فارسی]
+{
+  const rows = []
+  for (const s of surahs) {
+    const d = read(path.join(out, 'quran', `${s.n}.json`))
+    d.ayahs.forEach(([, f], k) => rows.push(['quran', s.n, 0, k + 1, f]))
+  }
+  for (const b of index.books.filter((x) => x.kind === 'book' && x.translated)) {
+    const d = read(path.join(out, `${b.id}.json`))
+    d.sections.forEach((sec, si) => sec.chapters.forEach((c, ci) => c.items.forEach((it) => it.fa && rows.push([b.id, si, ci, it.n ?? it.i, it.fa]))))
+  }
+  write('search.json', rows)
 }
 
 index.books.sort((a, b) => SHELVES.findIndex((s) => s.id === a.shelf) - SHELVES.findIndex((s) => s.id === b.shelf) || (a.order ?? 0) - (b.order ?? 0))

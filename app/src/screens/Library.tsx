@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { loadBook, loadIndex, norm, savePlace, type Book, type BookMeta, type Chapter, type Item, type Shelf } from '../books'
+import { loadBook, loadIndex, loadSearch, norm, savePlace, type Book, type BookMeta, type Chapter, type Hit, type Item, type Shelf } from '../books'
 import { CHAPTERS, lessonById, lessons } from '../data/lessons'
 import { MarkButton, ReaderShell } from '../reader'
 import { fa, useStore } from '../store'
@@ -18,7 +18,7 @@ const SPINE: Record<string, string> = {
 export type Open = { book: BookMeta; sec: number; ch: number } | null
 
 /** کتابخانه: قفسه‌ها، درس‌نامه‌ها و جست‌وجو در عنوان کتاب‌ها */
-export function Library({ openLesson, openBook, openQuran }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void }) {
+export function Library({ openLesson, openBook, openQuran, openAt, openSurah }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openAt: (b: BookMeta, sec: number, ch: number) => void; openSurah: (n: number) => void }) {
   const [idx, setIdx] = useState<{ shelves: Shelf[]; books: BookMeta[] } | null>(null)
   const [q, setQ] = useState('')
   const { p } = useStore()
@@ -28,6 +28,22 @@ export function Library({ openLesson, openBook, openQuran }: { openLesson: (id: 
   const k = norm(q.trim())
   const books = (idx?.books ?? []).filter((b) => !k || norm(`${b.title} ${b.author} ${b.desc}`).includes(k))
   const saved = p.saved.map(lessonById).filter((l) => !!l)
+  const [rows, setRows] = useState<Hit[] | null>(null)
+  useEffect(() => {
+    if (q.trim().length >= 2 && !rows) loadSearch().then(setRows).catch(() => setRows([]))
+  }, [q, rows])
+  // جست‌وجو در ترجمهٔ قرآن و متن‌های ترجمه‌شده؛ نمایه فقط با نخستین جست‌وجو بار می‌شود
+  const hits = useMemo(() => {
+    const words = k.split(' ').filter((w) => w.length > 1)
+    if (!rows || !words.length) return []
+    const found: Hit[] = []
+    for (const r of rows) {
+      const t = norm(r[4])
+      if (words.every((w) => t.includes(w)) && found.push(r) >= 80) break
+    }
+    return found
+  }, [rows, k])
+  const titleOf = (id: string) => (id === 'quran' ? 'قرآن کریم' : (idx?.books.find((b) => b.id === id)?.title ?? id))
 
   return (
     <div className="fade-up">
@@ -40,8 +56,35 @@ export function Library({ openLesson, openBook, openQuran }: { openLesson: (id: 
       </header>
       <label className="lib-search">
         {Icon.search}
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجوی کتاب یا نویسنده" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجو در کتاب‌ها و متن‌ها؛ مثلاً «صبر» یا «همسایه»" />
       </label>
+
+      {k.length >= 2 && (
+        <section className="shelf">
+          <div className="shelf-head">
+            <h2>در متن‌ها</h2>
+            <small>{!rows ? 'در حال جست‌وجو…' : hits.length >= 80 ? 'بیش از ۸۰ نتیجه؛ واژهٔ دقیق‌تری بنویس' : `${fa(hits.length)} نتیجه در ترجمهٔ قرآن و متن‌های ترجمه‌شده`}</small>
+          </div>
+          <div className="marks">
+            {hits.map((h) => (
+              <button
+                key={h.slice(0, 4).join(':')}
+                className="mark-row"
+                onClick={() => {
+                  if (h[0] === 'quran') return openSurah(h[1])
+                  const b = idx?.books.find((x) => x.id === h[0])
+                  if (b) openAt(b, h[1], h[2])
+                }}
+              >
+                <small>
+                  {titleOf(h[0])} · {h[0] === 'quran' ? `سورهٔ ${fa(h[1])}، آیهٔ ${fa(h[3])}` : `متن ${fa(h[3])}`}
+                </small>
+                <p>{h[4].length > 240 ? `${h[4].slice(0, 240)}…` : h[4]}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {!k && (
         <section className="shelf">

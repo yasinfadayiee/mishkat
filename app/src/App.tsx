@@ -112,7 +112,7 @@ function Shell() {
           <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             {tab === 'home' && <Home openLesson={openLesson} openQuran={openQuran} openBook={openBook} openPlace={openPlace} goTo={setTab} />}
             {tab === 'quran' && <Quran open={(n) => setView({ kind: 'surah', n })} />}
-            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} />}
+            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} openAt={(b, sec, ch) => openBook(b, sec, ch)} openSurah={(n) => setView({ kind: 'surah', n })} />}
             {tab === 'me' && <Me goTo={setTab} openLesson={openLesson} openMark={openMark} />}
             {tab === 'trust' && <Trust back={() => setTab('home')} />}
           </motion.div>

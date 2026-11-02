@@ -67,6 +67,9 @@ export const loadIndex = () => load<{ shelves: Shelf[]; books: BookMeta[] }>('in
 export const loadBook = (id: string) => load<Book>(`${id}.json`)
 export const loadSurahs = () => load<SurahMeta[]>('quran/index.json')
 export const loadSurah = (n: number) => load<Surah>(`quran/${n}.json`)
+/** [کتاب، بخش یا سوره، باب، شمارهٔ متن یا آیه، متن فارسی] */
+export type Hit = [string, number, number, number, string]
+export const loadSearch = () => load<Hit[]>('search.json')
 
 /* ───────── جای مطالعه ───────── */
 export interface Place {
