@@ -1,0 +1,39 @@
+{
+  "name": "mishkat-desktop",
+  "productName": "Mishkat",
+  "version": "0.1.0",
+  "description": "مشکات — نور کلام برای زندگی",
+  "author": "Mishkat",
+  "main": "main.cjs",
+  "private": true,
+  "scripts": {
+    "sync": "node -e \"require('fs').cpSync('../app/dist','web',{recursive:true})\"",
+    "start": "npm run sync && electron .",
+    "dist": "npm run sync && electron-builder --win nsis --x64"
+  },
+  "build": {
+    "appId": "app.mishkat.desktop",
+    "productName": "Mishkat",
+    "files": [
+      "main.cjs",
+      "web/**/*"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "icon": "../app/public/icons/icon-512.png",
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "مشکات",
+      "artifactName": "Mishkat-Setup-${version}.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^38.8.6",
+    "electron-builder": "^26.18.0"
+  }
+}

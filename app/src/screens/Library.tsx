@@ -1,0 +1,100 @@
+import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { lessons } from '../data/lessons'
+import { library } from '../data/paths'
+import { useStore } from '../store'
+import { ArabicText, GradingChip, Icon } from '../ui'
+
+type Book = (typeof library)[number]
+
+const inBook = (b: Book) =>
+  lessons.filter((l) => (b.id === 'quran' ? l.source.kind === 'quran' : b.id === 'nahj' ? l.source.kind === 'nahj' : b.id === 'kafi' ? l.source.ref.startsWith('الکافی') : false))
+
+export function Library({ openLesson }: { openLesson: (id: string) => void }) {
+  const [book, setBook] = useState<Book | null>(null)
+  const { p } = useStore()
+
+  if (book) {
+    const items = inBook(book)
+    return (
+      <div className="fade-up">
+        <button className="btn btn-quiet" onClick={() => setBook(null)} style={{ paddingRight: 0 }}>
+          {Icon.back} کتابخانه
+        </button>
+        <h1 className="h1">{book.title}</h1>
+        <p className="muted" style={{ marginTop: 0 }}>
+          {book.note}
+        </p>
+        <div style={{ maxWidth: 820 }}>
+          {items.map((l, k) => (
+            <motion.div key={l.id} className="card reader-item" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.06 }}>
+              {l.source.speaker && <div className="speaker">{l.source.speaker}</div>}
+              <ArabicText kind={l.source.kind} text={l.source.arabic} />
+              <p style={{ margin: 0, color: 'var(--ink-2)' }}>{l.source.translation}</p>
+              <div className="source-line" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span className="chip">{l.source.ref}</span>
+                  {l.source.grading && <GradingChip g={l.source.grading} />}
+                </span>
+                <button className="btn btn-gold" style={{ padding: '9px 16px', fontSize: 14 }} onClick={() => openLesson(l.id)}>
+                  {Icon.teacher} {p.completed[l.id] ? 'مرور با معلم' : 'برایم توضیح بده'}
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <div className="fade-up">
+        <div className="eyebrow">کتابخانه</div>
+        <h1 className="h1">منابع اصیل، به زبان امروز</h1>
+        <p className="muted" style={{ maxWidth: 640 }}>
+          متن اصلی را بخوان و هرجا خواستی بزن «برایم توضیح بده» تا معلم، جمله‌به‌جمله و با مثال همراهت شود.
+        </p>
+      </div>
+      <div className="grid two" style={{ marginTop: 18 }}>
+        {library.map((b, k) => (
+          <motion.button
+            key={b.id}
+            className="card"
+            disabled={!b.ready}
+            onClick={() => setBook(b)}
+            style={{ padding: 22, textAlign: 'right', opacity: b.ready ? 1 : 0.55, display: 'flex', gap: 16, alignItems: 'center' }}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: b.ready ? 1 : 0.55, y: 0 }}
+            transition={{ delay: k * 0.06 }}
+          >
+            <span
+              style={{
+                width: 58,
+                height: 74,
+                borderRadius: '10px 14px 14px 10px',
+                flex: 'none',
+                background: 'linear-gradient(160deg, var(--gold), var(--gold-2))',
+                boxShadow: 'inset -6px 0 0 rgba(0,0,0,.18), 0 8px 20px -6px var(--glow)',
+                display: 'grid',
+                placeItems: 'center',
+                color: '#1d1406',
+                fontFamily: 'Amiri, serif',
+                fontSize: 22,
+              }}
+            >
+              ✦
+            </span>
+            <span style={{ flex: 1 }}>
+              <b style={{ display: 'block', fontSize: 18 }}>{b.title}</b>
+              <small className="muted">{b.note}</small>
+              <div style={{ marginTop: 8 }}>
+                {b.ready ? <span className="chip ok">{inBook(b).length.toLocaleString('fa-IR')} درس آماده</span> : <span className="chip">به‌زودی</span>}
+              </div>
+            </span>
+          </motion.button>
+        ))}
+      </div>
+    </>
+  )
+}

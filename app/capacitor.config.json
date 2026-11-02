@@ -1,0 +1,7 @@
+{
+  "appId": "app.mishkat.android",
+  "appName": "مشکات",
+  "webDir": "dist",
+  "backgroundColor": "#03100d",
+  "android": { "allowMixedContent": false }
+}

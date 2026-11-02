@@ -1,0 +1,10 @@
+node_modules/
+app/dist/
+desktop/web/
+desktop/release/
+app/android/app/build/
+app/android/build/
+app/android/.gradle/
+app/android/local.properties
+app/android/app/src/main/assets/public/
+*.log

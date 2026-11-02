@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">مشکات</string>
+    <string name="title_activity_main">مشکات</string>
+    <string name="package_name">app.mishkat.android</string>
+    <string name="custom_url_scheme">app.mishkat.android</string>
+</resources>
