@@ -17,10 +17,13 @@ function greeting() {
 
 function dates() {
   const d = new Date()
-  const shamsi = d.toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  // ترتیب بخش‌ها دستی چیده می‌شود تا تاریخ به‌صورت «سه‌شنبه ۱۲ آبان ۱۴۰۵» خوانده شود
+  const part = (o: Intl.DateTimeFormatOptions) => d.toLocaleDateString('fa-IR', o)
+  const shamsi = `${part({ weekday: 'long' })} ${part({ day: 'numeric' })} ${part({ month: 'long' })} ${part({ year: 'numeric' })}`
   let qamari = ''
   try {
-    qamari = d.toLocaleDateString('fa-IR-u-ca-islamic-umalqura', { day: 'numeric', month: 'long', year: 'numeric' })
+    const q = (o: Intl.DateTimeFormatOptions) => d.toLocaleDateString('fa-IR-u-ca-islamic-umalqura', o)
+    qamari = `${q({ day: 'numeric' })} ${q({ month: 'long' })} ${q({ year: 'numeric' }).replace(/\s*ه‍?\.ق\.?/, '')} ق`
   } catch {
     /* تقویم قمری پشتیبانی نشد */
   }
