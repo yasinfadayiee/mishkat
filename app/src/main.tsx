@@ -17,3 +17,8 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+// فقط روی نسخهٔ وب (https)؛ ویندوز و اندروید فایل‌ها را از خود بسته می‌خوانند
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}))
+}
