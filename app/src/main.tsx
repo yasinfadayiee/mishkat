@@ -9,6 +9,7 @@ import '@fontsource/vazirmatn/latin-400.css'
 import '@fontsource/amiri-quran/arabic-400.css'
 import '@fontsource/amiri/arabic-400.css'
 import './styles.css'
+import './styles-v2.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

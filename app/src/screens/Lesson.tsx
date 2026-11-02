@@ -2,7 +2,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Lesson } from '../data/types'
 import { fa, useStore } from '../store'
+import { LightDust, Ornament } from '../fx'
 import { ArabicText, GradingChip, Icon, Recitation, Sparks } from '../ui'
+
+const CARTOUCHE = 'M50,0 C58,5 70,7 84,7 C93,7 100,13 100,22 L100,78 C100,87 93,93 84,93 C70,93 58,95 50,100 C42,95 30,93 16,93 C7,93 0,87 0,78 L0,22 C0,13 7,7 16,7 C30,7 42,5 50,0 Z'
 
 type StepId = 'hook' | 'source' | 'words' | 'teacher' | 'example' | 'parallels' | 'quiz' | 'practice' | 'reflect' | 'finish'
 
@@ -69,6 +72,8 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
 
   return (
     <motion.div className="player" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }}>
+      <div className="player-bg" style={{ backgroundImage: `url(${lesson.cover})` }} />
+      <LightDust density={28} />
       <div className="player-top">
         <div className="bars">
           {steps.map((_, k) => (
@@ -121,11 +126,38 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
 
             {step === 'source' && (
               <>
-                <div className="card verse-box">
-                  <div className="frame" />
+                <div className="cartouche">
+                  <div className="cartouche-glass" />
+                  <svg className="cartouche-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                    <defs>
+                      <linearGradient id="cartGold" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="#fff0c2" />
+                        <stop offset="0.4" stopColor="#e6c27d" />
+                        <stop offset="0.75" stopColor="#a8772f" />
+                        <stop offset="1" stopColor="#f3d999" />
+                      </linearGradient>
+                    </defs>
+                    <path d={CARTOUCHE} fill="none" stroke="url(#cartGold)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                    <path d={CARTOUCHE} fill="none" stroke="rgba(255,236,190,.35)" strokeWidth="1" vectorEffect="non-scaling-stroke" transform="translate(3 4) scale(.94 .92)" />
+                  </svg>
+                  <Ornament width={120} />
                   <div className="speaker">{s.speaker ? `${s.speaker} فرمود:` : 'خداوند می‌فرماید:'}</div>
-                  <ArabicText kind={s.kind} text={s.kind === 'quran' ? `﴿ ${s.arabic} ﴾` : s.arabic} className="verse-text" />
-                  <p className="translation">{s.translation}</p>
+                  <div className={`${s.kind === 'quran' ? 'quran' : 'arabic'} verse-text`} lang="ar">
+                    {(s.kind === 'quran' ? `﴿ ${s.arabic} ﴾` : s.arabic).split(' ').map((w, k) => (
+                      <motion.span
+                        key={k}
+                        className="reveal-word"
+                        initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        transition={{ delay: 0.25 + k * 0.12, duration: 0.55 }}
+                      >
+                        {w}&nbsp;
+                      </motion.span>
+                    ))}
+                  </div>
+                  <motion.p className="translation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 + s.arabic.split(' ').length * 0.12 }}>
+                    {s.translation}
+                  </motion.p>
                   <div className="source-line">
                     <span className="chip">{kindLabel[s.kind]}</span>
                     <span className="chip">{s.ref}</span>

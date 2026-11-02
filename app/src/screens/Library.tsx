@@ -3,9 +3,19 @@ import { useState } from 'react'
 import { lessons } from '../data/lessons'
 import { library } from '../data/paths'
 import { useStore } from '../store'
+import { PageHero } from '../fx'
 import { ArabicText, GradingChip, Icon } from '../ui'
 
 type Book = (typeof library)[number]
+
+const BOOK_ART: Record<string, string> = {
+  quran: 'art/splash.webp',
+  nahj: 'covers/c6.webp',
+  kafi: 'covers/c1.webp',
+  ghurar: 'covers/c3.webp',
+  sahifa: 'covers/c5.webp',
+  tuhaf: 'covers/c8.webp',
+}
 
 const inBook = (b: Book) =>
   lessons.filter((l) => (b.id === 'quran' ? l.source.kind === 'quran' : b.id === 'nahj' ? l.source.kind === 'nahj' : b.id === 'kafi' ? l.source.ref.startsWith('الکافی') : false))
@@ -49,13 +59,9 @@ export function Library({ openLesson }: { openLesson: (id: string) => void }) {
 
   return (
     <>
-      <div className="fade-up">
-        <div className="eyebrow">کتابخانه</div>
-        <h1 className="h1">منابع اصیل، به زبان امروز</h1>
-        <p className="muted" style={{ maxWidth: 640 }}>
-          متن اصلی را بخوان و هرجا خواستی بزن «برایم توضیح بده» تا معلم، جمله‌به‌جمله و با مثال همراهت شود.
-        </p>
-      </div>
+      <PageHero art="art/home-night.webp" eyebrow="کتابخانه" title={<>منابع اصیل، <span className="gold-text">به زبان امروز</span></>}>
+        <p>متن اصلی را بخوان و هرجا خواستی بزن «برایم توضیح بده» تا معلم، جمله‌به‌جمله و با مثال همراهت شود.</p>
+      </PageHero>
       <div className="grid two" style={{ marginTop: 18 }}>
         {library.map((b, k) => (
           <motion.button
@@ -68,23 +74,7 @@ export function Library({ openLesson }: { openLesson: (id: string) => void }) {
             animate={{ opacity: b.ready ? 1 : 0.55, y: 0 }}
             transition={{ delay: k * 0.06 }}
           >
-            <span
-              style={{
-                width: 58,
-                height: 74,
-                borderRadius: '10px 14px 14px 10px',
-                flex: 'none',
-                background: 'linear-gradient(160deg, var(--gold), var(--gold-2))',
-                boxShadow: 'inset -6px 0 0 rgba(0,0,0,.18), 0 8px 20px -6px var(--glow)',
-                display: 'grid',
-                placeItems: 'center',
-                color: '#1d1406',
-                fontFamily: 'Amiri, serif',
-                fontSize: 22,
-              }}
-            >
-              ✦
-            </span>
+            <span className="book-art" style={{ backgroundImage: `url(${BOOK_ART[b.id]})` }} />
             <span style={{ flex: 1 }}>
               <b style={{ display: 'block', fontSize: 18 }}>{b.title}</b>
               <small className="muted">{b.note}</small>

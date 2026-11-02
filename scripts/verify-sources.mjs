@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { lessons } from '../app/src/data/lessons.ts'
+import { NUR } from '../app/src/data/verses.ts'
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const raw = path.join(root, 'corpus', 'raw')
@@ -104,16 +105,19 @@ async function check(where, item) {
   ok++
 }
 
+await check('آیهٔ نور (صفحهٔ آغاز)', NUR)
 for (const l of lessons) {
   await check(`${l.id} / متن اصلی`, l.source)
   for (const [i, p] of l.parallels.entries()) await check(`${l.id} / شاهد ${i + 1}`, p)
 }
 
 if (fixes.length) {
-  const file = path.join(root, 'app', 'src', 'data', 'lessons.ts')
-  let src = fs.readFileSync(file, 'utf8')
-  for (const [from, to] of fixes) src = src.split(from).join(to)
-  fs.writeFileSync(file, src)
+  for (const name of ['lessons.ts', 'verses.ts']) {
+    const file = path.join(root, 'app', 'src', 'data', name)
+    let src = fs.readFileSync(file, 'utf8')
+    for (const [from, to] of fixes) src = src.split(from).join(to)
+    fs.writeFileSync(file, src)
+  }
   console.log(`${fixes.length} متن آیه عیناً از تنزیل جایگزین شد`)
 }
 console.log(`بررسی‌شده: ${ok}`)

@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { lessonById } from '../data/lessons'
 import { programs } from '../data/paths'
 import type { Program } from '../data/types'
 import { activeDays, dayKey, fa, useStore } from '../store'
+import { PageHero } from '../fx'
 import { Sheet } from '../ui'
 import { LessonCard } from './Home'
 
@@ -42,13 +44,9 @@ export function Paths({ openLesson }: { openLesson: (id: string) => void }) {
 
   return (
     <>
-      <div className="fade-up">
-        <div className="eyebrow">چله‌ها</div>
-        <h1 className="h1">چهل روز، یک عادت تازه</h1>
-        <p className="muted" style={{ maxWidth: 620 }}>
-          در فرهنگ ما «چله» یعنی چهل روز پایداری برای ساختن خود. هر چله چند درس کوتاه دارد و یک تمرین روزانه. هر روزی که درس بخوانی یا تمرینت را تیک بزنی، یک خانه روشن می‌شود.
-        </p>
-      </div>
+      <PageHero art="covers/c2.webp" eyebrow="چله‌ها" title={<>چهل روز، <span className="gold-text">یک عادت تازه</span></>}>
+        <p>در فرهنگ ما «چله» یعنی چهل روز پایداری برای ساختن خود. هر روزی که درس بخوانی یا تمرینت را تیک بزنی، یک خانه روشن می‌شود.</p>
+      </PageHero>
 
       <div className="grid two" style={{ marginTop: 18 }}>
         {programs.map((pr, k) => {
@@ -56,6 +54,7 @@ export function Paths({ openLesson }: { openLesson: (id: string) => void }) {
           const started = !!p.programs[pr.id]
           return (
             <motion.button key={pr.id} className="card program-card" onClick={() => setOpen(pr)} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.07 }}>
+              <span className="program-art" style={{ backgroundImage: `url(${lessonById(pr.lessons[0])?.cover})` }} />
               <span className="glowdot" style={{ background: pr.hue }} />
               <span className="ring">
                 <Ring value={n / pr.days} color={pr.hue} />

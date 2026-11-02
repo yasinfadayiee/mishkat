@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { lessonById } from './data/lessons'
-import { Home } from './screens/Home'
+import { Home, todaysLesson } from './screens/Home'
+import { Intro } from './screens/Intro'
 import { LessonPlayer } from './screens/Lesson'
 import { Library } from './screens/Library'
 import { Me, Trust } from './screens/Me'
@@ -19,15 +20,34 @@ const NAV: { id: Exclude<Tab, 'trust'>; label: string; icon: keyof typeof Icon }
   { id: 'me', label: 'من', icon: 'me' },
 ]
 
+const introSeen = () => {
+  try {
+    return sessionStorage.getItem('mishkat.intro') === '1'
+  } catch {
+    return false
+  }
+}
+
 function Shell() {
   const { p } = useStore()
   const [tab, setTab] = useState<Tab>('home')
   const [lessonId, setLessonId] = useState<string | null>(null)
+  const [intro, setIntro] = useState(!introSeen())
   const lesson = lessonId ? lessonById(lessonId) : undefined
+  const endIntro = useCallback(() => {
+    setIntro(false)
+    try {
+      sessionStorage.setItem('mishkat.intro', '1')
+    } catch {
+      /* بدون ذخیره هم ادامه می‌دهیم */
+    }
+  }, [])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [tab])
+
+  if (intro) return <AnimatePresence>{intro && <Intro onDone={endIntro} />}</AnimatePresence>
 
   if (!p.onboarded)
     return (
@@ -72,11 +92,18 @@ function Shell() {
       </main>
 
       <nav className="tabbar">
-        {NAV.map((n) => (
-          <button key={n.id} className={tab === n.id ? 'on' : ''} onClick={() => setTab(n.id)}>
-            {Icon[n.icon]}
-            {n.label}
-          </button>
+        {NAV.map((n, k) => (
+          <Fragment key={n.id}>
+            {k === 2 && (
+              <button className="fab" onClick={() => setLessonId(todaysLesson(p.completed).id)} aria-label="درس امروز">
+                <img src="icons/icon-192.png" alt="" />
+              </button>
+            )}
+            <button className={tab === n.id ? 'on' : ''} onClick={() => setTab(n.id)}>
+              {Icon[n.icon]}
+              {n.label}
+            </button>
+          </Fragment>
         ))}
       </nav>
 

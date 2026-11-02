@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
 import { lessonById, lessons } from '../data/lessons'
 import { activeDays, dayKey, fa, useStore, type ThemeId } from '../store'
-import { Icon, Lamp } from '../ui'
+import { PageHero } from '../fx'
+import { Icon } from '../ui'
 
 const THEMES: { id: ThemeId; name: string; colors: string[] }[] = [
   { id: 'emerald', name: 'شب زمردی', colors: ['#06201a', '#3fcf9f', '#e6c27d'] },
@@ -21,19 +22,9 @@ export function Me({ goTo }: { goTo: (t: 'trust') => void }) {
 
   return (
     <>
-      <div className="fade-up" style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-        <Lamp level={streak ? Math.min(1, 0.35 + streak / 10) : 0.15} className="" />
-        <div>
-          <div className="eyebrow">مسیر من</div>
-          <h1 className="h1" style={{ marginTop: 0 }}>
-            {p.name || 'همراه مشکات'}
-          </h1>
-          <p className="muted" style={{ margin: 0 }}>
-            {streak ? `چراغت ${fa(streak)} روز است که روشن مانده.` : 'با اولین درس، چراغت را روشن کن.'}
-          </p>
-        </div>
-      </div>
-      <style>{`.fade-up > svg{width:96px;height:120px;flex:none}`}</style>
+      <PageHero art="art/splash.webp" eyebrow="مسیر من" title={p.name || 'همراه مشکات'}>
+        <p>{streak ? `چراغت ${fa(streak)} روز است که روشن مانده.` : 'با اولین درس، چراغت را روشن کن.'}</p>
+      </PageHero>
 
       <div className="grid three" style={{ marginTop: 20, gridTemplateColumns: 'repeat(3,1fr)' }}>
         <div className="card stat">
