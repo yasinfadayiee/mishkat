@@ -26,6 +26,8 @@ export interface Progress {
   studyDays: string[]
   journal: JournalEntry[]
   programs: Record<string, { startedAt: string }>
+  /** درس‌های نشان‌شده برای مطالعهٔ دوباره */
+  saved: string[]
 }
 
 const KEY = 'mishkat.progress.v1'
@@ -41,6 +43,7 @@ const initial: Progress = {
   studyDays: [],
   journal: [],
   programs: {},
+  saved: [],
 }
 
 function load(): Progress {
@@ -86,10 +89,11 @@ export function activeDays(p: Progress) {
 interface Store {
   p: Progress
   set: (fn: (p: Progress) => Progress) => void
-  completeLesson: (id: string, quizCorrect: boolean) => void
+  completeLesson: (id: string) => void
   adoptHabit: (lessonId: string, short: string) => void
   toggleCheckin: (lessonId: string) => void
   addJournal: (lessonId: string, text: string) => void
+  toggleSaved: (lessonId: string) => void
   streak: number
 }
 
@@ -115,11 +119,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       p,
       set,
       streak: streakOf(p),
-      completeLesson: (id, quizCorrect) =>
+      completeLesson: (id) =>
         set((x) => ({
           ...x,
           completed: { ...x.completed, [id]: x.completed[id] ?? today },
-          quiz: { ...x.quiz, [id]: quizCorrect },
           studyDays: x.studyDays.includes(today) ? x.studyDays : [...x.studyDays, today],
         })),
       adoptHabit: (lessonId, short) =>
@@ -136,6 +139,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }),
       addJournal: (lessonId, text) =>
         set((x) => ({ ...x, journal: [{ lessonId, text, date: today }, ...x.journal] })),
+      toggleSaved: (lessonId) =>
+        set((x) => ({ ...x, saved: x.saved.includes(lessonId) ? x.saved.filter((i) => i !== lessonId) : [lessonId, ...x.saved] })),
     }
   }, [p, set])
 

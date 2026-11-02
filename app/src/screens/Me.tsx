@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { lessonById, lessons } from '../data/lessons'
+import { CHAPTERS, lessonById, lessons } from '../data/lessons'
 import { activeDays, dayKey, fa, useStore, type ThemeId } from '../store'
 import { PageHero } from '../fx'
 import { Icon } from '../ui'
@@ -10,7 +10,7 @@ const THEMES: { id: ThemeId; name: string; colors: string[] }[] = [
   { id: 'parchment', name: 'کاغذ کاهی', colors: ['#f7efdf', '#0e7a5c', '#9a6f27'] },
 ]
 
-export function Me({ goTo }: { goTo: (t: 'trust') => void }) {
+export function Me({ goTo, openLesson }: { goTo: (t: 'trust') => void; openLesson: (id: string) => void }) {
   const { p, set, streak } = useStore()
   const active = activeDays(p)
   const days = Array.from({ length: 28 }, (_, k) => {
@@ -42,6 +42,59 @@ export function Me({ goTo }: { goTo: (t: 'trust') => void }) {
           <span>تمرین فعال</span>
         </div>
       </div>
+
+      <section className="section">
+        <div className="section-head">
+          <h2 className="h2">پیشرفت در منزل‌ها</h2>
+          <span className="muted" style={{ fontSize: 13 }}>
+            پنج منزل، چهل ایستگاه
+          </span>
+        </div>
+        <div className="card chapter-progress">
+          {CHAPTERS.map((c, k) => {
+            const n = c.lessons.filter((id) => p.completed[id]).length
+            return (
+              <div key={c.id} className={`cp-row ${n === c.lessons.length ? 'full' : ''}`}>
+                <span className="cp-n">{fa(k + 1)}</span>
+                <div className="cp-body">
+                  <div className="cp-top">
+                    <b>{c.title}</b>
+                    <small>
+                      {fa(n)} از {fa(c.lessons.length)}
+                    </small>
+                  </div>
+                  <i>
+                    <b style={{ width: `${(n / c.lessons.length) * 100}%` }} />
+                  </i>
+                  <small className="muted">{c.subtitle}</small>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {p.saved.length > 0 && (
+        <section className="section">
+          <div className="section-head">
+            <h2 className="h2">نشان‌شده‌ها</h2>
+          </div>
+          <div className="saved-row">
+            {p.saved.map((id) => {
+              const l = lessonById(id)
+              return (
+                l && (
+                  <button key={id} className="saved-card" onClick={() => openLesson(id)}>
+                    <span className="saved-art" style={{ backgroundImage: `url(${l.cover})` }} />
+                    <b>{l.title}</b>
+                    <small>{l.source.ref}</small>
+                  </button>
+                )
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <div className="section-head">
@@ -130,7 +183,7 @@ export function Trust({ back }: { back: () => void }) {
       {[
         ['متن اصلی دست نمی‌خورد', 'متن آیات عیناً از نسخهٔ عثمانی «تنزیل» آورده می‌شود. احادیث از پایگاه «ثقلین» (کافی، نهج‌البلاغه، امالی) و صحیح بخاری و مسلم گرفته می‌شود؛ فقط گاهی اعرابِ ناقص برای خوانایی کامل شده است. یک برنامهٔ بازبین خودکار، پیش از هر انتشار، همهٔ متن‌ها را حرف‌به‌حرف با منبع مقایسه می‌کند.'],
         ['درجهٔ سند پنهان نمی‌شود', 'برای احادیث کافی، نظر علامه مجلسی در «مرآة العقول» دربارهٔ سند (صحیح، حسن، مجهول، ضعیف) کنار حدیث نمایش داده می‌شود؛ حتی وقتی ضعیف است. حدیث ضعیف‌السند فقط به‌عنوان شاهد کنار آیه یا روایت معتبر می‌آید.'],
-        ['ترجمه و توضیح از هم جدا هستند', 'ترجمه همیشه با نام مترجم می‌آید. بخش «معلم می‌گوید» برداشت و توضیح است، نه متن معصوم، و به‌روشنی از متن اصلی جدا نشان داده می‌شود.'],
+        ['ترجمه و توضیح از هم جدا هستند', 'ترجمه همیشه با نام مترجم می‌آید. شرح جمله‌به‌جمله، نکته‌ها و مثال‌ها برداشت و توضیح است، نه متن معصوم، و به‌روشنی از متن اصلی جدا نشان داده می‌شود.'],
         ['هر توضیح، پیش از انتشار عمومی بازبینی می‌شود', 'توضیحات و مثال‌ها پیش‌نویس تیم مشکات است و پیش از انتشار عمومی باید به تأیید کارشناس دینی برسد. هر کس می‌تواند با دکمهٔ «تطبیق با منبع» متن را خودش ببیند.'],
       ].map(([t, b], k) => (
         <motion.div key={k} className="card point" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.08 }}>

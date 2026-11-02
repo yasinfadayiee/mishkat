@@ -211,17 +211,27 @@ export function Home({ openLesson, goTo }: { openLesson: (id: string) => void; g
                 <div className="today-art" style={{ backgroundImage: `url(${today.cover})` }} />
                 <div className="today-shade" />
                 <div className="today-body">
-                  <span className="chip chip-glass">✦ درس امروز · {fa(today.minutes)} دقیقه</span>
+                  <span className="chip chip-glass">✦ درس امروز · {fa(today.minutes + (today.sharh ? today.sharh.parts.length * 2 : 0))} دقیقه</span>
                   <h2>{today.title}</h2>
                   <p>{today.subtitle}</p>
                   <span className="btn btn-gold btn-shine">
-                    {p.completed[today.id] ? 'مرور دوباره' : 'شروع درس'} {Icon.play}
+                    {p.completed[today.id] ? 'خواندن دوباره' : 'خواندن درس'} {Icon.play}
                   </span>
                 </div>
               </ArchFrame>
             </button>
           </Tilt>
         </motion.div>
+
+        {today.sharh && (
+          <motion.button className="today-essence" onClick={() => openLesson(today.id)} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45 }}>
+            <span className="te-kicker">آنچه امروز می‌فهمی</span>
+            <p>{today.sharh.essence}</p>
+            <span className="te-meta">
+              {Icon.teacher} {fa(today.sharh.parts.length)} جمله، یکی‌یکی شرح داده شده
+            </span>
+          </motion.button>
+        )}
 
         <section className="section">
           <div className="section-head">

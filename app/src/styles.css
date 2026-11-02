@@ -1060,10 +1060,12 @@ a.btn {
 /* ───────── تقویم فعالیت ───────── */
 .heat {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
 }
 .heat i {
+  width: 100%;
+  align-self: start;
   aspect-ratio: 1;
   border-radius: 7px;
   background: var(--line);

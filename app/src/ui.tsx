@@ -31,6 +31,9 @@ export const Icon = {
   target: S(<><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="1" /></>),
   pen: S(<><path d="M4 20h4L19 9l-4-4L4 16z" /><path d="m13.5 6.5 4 4" /></>),
   external: S(<><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5H5V6h5" /></>),
+  bookmark: S(<path d="M7 4h10v16l-5-3.5L7 20z" />),
+  bookmarked: S(<path d="M7 4h10v16l-5-3.5L7 20z" fill="currentColor" />),
+  search: S(<><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>),
   sound: S(<><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></>),
 }
 

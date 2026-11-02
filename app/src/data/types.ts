@@ -56,6 +56,23 @@ export interface Practice {
   short: string
 }
 
+/** یک تکه از متن اصلی با شرح ساده و ژرف آن */
+export interface SharhPart {
+  /** عیناً بخشی از متن عربی؛ کنار هم گذاشتن همهٔ تکه‌ها باید کل متن را بسازد */
+  ar: string
+  fa: string
+  plain: string
+  deep: string
+  life: string
+}
+
+export interface Sharh {
+  /** پیام اصلی متن در یک جمله */
+  essence: string
+  parts: SharhPart[]
+  misread: { wrong: string; right: string }[]
+}
+
 export type ReviewState = 'verified' | 'draft'
 
 export interface Lesson {
@@ -71,7 +88,9 @@ export interface Lesson {
   teacher: TeacherPoint[]
   example: { title: string; body: string }
   parallels: Parallel[]
-  quiz: Quiz
+  /** دیگر نمایش داده نمی‌شود؛ برنامه آزمون ندارد */
+  quiz?: Quiz
+  sharh?: Sharh
   practice: Practice
   reflect: string
   review: { sourceText: ReviewState; explanation: ReviewState }

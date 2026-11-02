@@ -118,6 +118,8 @@ await check('آیهٔ نور (صفحهٔ آغاز)', NUR)
 for (const l of lessons) {
   await check(`${l.id} / متن اصلی`, l.source)
   for (const [i, p] of l.parallels.entries()) await check(`${l.id} / شاهد ${i + 1}`, p)
+  // تکه‌های شرح باید کنار هم دقیقاً همان متن تطبیق‌شده را بسازند
+  if (l.sharh && l.sharh.parts.map((x) => x.ar).join(' ') !== l.source.arabic) problems.push(`${l.id} / شرح: تکه‌ها با متن اصلی یکی نیستند`)
 }
 
 if (fixes.length) {

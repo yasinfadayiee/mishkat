@@ -1,349 +1,432 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Lesson } from '../data/types'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { chapterOf, lessons } from '../data/lessons'
+import type { Lesson, Word } from '../data/types'
 import { fa, useStore } from '../store'
 import { LightDust, Ornament } from '../fx'
 import { ArabicText, GradingChip, Icon, Recitation, Sparks } from '../ui'
 
 const CARTOUCHE = 'M50,0 C58,5 70,7 84,7 C93,7 100,13 100,22 L100,78 C100,87 93,93 84,93 C70,93 58,95 50,100 C42,95 30,93 16,93 C7,93 0,87 0,78 L0,22 C0,13 7,7 16,7 C30,7 42,5 50,0 Z'
-
-type StepId = 'hook' | 'source' | 'words' | 'teacher' | 'example' | 'parallels' | 'quiz' | 'practice' | 'reflect' | 'finish'
-
-const STEP_LABEL: Record<StepId, [string, keyof typeof Icon]> = {
-  hook: ['شروع', 'story'],
-  source: ['متن اصلی', 'quote'],
-  words: ['کلمه به کلمه', 'words'],
-  teacher: ['معلم می‌گوید', 'teacher'],
-  example: ['در زندگی واقعی', 'life'],
-  parallels: ['هم‌صدا با این کلام', 'link'],
-  quiz: ['خودت را بسنج', 'quiz'],
-  practice: ['تمرین امروز', 'target'],
-  reflect: ['با خودت خلوت کن', 'pen'],
-  finish: ['پایان', 'spark'],
-}
-
 const kindLabel = { quran: 'قرآن کریم', nahj: 'نهج‌البلاغه', hadith: 'حدیث' }
 
+// برای پیدا کردن واژه‌های هر تکه، حرکات و شکل‌های مختلف الف و یاء یکسان گرفته می‌شود
+const bare = (t: string) =>
+  t
+    .replace(/[ً-ٰٟۖ-ۭـ]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/[ىی]/g, 'ي')
+    .replace(/[،؛.:!؟«»()﴿﴾]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+const SCALE_KEY = 'mishkat.textScale'
+const readScale = () => {
+  try {
+    return Number(localStorage.getItem(SCALE_KEY)) || 1
+  } catch {
+    return 1
+  }
+}
+
+/* ستارهٔ هشت‌پر با شماره، برای هر تکهٔ شرح */
+function Medallion({ n }: { n: number }) {
+  return (
+    <div className="medallion" aria-hidden>
+      <svg viewBox="0 0 40 40">
+        <rect x="8" y="8" width="24" height="24" rx="2" />
+        <rect x="8" y="8" width="24" height="24" rx="2" transform="rotate(45 20 20)" />
+      </svg>
+      <span>{fa(n)}</span>
+    </div>
+  )
+}
+
+function Section({ id, icon, kicker, title, children }: { id: string; icon: keyof typeof Icon; kicker: string; title: string; children: ReactNode }) {
+  return (
+    <section className="study-section" id={`s-${id}`} data-sec={id}>
+      <header className="sec-head">
+        <span className="sec-icon">{Icon[icon]}</span>
+        <div>
+          <div className="sec-kicker">{kicker}</div>
+          <h2>{title}</h2>
+        </div>
+      </header>
+      {children}
+    </section>
+  )
+}
+
 export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) {
-  const { completeLesson, adoptHabit, addJournal, p, streak } = useStore()
-  const steps = useMemo<StepId[]>(
-    () => ['hook', 'source', 'words', 'teacher', 'example', ...(lesson.parallels.length ? (['parallels'] as StepId[]) : []), 'quiz', 'practice', 'reflect', 'finish'],
-    [lesson],
-  )
-  const [i, setI] = useState(0)
-  const [dir, setDir] = useState(1)
-  const [picked, setPicked] = useState<number | null>(null)
-  const [revealed, setRevealed] = useState<Set<number>>(new Set())
+  const { completeLesson, adoptHabit, addJournal, toggleSaved, p, streak } = useStore()
+  const isSaved = p.saved.includes(lesson.id)
+  const scroller = useRef<HTMLDivElement>(null)
+  const [progress, setProgress] = useState(0)
+  const [active, setActive] = useState('intro')
   const [note, setNote] = useState('')
-  const step = steps[i]
+  const [saved, setSaved] = useState(false)
+  const [done, setDone] = useState(false)
+  const [scale, setScale] = useState(readScale)
+  const s = lesson.source
+  const sh = lesson.sharh
   const adopted = p.habits.some((h) => h.lessonId === lesson.id)
+  const chapter = chapterOf(lesson.id)
+  const station = lessons.findIndex((l) => l.id === lesson.id) + 1
 
-  const go = useCallback(
-    (d: number) => {
-      setDir(d)
-      setI((x) => Math.min(steps.length - 1, Math.max(0, x + d)))
-    },
-    [steps.length],
+  const toc = useMemo(
+    () =>
+      [
+        ['intro', 'آغاز'],
+        ['text', 'متن'],
+        ['sharh', sh ? 'شرح جمله‌به‌جمله' : 'واژه‌ها'],
+        ...(sh?.misread.length ? [['misread', 'برداشت نادرست']] : []),
+        ['lessons', 'درس‌ها'],
+        ['life', 'در زندگی'],
+        ...(lesson.parallels.length ? [['parallels', 'هم‌صدا']] : []),
+        ['act', 'عمل'],
+      ] as [string, string][],
+    [lesson, sh],
   )
 
-  const canNext = step !== 'quiz' || picked !== null
+  // نوار پیشرفت مطالعه و بخش فعال فهرست
+  useEffect(() => {
+    const el = scroller.current
+    if (!el) return
+    const onScroll = () => {
+      const max = el.scrollHeight - el.clientHeight
+      setProgress(max > 0 ? el.scrollTop / max : 0)
+      const secs = [...el.querySelectorAll<HTMLElement>('[data-sec]')]
+      const top = el.getBoundingClientRect().top + 140
+      let cur = secs[0]?.dataset.sec ?? 'intro'
+      for (const x of secs) if (x.getBoundingClientRect().top <= top) cur = x.dataset.sec!
+      setActive(cur)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [])
 
-  const next = useCallback(() => {
-    if (!canNext) return
-    if (step === 'reflect' && note.trim()) addJournal(lesson.id, note.trim())
-    if (steps[i + 1] === 'finish') completeLesson(lesson.id, picked === lesson.quiz.answer)
-    if (step === 'finish') return onClose()
-    go(1)
-  }, [canNext, step, note, steps, i, go, onClose, addJournal, completeLesson, lesson, picked])
+  useEffect(() => {
+    try {
+      localStorage.setItem(SCALE_KEY, String(scale))
+    } catch {
+      /* حافظهٔ مرورگر در دسترس نیست */
+    }
+  }, [scale])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).tagName === 'TEXTAREA') return
-      if (e.key === 'ArrowLeft' || e.key === 'Enter') next()
-      if (e.key === 'ArrowRight') go(-1)
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [next, go, onClose])
+  }, [onClose])
 
-  const [label, icon] = STEP_LABEL[step]
-  const s = lesson.source
+  // چیپ فعال فهرست همیشه در دید بماند
+  // (scrollIntoView صفحه را هم جابه‌جا می‌کند، پس فقط نوار افقی اسکرول می‌شود)
+  useEffect(() => {
+    const bar = document.querySelector<HTMLElement>('.study-toc')
+    const chip = bar?.querySelector<HTMLElement>(`[data-to="${active}"]`)
+    if (bar && chip) bar.scrollTo({ left: chip.offsetLeft - bar.clientWidth / 2 + chip.clientWidth / 2, behavior: 'smooth' })
+  }, [active])
+
+  const jump = (id: string) => {
+    const el = scroller.current
+    const target = el?.querySelector<HTMLElement>(`#s-${id}`)
+    if (el && target) el.scrollTo({ top: el.scrollTop + target.getBoundingClientRect().top - el.getBoundingClientRect().top - 104, behavior: 'smooth' })
+  }
+
+  const wordsIn = (ar: string): Word[] => lesson.words.filter((w) => bare(ar).includes(bare(w.ar)))
+
+  const finish = () => {
+    if (note.trim() && !saved) addJournal(lesson.id, note.trim())
+    completeLesson(lesson.id)
+    setDone(true)
+  }
 
   return (
-    <motion.div className="player" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }}>
-      <div className="player-bg" style={{ backgroundImage: `url(${lesson.cover})` }} />
-      <LightDust density={28} />
-      <div className="player-top">
-        <div className="bars">
-          {steps.map((_, k) => (
-            <i key={k}>
-              <b style={{ width: k < i ? '100%' : k === i ? '55%' : '0%' }} />
-            </i>
-          ))}
-        </div>
-        <div className="player-head">
-          <button className="icon-btn" onClick={onClose} aria-label="بستن">
-            {Icon.close}
+    <motion.div className="study" style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
+      <div className="study-progress">
+        <b style={{ transform: `scaleX(${progress})` }} />
+      </div>
+      <div className="study-bar">
+        <button className="icon-btn" onClick={onClose} aria-label="بستن">
+          {Icon.close}
+        </button>
+        <div className={`study-bar-title ${progress > 0.06 ? 'on' : ''}`}>{lesson.title}</div>
+        <button className={`icon-btn ${isSaved ? 'saved' : ''}`} onClick={() => toggleSaved(lesson.id)} aria-label={isSaved ? 'برداشتن نشان' : 'نشان کردن درس'}>
+          {isSaved ? Icon.bookmarked : Icon.bookmark}
+        </button>
+        <div className="text-size" role="group" aria-label="اندازهٔ متن">
+          <button onClick={() => setScale((x) => Math.max(0.9, +(x - 0.1).toFixed(1)))} aria-label="متن کوچک‌تر">
+            آ<sub>−</sub>
           </button>
-          <div style={{ textAlign: 'center', flex: 1 }}>
-            <div style={{ fontSize: 12, color: 'var(--muted)' }}>{lesson.topic}</div>
-            <div style={{ fontWeight: 800, fontSize: 15 }}>{lesson.title}</div>
-          </div>
-          <button className="icon-btn" onClick={() => go(-1)} disabled={i === 0} style={{ opacity: i === 0 ? 0.3 : 1 }} aria-label="قبلی">
-            {Icon.back}
+          <button onClick={() => setScale((x) => Math.min(1.4, +(x + 0.1).toFixed(1)))} aria-label="متن بزرگ‌تر">
+            آ<sup>+</sup>
           </button>
         </div>
       </div>
 
-      <div className="player-stage">
-        <AnimatePresence mode="wait" custom={dir}>
-          <motion.div
-            key={step}
-            custom={dir}
-            initial={{ opacity: 0, x: dir * -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: dir * 40 }}
-            transition={{ duration: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
-          >
-            {step !== 'finish' && (
-              <div className="step-title">
-                {Icon[icon]} {label}
-              </div>
-            )}
+      <div className="study-scroll" ref={scroller}>
+        <header className="study-hero">
+          <div className="study-hero-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
+          <LightDust density={22} />
+          <div className="study-hero-fade" />
+          <div className="study-hero-text">
+            <div className="study-kicker">
+              {chapter ? `منزل ${chapter.title}` : lesson.topic} · ایستگاه {fa(station)}
+            </div>
+            <h1>{lesson.title}</h1>
+            <p>{lesson.subtitle}</p>
+            <div className="study-meta">
+              <span>{kindLabel[s.kind]}</span>
+              <span>{s.ref}</span>
+              <span>{fa(lesson.minutes + (sh ? sh.parts.length * 2 : 0))} دقیقه مطالعه</span>
+            </div>
+          </div>
+        </header>
 
-            {step === 'hook' && (
-              <>
-                <div className="card" style={{ overflow: 'hidden', borderRadius: 26, marginBottom: 18 }}>
-                  <div style={{ aspectRatio: '16/10', backgroundImage: `url(${lesson.cover})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }} />
-                </div>
-                <h2 className="h1" style={{ marginBottom: 8 }}>
-                  {lesson.hook.title}
-                </h2>
-                <p className="story">{lesson.hook.body}</p>
-              </>
-            )}
+        <nav className="study-toc">
+          {toc.map(([id, label]) => (
+            <button key={id} data-to={id} className={active === id ? 'on' : ''} onClick={() => jump(id)}>
+              {label}
+            </button>
+          ))}
+        </nav>
 
-            {step === 'source' && (
-              <>
-                <div className="cartouche">
-                  <div className="cartouche-glass" />
-                  <svg className="cartouche-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                    <defs>
-                      <linearGradient id="cartGold" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stopColor="#fff0c2" />
-                        <stop offset="0.4" stopColor="#e6c27d" />
-                        <stop offset="0.75" stopColor="#a8772f" />
-                        <stop offset="1" stopColor="#f3d999" />
-                      </linearGradient>
-                    </defs>
-                    <path d={CARTOUCHE} fill="none" stroke="url(#cartGold)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-                    <path d={CARTOUCHE} fill="none" stroke="rgba(255,236,190,.35)" strokeWidth="1" vectorEffect="non-scaling-stroke" transform="translate(3 4) scale(.94 .92)" />
-                  </svg>
-                  <Ornament width={120} />
-                  <div className="speaker">{s.speaker ? `${s.speaker} فرمود:` : 'خداوند می‌فرماید:'}</div>
-                  <div className={`${s.kind === 'quran' ? 'quran' : 'arabic'} verse-text`} lang="ar">
-                    {(s.kind === 'quran' ? `﴿ ${s.arabic} ﴾` : s.arabic).split(' ').map((w, k) => (
-                      <motion.span
-                        key={k}
-                        className="reveal-word"
-                        initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
-                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                        transition={{ delay: 0.25 + k * 0.12, duration: 0.55 }}
-                      >
-                        {w}&nbsp;
-                      </motion.span>
-                    ))}
-                  </div>
-                  <motion.p className="translation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 + s.arabic.split(' ').length * 0.12 }}>
-                    {s.translation}
-                  </motion.p>
-                  <div className="source-line">
-                    <span className="chip">{kindLabel[s.kind]}</span>
-                    <span className="chip">{s.ref}</span>
-                    {s.grading && <GradingChip g={s.grading} />}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 16 }}>
-                  {s.ayah && <Recitation {...s.ayah} />}
-                  <a className="btn btn-ghost" href={s.verifyUrl} target="_blank" rel="noreferrer" style={{ padding: '9px 16px', fontSize: 13.5 }}>
-                    {Icon.shield} تطبیق با منبع
-                  </a>
-                </div>
-                <p className="muted" style={{ fontSize: 12.5, textAlign: 'center', marginTop: 14 }}>
-                  ترجمه: {s.translator}
-                </p>
-              </>
-            )}
+        <div className="study-body">
+          <Section id="intro" icon="story" kicker="پیش از خواندن" title={lesson.hook.title}>
+            <p className="prose lead">{lesson.hook.body}</p>
+          </Section>
 
-            {step === 'words' && (
-              <>
-                <p className="muted" style={{ marginTop: 0 }}>
-                  روی هر کلمه بزن تا معنایش آشکار شود. اول خودت حدس بزن!
-                </p>
-                <div className="words">
-                  {lesson.words.map((w, k) => (
-                    <motion.button
-                      key={k}
-                      className={`word ${revealed.has(k) ? '' : 'hidden'}`}
-                      onClick={() => setRevealed((r) => new Set(r).add(k))}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: k * 0.06 }}
-                    >
-                      <span className="ar">{w.ar}</span>
-                      <span className="fa">{w.fa}</span>
-                    </motion.button>
-                  ))}
-                </div>
-                <div className="card" style={{ padding: 18, marginTop: 20 }}>
-                  <ArabicText kind={s.kind} text={s.arabic} className="" />
-                </div>
-              </>
-            )}
-
-            {step === 'teacher' &&
-              lesson.teacher.map((t, k) => (
-                <motion.div key={k} className="card point" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 + k * 0.18 }}>
-                  <div className="num">{fa(k + 1)}</div>
-                  <div>
-                    <h4>{t.title}</h4>
-                    <p>{t.body}</p>
-                  </div>
-                </motion.div>
-              ))}
-
-            {step === 'example' && (
-              <div className="card" style={{ padding: 24 }}>
-                <h3 className="h2" style={{ marginBottom: 10, color: 'var(--gold)' }}>
-                  {lesson.example.title}
-                </h3>
-                <p className="story" style={{ margin: 0, fontSize: 17 }}>
-                  {lesson.example.body}
-                </p>
-              </div>
-            )}
-
-            {step === 'parallels' && (
-              <>
-                <p className="muted" style={{ marginTop: 0 }}>
-                  این آموزه تنها نیست؛ آیات و روایات دیگر، و حتی منابع مذاهب دیگر، همین را می‌گویند.
-                </p>
-                {lesson.parallels.map((x, k) => (
-                  <motion.div key={k} className="card parallel" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: k * 0.12 }}>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                      <span className={`chip ${x.school === 'sunni' ? '' : 'ok'}`}>{x.school === 'quran' ? 'قرآن' : x.school === 'shia' ? 'منابع شیعه' : 'منابع اهل سنت'}</span>
-                      <b style={{ fontSize: 14.5 }}>{x.label}</b>
-                    </div>
-                    <ArabicText kind={x.school === 'quran' ? 'quran' : 'shia'} text={x.arabic} />
-                    <p>{x.translation}</p>
-                    <div className="source-line" style={{ justifyContent: 'flex-start' }}>
-                      <span className="chip">{x.ref}</span>
-                      {x.grading && <GradingChip g={x.grading} />}
-                      <a className="chip" href={x.verifyUrl} target="_blank" rel="noreferrer">
-                        تطبیق ↗
-                      </a>
-                    </div>
-                    {x.note && <div className="note">{x.note}</div>}
-                  </motion.div>
+          <Section id="text" icon="quote" kicker="متن اصلی" title={s.speaker ? `سخن ${s.speaker}` : 'کلام خداوند'}>
+            <div className="cartouche">
+              <div className="cartouche-glass" />
+              <svg className="cartouche-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                <defs>
+                  <linearGradient id="cartGold" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stopColor="#fff0c2" />
+                    <stop offset="0.4" stopColor="#e6c27d" />
+                    <stop offset="0.75" stopColor="#a8772f" />
+                    <stop offset="1" stopColor="#f3d999" />
+                  </linearGradient>
+                </defs>
+                <path d={CARTOUCHE} fill="none" stroke="url(#cartGold)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                <path d={CARTOUCHE} fill="none" stroke="rgba(255,236,190,.35)" strokeWidth="1" vectorEffect="non-scaling-stroke" transform="translate(3 4) scale(.94 .92)" />
+              </svg>
+              <Ornament width={120} />
+              <div className="speaker">{s.speaker ? `${s.speaker} فرمود:` : 'خداوند می‌فرماید:'}</div>
+              <div className={`${s.kind === 'quran' ? 'quran' : 'arabic'} verse-text`} lang="ar">
+                {(s.kind === 'quran' ? `﴿ ${s.arabic} ﴾` : s.arabic).split(' ').map((w, k) => (
+                  <motion.span
+                    key={k}
+                    className="reveal-word"
+                    initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.15 + k * 0.08, duration: 0.5 }}
+                  >
+                    {w}&nbsp;
+                  </motion.span>
                 ))}
-              </>
+              </div>
+              <p className="translation">{s.translation}</p>
+              <div className="source-line">
+                <span className="chip">{s.ref}</span>
+                {s.grading && <GradingChip g={s.grading} />}
+              </div>
+            </div>
+            <div className="text-actions">
+              {s.ayah && <Recitation {...s.ayah} />}
+              <a className="btn btn-ghost" href={s.verifyUrl} target="_blank" rel="noreferrer">
+                {Icon.shield} تطبیق با منبع
+              </a>
+            </div>
+            <p className="muted tiny center">ترجمه: {s.translator}</p>
+            {sh && (
+              <motion.blockquote className="essence" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                <span>پیام اصلی</span>
+                {sh.essence}
+              </motion.blockquote>
             )}
+          </Section>
 
-            {step === 'quiz' && (
-              <>
-                <h2 className="h2" style={{ fontSize: 20, margin: '4px 0 16px', lineHeight: 1.8 }}>
-                  {lesson.quiz.q}
-                </h2>
-                {lesson.quiz.options.map((o, k) => {
-                  const state = picked === null ? '' : k === lesson.quiz.answer ? 'right' : k === picked ? 'wrong' : ''
+          {sh ? (
+            <Section id="sharh" icon="teacher" kicker="معلم کنار توست" title="شرح جمله‌به‌جمله">
+              <p className="prose muted-prose">متن را تکه‌تکه با هم می‌خوانیم. برای هر تکه اول می‌بینی دقیقاً چه می‌گوید، بعد لایهٔ عمیق‌ترش، و در آخر جایش در زندگی امروز تو.</p>
+              <div className="sharh">
+                {sh.parts.map((part, k) => {
+                  const ws = wordsIn(part.ar)
                   return (
-                    <button key={k} className={`option ${state}`} onClick={() => picked === null && setPicked(k)}>
-                      {o}
-                    </button>
+                    <motion.article key={k} className="sharh-part" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5 }}>
+                      <Medallion n={k + 1} />
+                      <div className="sp-card">
+                        <ArabicText kind={s.kind} text={part.ar} className="sp-ar" />
+                        <p className="sp-fa">{part.fa}</p>
+                        {ws.length > 0 && (
+                          <div className="sp-words">
+                            {ws.map((w, j) => (
+                              <span key={j}>
+                                <b lang="ar">{w.ar}</b>
+                                {w.fa}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <h3 className="sp-h">یعنی چه؟</h3>
+                        <p className="prose">{part.plain}</p>
+                        <div className="sp-deep">
+                          <h3 className="sp-h">
+                            {Icon.spark} ژرف‌تر
+                          </h3>
+                          <p className="prose">{part.deep}</p>
+                        </div>
+                        <div className="sp-life">
+                          {Icon.life}
+                          <p>{part.life}</p>
+                        </div>
+                      </div>
+                    </motion.article>
                   )
                 })}
-                <AnimatePresence>
-                  {picked !== null && (
-                    <motion.div className="card" style={{ padding: 18, marginTop: 6 }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                      <b style={{ color: picked === lesson.quiz.answer ? 'var(--accent)' : 'var(--gold)' }}>
-                        {picked === lesson.quiz.answer ? 'آفرین! درست است ✦' : 'نزدیک بودی؛ ببین چرا:'}
-                      </b>
-                      <p style={{ margin: '6px 0 0', color: 'var(--ink-2)' }}>{lesson.quiz.why}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </>
-            )}
+              </div>
+            </Section>
+          ) : (
+            <Section id="sharh" icon="words" kicker="کلمه به کلمه" title="واژه‌های کلیدی">
+              <div className="words">
+                {lesson.words.map((w, k) => (
+                  <div key={k} className="word">
+                    <span className="ar">{w.ar}</span>
+                    <span className="fa">{w.fa}</span>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
 
-            {step === 'practice' && (
-              <>
-                <div className="card" style={{ padding: 22 }}>
-                  <h3 className="h2" style={{ color: 'var(--gold)', fontSize: 21 }}>
-                    {lesson.practice.title}
-                  </h3>
-                  <div style={{ marginTop: 10 }}>
-                    {lesson.practice.steps.map((t, k) => (
-                      <div key={k} className="practice-step">
-                        <i>{fa(k + 1)}</i>
-                        <span>{t}</span>
-                      </div>
-                    ))}
+          {sh && sh.misread.length > 0 && (
+            <Section id="misread" icon="shield" kicker="مراقب باش" title="برداشت‌های نادرست">
+              {sh.misread.map((m, k) => (
+                <div key={k} className="misread">
+                  <div className="mr-wrong">
+                    <i>✕</i>
+                    <p>
+                      <b>برداشت نادرست</b>
+                      {m.wrong}
+                    </p>
+                  </div>
+                  <div className="mr-right">
+                    <i>✓</i>
+                    <p>
+                      <b>آنچه متن می‌گوید</b>
+                      {m.right}
+                    </p>
                   </div>
                 </div>
-                <button className={`btn ${adopted ? 'btn-ghost' : 'btn-gold'}`} style={{ width: '100%', marginTop: 16 }} onClick={() => adoptHabit(lesson.id, lesson.practice.short)}>
-                  {adopted ? (
-                    <>
-                      {Icon.check} به تمرین‌های روزانه‌ات اضافه شد
-                    </>
-                  ) : (
-                    'قبول می‌کنم؛ هر روز یادم بینداز'
-                  )}
-                </button>
-              </>
-            )}
+              ))}
+            </Section>
+          )}
 
-            {step === 'reflect' && (
-              <>
-                <h2 className="h2" style={{ fontSize: 19, lineHeight: 1.9, margin: '4px 0 14px' }}>
-                  {lesson.reflect}
-                </h2>
-                <textarea className="journal-input" placeholder="چند خط برای خودت بنویس… فقط خودت می‌بینی." value={note} onChange={(e) => setNote(e.target.value)} />
-                <p className="muted" style={{ fontSize: 12.5 }}>
-                  نوشتن، فکر را روشن می‌کند. یادداشت‌هایت در بخش «من» نگه داشته می‌شود.
-                </p>
-              </>
-            )}
-
-            {step === 'finish' && (
-              <div className="finish">
-                <Sparks show />
-                <motion.div className="big-lamp" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 12 }}>
-                  <img src="icons/hero-lamp.webp" alt="" style={{ filter: `brightness(${0.85 + Math.min(streak, 10) * 0.03})` }} />
-                </motion.div>
-                <h2 className="h1" style={{ color: 'var(--gold)' }}>
-                  چراغت روشن‌تر شد
-                </h2>
-                <p className="muted" style={{ fontSize: 16 }}>
-                  {streak > 1 ? `${fa(streak)} روز پیاپی با نورِ کلام همراه بوده‌ای.` : 'اولین قدم برداشته شد. فردا هم منتظرت هستیم.'}
-                </p>
-                <div className="card" style={{ padding: 18, textAlign: 'right', marginTop: 18 }}>
-                  <div className="eyebrow">امروز یادت بماند</div>
-                  <ArabicText kind={s.kind} text={s.arabic} className="" />
-                  <p style={{ margin: 0, color: 'var(--ink-2)', fontSize: 14.5 }}>{s.translation}</p>
+          <Section id="lessons" icon="target" kicker="از این سخن چه بیاموزیم" title="سه درس برای زندگی">
+            {lesson.teacher.map((t, k) => (
+              <div key={k} className="card point">
+                <div className="num">{fa(k + 1)}</div>
+                <div>
+                  <h4>{t.title}</h4>
+                  <p>{t.body}</p>
                 </div>
               </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+            ))}
+          </Section>
+
+          <Section id="life" icon="life" kicker="داستان کوتاه" title={lesson.example.title}>
+            <div className="tale">
+              <div className="tale-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
+              <p className="prose">{lesson.example.body}</p>
+            </div>
+          </Section>
+
+          {lesson.parallels.length > 0 && (
+            <Section id="parallels" icon="link" kicker="این سخن تنها نیست" title="هم‌صدا با این کلام">
+              {lesson.parallels.map((x, k) => (
+                <div key={k} className="card parallel">
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span className={`chip ${x.school === 'sunni' ? '' : 'ok'}`}>{x.school === 'quran' ? 'قرآن' : x.school === 'shia' ? 'منابع شیعه' : 'منابع اهل سنت'}</span>
+                    <b style={{ fontSize: 14.5 }}>{x.label}</b>
+                  </div>
+                  <ArabicText kind={x.school === 'quran' ? 'quran' : 'shia'} text={x.arabic} />
+                  <p>{x.translation}</p>
+                  <div className="source-line" style={{ justifyContent: 'flex-start' }}>
+                    <span className="chip">{x.ref}</span>
+                    {x.grading && <GradingChip g={x.grading} />}
+                    <a className="chip" href={x.verifyUrl} target="_blank" rel="noreferrer">
+                      تطبیق ↗
+                    </a>
+                  </div>
+                  {x.note && <div className="note">{x.note}</div>}
+                </div>
+              ))}
+            </Section>
+          )}
+
+          <Section id="act" icon="pen" kicker="از دانستن تا شدن" title={lesson.practice.title}>
+            <div className="card act-card">
+              {lesson.practice.steps.map((t, k) => (
+                <div key={k} className="practice-step">
+                  <i>{fa(k + 1)}</i>
+                  <span>{t}</span>
+                </div>
+              ))}
+              <button className={`btn ${adopted ? 'btn-ghost' : 'btn-gold'}`} style={{ width: '100%', marginTop: 14 }} onClick={() => adoptHabit(lesson.id, lesson.practice.short)}>
+                {adopted ? <>{Icon.check} در تمرین‌های روزانه‌ات است</> : 'این را تمرین روزانه‌ام می‌کنم'}
+              </button>
+            </div>
+            <div className="reflect">
+              <div className="sec-kicker">با خودت خلوت کن</div>
+              <p className="reflect-q">{lesson.reflect}</p>
+              <textarea className="journal-input" placeholder="چند خط برای خودت بنویس… فقط خودت می‌بینی." value={note} onChange={(e) => (setNote(e.target.value), setSaved(false))} />
+              {note.trim() && (
+                <button className="btn btn-ghost" disabled={saved} onClick={() => (addJournal(lesson.id, note.trim()), setSaved(true))}>
+                  {saved ? <>{Icon.check} در دفترت ذخیره شد</> : 'ذخیره در دفتر من'}
+                </button>
+              )}
+            </div>
+          </Section>
+
+          <div className="study-end">
+            <Ornament width={160} />
+            <button className="btn btn-gold" onClick={finish}>
+              {p.completed[lesson.id] ? 'دوباره خواندم؛ چراغ را روشن کن' : 'این درس را آموختم'}
+            </button>
+            <p className="muted tiny">پیش‌نویس شرح‌ها هنوز در انتظار تأیید کارشناس است؛ متن‌های عربی با منبع تطبیق داده شده‌اند.</p>
+          </div>
+        </div>
       </div>
 
-      <div className="player-foot">
-        <button className="btn btn-gold" onClick={next} disabled={!canNext} style={{ opacity: canNext ? 1 : 0.45 }}>
-          {step === 'finish' ? 'بازگشت به خانه' : step === 'reflect' ? (note.trim() ? 'ذخیره و پایان درس' : 'پایان درس') : 'ادامه'}
-          {step !== 'finish' && Icon.next}
-        </button>
-      </div>
+      <AnimatePresence>
+        {done && (
+          <motion.div className="finish-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <Sparks show />
+            <div className="finish">
+              <motion.div className="big-lamp" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 12 }}>
+                <img src="icons/hero-lamp.webp" alt="" style={{ filter: `brightness(${0.85 + Math.min(streak, 10) * 0.03})` }} />
+              </motion.div>
+              <h2 className="h1" style={{ color: 'var(--gold)' }}>
+                چراغت روشن‌تر شد
+              </h2>
+              <p className="muted" style={{ fontSize: 16 }}>
+                {streak > 1 ? `${fa(streak)} روز پیاپی با نورِ کلام همراه بوده‌ای.` : 'اولین قدم برداشته شد. فردا هم منتظرت هستیم.'}
+              </p>
+              <div className="card" style={{ padding: 18, textAlign: 'right', marginTop: 18 }}>
+                <div className="eyebrow">امروز یادت بماند</div>
+                <ArabicText kind={s.kind} text={s.arabic} />
+                <p style={{ margin: 0, color: 'var(--ink-2)', fontSize: 14.5 }}>{sh ? sh.essence : s.translation}</p>
+              </div>
+              <button className="btn btn-gold" style={{ width: '100%', marginTop: 18 }} onClick={onClose}>
+                بازگشت به خانه
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

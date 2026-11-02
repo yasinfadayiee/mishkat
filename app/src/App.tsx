@@ -85,7 +85,7 @@ function Shell() {
             {tab === 'home' && <Home openLesson={setLessonId} goTo={setTab} />}
             {tab === 'paths' && <Paths openLesson={setLessonId} />}
             {tab === 'library' && <Library openLesson={setLessonId} />}
-            {tab === 'me' && <Me goTo={setTab} />}
+            {tab === 'me' && <Me goTo={setTab} openLesson={setLessonId} />}
             {tab === 'trust' && <Trust back={() => setTab('home')} />}
           </motion.div>
         </AnimatePresence>
