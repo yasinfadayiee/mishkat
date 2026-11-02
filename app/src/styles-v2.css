@@ -916,3 +916,62 @@
     inset -6px 0 0 rgba(0, 0, 0, 0.25),
     0 10px 24px -8px var(--glow);
 }
+
+/* ───────── منزل‌های مسیر نور ───────── */
+.chapter-row {
+  gap: 10px;
+  padding-bottom: 12px;
+}
+.chapter-chip {
+  width: 132px;
+  padding: 10px 14px 12px;
+  border-radius: 18px;
+  text-align: right;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: 0.25s;
+}
+.chapter-chip small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.chapter-chip b {
+  display: block;
+  font-size: 15px;
+}
+.chapter-chip.on {
+  border-color: var(--gold);
+  background: linear-gradient(160deg, var(--gold-soft), var(--card));
+  box-shadow: 0 0 22px -6px var(--glow);
+}
+.chapter-bar {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line);
+  margin-top: 8px;
+  overflow: hidden;
+}
+.chapter-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(270deg, var(--gold), #fff1c8);
+}
+.journey-title {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 1;
+}
+.journey-title .gold-text {
+  font-size: 19px;
+  font-weight: 900;
+  display: block;
+}
+.journey-title small {
+  color: var(--muted);
+  font-size: 12.5px;
+}

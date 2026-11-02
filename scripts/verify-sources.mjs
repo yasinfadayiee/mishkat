@@ -23,13 +23,22 @@ const stripMarks = (t) =>
 const segments = (t) => t.split('…').map((s) => s.replace(/[﴿﴾]/g, '').trim()).filter(Boolean)
 
 async function ayah(ref) {
-  const file = path.join(raw, `q_${ref.replace(':', '_')}.json`)
-  if (!fs.existsSync(file)) {
-    const r = await fetch(`https://api.alquran.cloud/v1/ayah/${ref}/editions/quran-uthmani,fa.makarem`)
-    fs.writeFileSync(file, await r.text())
+  // «94:5-6» یعنی چند آیهٔ پیاپی؛ متن‌ها با فاصله کنار هم قرار می‌گیرند
+  const [su, range] = ref.split(':')
+  const [a, b] = range.split('-').map(Number)
+  const ar = []
+  const fa = []
+  for (let n = a; n <= (b ?? a); n++) {
+    const file = path.join(raw, `q_${su}_${n}.json`)
+    if (!fs.existsSync(file)) {
+      const r = await fetch(`https://api.alquran.cloud/v1/ayah/${su}:${n}/editions/quran-uthmani,fa.makarem`)
+      fs.writeFileSync(file, await r.text())
+    }
+    const d = JSON.parse(fs.readFileSync(file, 'utf8')).data
+    ar.push(d.find((e) => e.edition.identifier === 'quran-uthmani').text)
+    fa.push(d.find((e) => e.edition.identifier === 'fa.makarem').text)
   }
-  const d = JSON.parse(fs.readFileSync(file, 'utf8')).data
-  return { ar: d.find((e) => e.edition.identifier === 'quran-uthmani').text, fa: d.find((e) => e.edition.identifier === 'fa.makarem').text }
+  return { ar: ar.join(' '), fa: fa.join(' ') }
 }
 
 const books = {}

@@ -151,7 +151,7 @@ export function ArabicText({ kind, text, className = '' }: { kind: SourceText['k
 }
 
 export function GradingChip({ g }: { g: Grading }) {
-  const strong = /صحیح|کالصحیح/.test(g.value)
+  const strong = /صحیح|حسن|موثق/.test(g.value)
   return (
     <span className={`chip ${strong ? 'ok' : 'warn'}`} title={`درجهٔ سند به نظر ${g.by}`}>
       سند: {g.value}

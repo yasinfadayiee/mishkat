@@ -93,7 +93,7 @@ export function Paths({ openLesson }: { openLesson: (id: string) => void }) {
             </div>
             <b>درس‌های این چله</b>
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
-              {open.lessons.map((id) => (
+              {open.lessons.filter((id) => lessonById(id)).map((id) => (
                 <LessonCard
                   key={id}
                   id={id}

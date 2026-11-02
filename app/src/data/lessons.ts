@@ -1,3 +1,4 @@
+import { lessons2 } from './lessons2.ts'
 import type { Lesson } from './types'
 
 /*
@@ -11,7 +12,7 @@ import type { Lesson } from './types'
 const MAKAREM = 'ترجمهٔ آیت‌الله مکارم شیرازی'
 const OURS = 'برگردان روان مشکات'
 
-export const lessons: Lesson[] = [
+const base: Lesson[] = [
   {
     id: 'consistency',
     title: 'کم، ولی همیشگی',
@@ -667,4 +668,19 @@ export const lessons: Lesson[] = [
   },
 ]
 
-export const lessonById = (id: string) => lessons.find((l) => l.id === id)
+/** منزل‌های «مسیر نور»: هر منزل هشت ایستگاه */
+export const CHAPTERS = [
+  { id: 'awake', title: 'بیداری', subtitle: 'ساختن عادت‌های درست', lessons: ['consistency', 'change-within', 'opportunity', 'hearts-tire', 'two-patience', 'small-sins', 'capacity', 'self-account'] },
+  { id: 'calm', title: 'آرامش', subtitle: 'خشم، گذشت و امید', lessons: ['anger-key', 'forgive', 'forgive-power', 'answer-peace', 'heart-rest', 'ease', 'hope-relapse', 'reason-desire'] },
+  { id: 'tongue', title: 'زبان', subtitle: 'سخن درست، سکوت به‌جا', lessons: ['tongue', 'think-speak', 'word-chain', 'silence', 'lying', 'verify-news', 'say-do', 'dignity'] },
+  { id: 'people', title: 'مردم', subtitle: 'دوستی، انصاف و فروتنی', lessons: ['golden-rule', 'friends', 'among-people', 'good-character', 'humility', 'envy', 'own-faults', 'truth-trust'] },
+  { id: 'wisdom', title: 'خرد و خانواده', subtitle: 'تصمیم، دانش و خانه', lessons: ['consult', 'gratitude', 'knowledge-wealth', 'say-idk', 'lessons-life', 'three-hours', 'parents', 'young-heart'] },
+]
+
+const pool = [...base, ...lessons2]
+export const lessons: Lesson[] = CHAPTERS.flatMap((c) => c.lessons)
+  .map((id) => pool.find((l) => l.id === id))
+  .filter((l): l is Lesson => !!l)
+
+export const chapterOf = (id: string) => CHAPTERS.find((c) => c.lessons.includes(id))
+export const lessonById = (id: string) => pool.find((l) => l.id === id)

@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useState } from 'react'
-import { lessonById, lessons } from '../data/lessons'
+import { CHAPTERS, lessonById, lessons } from '../data/lessons'
 import { programs, situations } from '../data/paths'
 import type { Situation } from '../data/types'
 import { ArchFrame, LightDust, Ornament, Stars, Tilt, skyPhase } from '../fx'
@@ -55,74 +55,99 @@ export function LessonCard({ id, onOpen, done }: { id: string; onOpen: (id: stri
   )
 }
 
-/** مسیر نور: درس‌ها مثل ایستگاه‌هایی روی یک راهِ پیچ‌درپیچ */
+/** مسیر نور: هر منزل، هشت ایستگاه روی یک راهِ پیچ‌درپیچ */
 function JourneyPath({ onOpen }: { onOpen: (id: string) => void }) {
   const { p } = useStore()
-  const current = lessons.findIndex((l) => !p.completed[l.id])
+  const firstOpen = CHAPTERS.findIndex((c) => c.lessons.some((id) => lessonById(id) && !p.completed[id]))
+  const [ci, setCi] = useState(firstOpen === -1 ? 0 : firstOpen)
+  const chapter = CHAPTERS[ci]
+  const items = chapter.lessons.map((id) => lessonById(id)).filter((l) => !!l)
+  const offset = CHAPTERS.slice(0, ci).reduce((n, c) => n + c.lessons.length, 0)
+  const current = items.findIndex((l) => !p.completed[l!.id])
   const xs = [50, 76, 50, 24]
   const step = 175
-  const pts = lessons.map((_, i) => ({ x: xs[i % xs.length], y: 70 + i * step }))
+  const pts = items.map((_, i) => ({ x: xs[i % xs.length], y: 150 + i * step }))
   const d = pts.reduce((acc, pt, i) => {
     if (i === 0) return `M${pt.x} ${pt.y}`
     const prev = pts[i - 1]
     const my = (prev.y + pt.y) / 2
     return `${acc} C${prev.x} ${my} ${pt.x} ${my} ${pt.x} ${pt.y}`
   }, '')
-  const height = 70 + (lessons.length - 1) * step + 90
-  const doneUpTo = current === -1 ? lessons.length - 1 : current
+  const height = 150 + (items.length - 1) * step + 100
+  const doneUpTo = current === -1 ? items.length - 1 : current
 
   return (
-    <div className="journey" style={{ height }}>
-      <div className="journey-bg" style={{ backgroundImage: 'url(art/home-night.webp)' }} />
-      <svg className="journey-line" viewBox={`0 0 100 ${height}`} preserveAspectRatio="none" aria-hidden>
-        <defs>
-          <linearGradient id="pathGlow" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#fff0c2" />
-            <stop offset="1" stopColor="#b98b3f" />
-          </linearGradient>
-        </defs>
-        <path d={d} fill="none" stroke="var(--line-strong)" strokeWidth="10" strokeLinecap="round" vectorEffect="non-scaling-stroke" opacity=".35" />
-        <path d={d} fill="none" stroke="var(--gold)" strokeWidth="2" strokeDasharray="2 9" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-        <motion.path
-          d={d}
-          fill="none"
-          stroke="url(#pathGlow)"
-          strokeWidth="4"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          style={{ filter: 'drop-shadow(0 0 6px rgba(255,200,110,.8))' }}
-          initial={{ pathLength: 0 }}
-          whileInView={{ pathLength: Math.max(0.02, doneUpTo / Math.max(1, lessons.length - 1)) }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.6, ease: 'easeInOut' }}
-        />
-      </svg>
-      {lessons.map((l, i) => {
-        const state = p.completed[l.id] ? 'done' : i === current ? 'current' : 'next'
-        return (
-          <motion.button
-            key={l.id}
-            className={`node node-${state}`}
-            style={{ left: `${pts[i].x}%`, top: pts[i].y }}
-            onClick={() => onOpen(l.id)}
-            initial={{ opacity: 0, scale: 0.7 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ type: 'spring', damping: 14, delay: 0.05 }}
-          >
-            <span className="node-ring">
-              <span className="node-art" style={{ backgroundImage: `url(${l.cover})` }} />
-              {state === 'done' && <span className="node-check">{Icon.check}</span>}
-            </span>
-            {state === 'current' && <span className="node-flag">اینجا هستی</span>}
-            <span className="node-label">
-              <small>ایستگاه {fa(i + 1)}</small>
-              {l.title}
-            </span>
-          </motion.button>
-        )
-      })}
-    </div>
+    <>
+      <div className="scroller chapter-row">
+        {CHAPTERS.map((c, k) => {
+          const done = c.lessons.filter((id) => p.completed[id]).length
+          return (
+            <button key={c.id} className={`chapter-chip ${k === ci ? 'on' : ''}`} onClick={() => setCi(k)}>
+              <small>منزل {fa(k + 1)}</small>
+              <b>{c.title}</b>
+              <span className="chapter-bar">
+                <i style={{ width: `${(done / c.lessons.length) * 100}%` }} />
+              </span>
+            </button>
+          )
+        })}
+      </div>
+      <div className="journey" style={{ height }} key={chapter.id}>
+        <div className="journey-bg" style={{ backgroundImage: 'url(art/home-night.webp)' }} />
+        <div className="journey-title">
+          <span className="gold-text">منزل {fa(ci + 1)}: {chapter.title}</span>
+          <small>{chapter.subtitle}</small>
+        </div>
+        <svg className="journey-line" viewBox={`0 0 100 ${height}`} preserveAspectRatio="none" aria-hidden>
+          <defs>
+            <linearGradient id="pathGlow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#fff0c2" />
+              <stop offset="1" stopColor="#b98b3f" />
+            </linearGradient>
+          </defs>
+          <path d={d} fill="none" stroke="var(--line-strong)" strokeWidth="10" strokeLinecap="round" vectorEffect="non-scaling-stroke" opacity=".35" />
+          <path d={d} fill="none" stroke="var(--gold)" strokeWidth="2" strokeDasharray="2 9" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <motion.path
+            d={d}
+            fill="none"
+            stroke="url(#pathGlow)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+            style={{ filter: 'drop-shadow(0 0 6px rgba(255,200,110,.8))' }}
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: Math.max(0.02, doneUpTo / Math.max(1, items.length - 1)) }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.6, ease: 'easeInOut' }}
+          />
+        </svg>
+        {items.map((l, i) => {
+          const state = p.completed[l!.id] ? 'done' : i === current ? 'current' : 'next'
+          return (
+            <motion.button
+              key={l!.id}
+              className={`node node-${state}`}
+              style={{ left: `${pts[i].x}%`, top: pts[i].y }}
+              onClick={() => onOpen(l!.id)}
+              initial={{ opacity: 0, scale: 0.7 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ type: 'spring', damping: 14, delay: 0.05 }}
+            >
+              <span className="node-ring">
+                <span className="node-art" style={{ backgroundImage: `url(${l!.cover})` }} />
+                {state === 'done' && <span className="node-check">{Icon.check}</span>}
+              </span>
+              {state === 'current' && <span className="node-flag">اینجا هستی</span>}
+              <span className="node-label">
+                <small>ایستگاه {fa(offset + i + 1)}</small>
+                {l!.title}
+              </span>
+            </motion.button>
+          )
+        })}
+      </div>
+    </>
   )
 }
 
@@ -321,7 +346,7 @@ export function Home({ openLesson, goTo }: { openLesson: (id: string) => void; g
               چند دقیقه وقت بگذار؛ معلم کنارت است.
             </p>
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              {sit.lessons.map((id) => (
+              {sit.lessons.filter((id) => lessonById(id)).map((id) => (
                 <LessonCard
                   key={id}
                   id={id}

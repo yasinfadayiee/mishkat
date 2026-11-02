@@ -1,0 +1,818 @@
+[
+  {
+    "id": "hearts-tire",
+    "topic": "لذت یادگیری",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "إِنَّ هذِهِ الْقُلُوبَ تَمَلُّ كَمَا تَمَلُّ الْأَبْدَانُ، فَابْتَغُوا لَهَا طَرَائِفَ الْحِكْمَةِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۹۱",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/91/110",
+      "english": "91. Amīr al-mu’minīn, peace be upon him, said: The hearts get weary as bodies get weary; so look for beautiful wise sayings for them (to dispel their weariness)."
+    },
+    "parallels": [
+      {
+        "arabic": "إِنَّ لِلْقُلُوبِ شَهْوَةً وَإِقْبَالًا وَإِدْبَاراً، فَأْتُوهَا مِنْ قِبَلِ شَهْوَتِهَا وَإِقْبَالِهَا، فَإِنَّ الْقَلْبَ إِذَا أُكْرِهَ عَمِيَ",
+        "translation": "",
+        "ref": "نهج‌البلاغه، حکمت ۱۹۳",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/3/193/239",
+        "speaker": "امام علی (ع)",
+        "english": "193. Amīr al-mu’minīn, peace be upon him, said: Hearts are imbued with passion and the power of advancing and retreating. Therefore, approach them for action at the time of their passionateness and when they are in a mood for advancing, because if hearts are forced (to do a thing) they will be blinded."
+      },
+      {
+        "arabic": "قَلِيلٌ تَدُومُ عَلَيْهِ أَرْجَى مِنْ كَثِيرٍ مَمْلُولٍ مِنْهُ",
+        "translation": "",
+        "ref": "نهج‌البلاغه، حکمت ۲۷۸",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/3/278/339",
+        "speaker": "امام علی (ع)",
+        "english": "278. Amīr al-mu’minīn, peace be upon him, said: A small action which is continued with regularity is more beneficial than a long one performed with disgust."
+      }
+    ]
+  },
+  {
+    "id": "two-patience",
+    "topic": "ترک عادت بد",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "الصَّبْرُ صَبْرَانِ: صَبْرٌ عَلَى مَا تَكْرَهُ، وَصَبْرٌ عَمَّا تُحِبُّ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۵۵",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/55/69",
+      "english": "55. Amīr al-mu’minīn, peace be upon him, said: Patience is of two kinds, patience over what pains you, and patience against what you covet."
+    },
+    "parallels": [
+      {
+        "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱسْتَعِينُوا۟ بِٱلصَّبْرِ وَٱلصَّلَوٰةِ ۚ إِنَّ ٱللَّهَ مَعَ ٱلصَّٰبِرِينَ",
+        "translation": "ای افرادی که ایمان آورده‌اید! از صبر (و استقامت) و نماز، کمک بگیرید! (زیرا) خداوند با صابران است.",
+        "ref": "سورهٔ بقره، آیهٔ ۱۵۳ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#2:153"
+      }
+    ]
+  },
+  {
+    "id": "reason-desire",
+    "topic": "خودکنترلی",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "الْحِلْمُ غِطَاءٌ سَاتِرٌ، وَالْعَقْلُ حُسَامٌ قَاطِعٌ، فَاسْتُرْ خَلَلَ خُلُقِكَ بِحِلْمِكَ، وَقَاتِلْ هَوَاكَ بِعَقْلِكَ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۴۲۴",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/424/538",
+      "english": "424. Amīr al-mu’minīn, peace be upon him, said: Forbearance is a curtain for covering, and wisdom is a sharp sword. Therefore, conceal the weaknesses in your conduct with forbearance and kill your desires with your wisdom."
+    },
+    "parallels": [
+      {
+        "arabic": "وَأَمَّا مَنْ خَافَ مَقَامَ رَبِّهِۦ وَنَهَى ٱلنَّفْسَ عَنِ ٱلْهَوَىٰ فَإِنَّ ٱلْجَنَّةَ هِىَ ٱلْمَأْوَىٰ",
+        "translation": "و آن کس که از مقام پروردگارش ترسان باشد و نفس را از هوی بازدارد، قطعاً بهشت جایگاه اوست!",
+        "ref": "سورهٔ نازعات، آیات ۴۰ و ۴۱ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#79:40-41"
+      }
+    ]
+  },
+  {
+    "id": "small-sins",
+    "topic": "عادت‌های کوچک",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "أَشدُّ الذُّنُوبِ مَا اسْتَهَانَ بِهِ صَاحِبُهُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۳۴۸",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/348/425",
+      "english": "348. Amīr al-mu’minīn, peace be upon him, said: The most serious sin is that which the doer considers light. [1]"
+    },
+    "parallels": [
+      {
+        "arabic": "وَلاَ تَأْمَنْ عَلَى نَفْسِكَ صَغِيرَ مَعْصِيَة، فَلَعَلَّكَ مُعَذَّبٌ عَلَيْهِ",
+        "translation": "",
+        "ref": "نهج‌البلاغه، خطبهٔ ۱۴۰",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/1/140/3",
+        "speaker": "امام علی (ع)",
+        "english": "O creature of Allāh, do not be quick in exposing anyone’s sin for he may be forgiven for it, and do not feel yourself safe even for a small sin because you may be punished for it. Therefore, every one of you who comes to know the faults of others should not expose them in view of what he knows about his own faults, and he should remain busy in thanks that he has been saved from what others have been indulging in."
+      }
+    ]
+  },
+  {
+    "id": "think-speak",
+    "topic": "سنجیده‌گویی",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "لِسَانُ الْعَاقِلِ وَرَاءَ قَلْبِهِ، وَقَلْبُ الْأَحْمَقِ وَرَاءَ لِسَانِهِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۴۰",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/40/51",
+      "english": "40. Amīr al-mu’minīn, peace be upon him, said: The tongue of the wise man is behind his heart, and the heart of the fool is behind his tongue."
+    },
+    "parallels": [
+      {
+        "arabic": "مِنْ عَلامَاتِ الْفِقْهِ الْحِلْمُ وَالْعِلْمُ وَالصَّمْتُ إِنَّ الصَّمْتَ بَابٌ مِنْ أَبْوَابِ الْحِكْمَةِ إِنَّ الصَّمْتَ يَكْسِبُ الْمَحَبَّةَ إِنَّهُ دَلِيلٌ عَلَى كُلِّ خَيْرٍ",
+        "translation": "",
+        "ref": "الکافی، ج ۲، باب الصمت و حفظ اللسان، ح ۱",
+        "school": "shia",
+        "grading": {
+          "value": "صحیح",
+          "by": "علامه مجلسی، مرآة العقول"
+        },
+        "verifyUrl": "https://thaqalayn.net/hadith/1/1/56/1",
+        "speaker": "امام رضا (ع)",
+        "english": "1. Muhammad ibn Yahya has narrated from Ahmad ibn Muhammad ibn ‘Isa from Ahmad ibn Muhammad ibn abu Nasr who has said the following: “Abu al-Hassan al-Rida (a.s.) has said, ‘Of the signs of one’s intelligence is forbearance, knowledge and silence. Silence is one of the doors of wisdom. Silence earns love and it, certainly, is the guide to all good.’” "
+      }
+    ]
+  },
+  {
+    "id": "word-chain",
+    "topic": "زبان و فضای مجازی",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "الْكَلاَمُ فِي وَثَاقِكَ مَا لَمْ تَتَكَلَّمْ بِهِ، فَإذَا تَكَلَّمْتَ بِهِ صِرْتَ فِي وَثَاقِهِ، فَاخْزُنْ لِسَانَكَ كَمَا تَخْزُنُ ذَهَبَكَ وَوَرِقَكَ فَرُبَّ كَلِمَةٍ سَلَبَتْ نِعْمَةً وَجَلَبَتْ نِقْمَةً",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۳۸۱",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/381/476",
+      "english": "381. Amīr al-mu’minīn, peace be upon him, said: Words are in your control until you have not uttered them; but when you have spoken them out you are under their control. Therefore, guard your tongue as you guard your gold and silver, for often one expression snatches away a blessing and invites punishment."
+    },
+    "parallels": [
+      {
+        "arabic": "وَلَا تَقْفُ مَا لَيْسَ لَكَ بِهِۦ عِلْمٌ ۚ إِنَّ ٱلسَّمْعَ وَٱلْبَصَرَ وَٱلْفُؤَادَ كُلُّ أُو۟لَٰٓئِكَ كَانَ عَنْهُ مَسْـُٔولًۭا",
+        "translation": "از آنچه به آن آگاهی نداری، پیروی مکن، چرا که گوش و چشم و دل، همه مسؤولند.",
+        "ref": "سورهٔ اسراء، آیهٔ ۳۶ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#17:36"
+      }
+    ]
+  },
+  {
+    "id": "dignity",
+    "topic": "عزت نفس",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "أَزْرَى بِنَفْسِهِ مَنِ اسْتَشْعَرَ الطَّمَعَ وَرَضِيَ بِالذُّلِّ مَنْ كَشَفَ عَنْ ضُرِّهِ وَهَانَتْ عَلَيْهِ نَفْسُهُ مَنْ أَمَّرَ عَلَيْهَا لِسَانَهُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۲",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/2/2",
+      "english": "2. Amīr al-mu’minīn, peace be upon him, said: He who adopts greed as a habit devalues himself; he who discloses his hardship agrees to humiliation; and he who allows his tongue to overpower his soul debases the soul."
+    },
+    "parallels": []
+  },
+  {
+    "id": "friends",
+    "topic": "دوستی",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "أَعْجَزُ النَّاسِ مَنْ عَجَزَ عَنِ اكْتِسَابِ الْإِخْوَانِ وَأَعْجَزُ مِنْهُ مَنْ ضَيَّعَ مَنْ ظَفِرَ بِهِ مِنْهُمْ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۱۲",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/12/13",
+      "english": "12. Amīr al-mu’minīn, peace be upon him, said: The most helpless of all men is he who cannot find a few brothers during his life, but still more helpless is he who finds such a brother but loses him. [1]"
+    },
+    "parallels": [
+      {
+        "arabic": "صَدْرُ الْعَاقِلِ صُنْدُوقُ سِرِّهِ وَالْبَشَاشَةُ حِبَالَةُ الْمَوَدَّةِ وَالِاحْتِمَالُ قَبْرُ الْعُيُوبِ‏",
+        "translation": "",
+        "ref": "نهج‌البلاغه، حکمت ۶",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/3/6/6",
+        "speaker": "امام علی (ع)",
+        "english": "6. Amīr al-mu’minīn, peace be upon him, said: The bosom of the wise is the safe of his secrets; cheerfulness is the bond of friendship; effective forbearance is the grave of short-comings."
+      }
+    ]
+  },
+  {
+    "id": "among-people",
+    "topic": "رفتار با مردم",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "خَالِطُوا النَّاسَ مُخَالَطَةً إِنْ مِتُّمْ مَعَهَا بَكَوْا عَلَيْكُمْ وَإِنْ عِشْتُمْ حَنُّوا إِلَيْكُمْ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۱۰",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/10/11",
+      "english": "10. Amīr al-mu’minīn, peace be upon him, said: Meet people in such a manner that if you die they should weep for you and if you live they should long for you. [1]"
+    },
+    "parallels": [
+      {
+        "arabic": "وَلَا تَسْتَوِى ٱلْحَسَنَةُ وَلَا ٱلسَّيِّئَةُ ۚ ٱدْفَعْ بِٱلَّتِى هِىَ أَحْسَنُ فَإِذَا ٱلَّذِى بَيْنَكَ وَبَيْنَهُۥ عَدَٰوَةٌۭ كَأَنَّهُۥ وَلِىٌّ حَمِيمٌۭ",
+        "translation": "هرگز نیکی و بدی یکسان نیست؛ بدی را با نیکی دفع کن، ناگاه (خواهی دید) همان کس که میان تو و او دشمنی است، گویی دوستی گرم و صمیمی است!",
+        "ref": "سورهٔ فصلت، آیهٔ ۳۴ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#41:34"
+      }
+    ]
+  },
+  {
+    "id": "forgive-power",
+    "topic": "گذشت",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "إِذَا قَدَرْتَ عَلَى عَدُوِّكَ فَاجْعَلِ الْعَفْوَ عَنْهُ شُكْراً لِلْقُدْرَةِ عَلَيْهِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۱۱",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/11/12",
+      "english": "11. Amīr al-mu’minīn, peace be upon him, said: When you gain power over your adversary pardon him by way of thanks for being able to overpower him. [1]"
+    },
+    "parallels": [
+      {
+        "arabic": "وَإِذَا مَا غَضِبُوا۟ هُمْ يَغْفِرُونَ",
+        "translation": "و هنگامی که خشمگین شوند عفو می‌کنند.",
+        "ref": "سورهٔ شوری، بخشی از آیهٔ ۳۷ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#42:37"
+      }
+    ]
+  },
+  {
+    "id": "own-faults",
+    "topic": "عیب‌جویی",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "مَنْ نَظَرَ فِي عَيْبِ نَفْسِهِ اشْتَغَلَ عَنْ عَيْبِ غَيْرهِ، وَمَنْ رَضِيَ برِزْقِ اللهِ لَمْ يَحْزَنْ عَلَى مَا فَاتَهُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۳۴۹",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/349/426",
+      "english": "349. Amīr al-mu’minīn, peace be upon him, said: He who sees his own shortcomings abstains from looking into other’s shortcomings. He who feels happy with the livelihood with which Allāh provides him does not grieve over what he misses. He who draws out the sword of revolt gets killed with it. He who strives without means perishes. He who enters the depths gets drowned. He who visits places of ill-repute receives blame."
+    },
+    "parallels": [
+      {
+        "arabic": "فَلْيَكْفُفْ مَنْ عَلِمَ مِنْكُمْ عَيْبَ غَيْرِهِ لِمَا يَعْلَمُ مِنْ عَيْبِ نَفْسِهِ",
+        "translation": "",
+        "ref": "نهج‌البلاغه، خطبهٔ ۱۴۰",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/1/140/3",
+        "speaker": "امام علی (ع)",
+        "english": "O creature of Allāh, do not be quick in exposing anyone’s sin for he may be forgiven for it, and do not feel yourself safe even for a small sin because you may be punished for it. Therefore, every one of you who comes to know the faults of others should not expose them in view of what he knows about his own faults, and he should remain busy in thanks that he has been saved from what others have been indulging in."
+      }
+    ]
+  },
+  {
+    "id": "three-hours",
+    "topic": "مدیریت وقت",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "لِلْمُؤْمِنِ ثَلاَثُ سَاعَات: فَسَاعَةٌ يُنَاجِي فِيهَا رَبَّهُ، وَسَاعَةٌ يَرُمُّ مَعَاشَهُ، وَسَاعَةٌ يُخَلِّي بَيْنَ نَفْسِهِ وَبَيْنَ لَذَّتِهَا فِيَما يَحِلُّ وَيَجْمُلُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۳۹۰",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/390/487",
+      "english": "390. Amīr al-mu’minīn, peace be upon him, said: The believer’s time has three periods : The period when he is in communion with Allāh; the period when he manages for his livelihood; and the period when he is free to enjoy what is lawful and pleasant."
+    },
+    "parallels": [
+      {
+        "arabic": "وَٱبْتَغِ فِيمَآ ءَاتَىٰكَ ٱللَّهُ ٱلدَّارَ ٱلْءَاخِرَةَ ۖ وَلَا تَنسَ نَصِيبَكَ مِنَ ٱلدُّنْيَا",
+        "translation": "و در آنچه خدا به تو داده، سرای آخرت را بطلب؛ و بهره‌ات را از دنیا فراموش مکن",
+        "ref": "سورهٔ قصص، بخشی از آیهٔ ۷۷ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#28:77"
+      }
+    ]
+  },
+  {
+    "id": "say-idk",
+    "topic": "یادگیری",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "وَلَا يَسْتَحِيَنَّ أَحَدٌ مِنْكُمْ إِذَا سُئِلَ عَمَّا لَا يَعْلَمُ أَنْ يَقُولَ لَا أَعْلَمُ وَلَا يَسْتَحِيَنَّ أَحَدٌ إِذَا لَمْ يَعْلَمِ الشَّيْ‏ءَ أَنْ يَتَعَلَّمَهُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۸۲",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/82/100",
+      "english": "82. Amīr al-mu’minīn, peace be upon him, said: I impart to you five things which, if you ride your camels fast in search of them, you will find them worth it. No one of you should repose hope save in his Lord (Allāh); no one of you should fear anything save his sin; no one should feel ashamed of saying “I do not know” when he is asked a matter which he does not know; no one should feel ashamed of learning a thing that he does not know; and you should practise endurance, because endurance is for belief what the head is for the body, so that just as there is no good in a body without the head there is no good in belief without endurance."
+    },
+    "parallels": [
+      {
+        "arabic": "وَقُل رَّبِّ زِدْنِى عِلْمًۭا",
+        "translation": "و بگو: «پروردگارا! علم مرا افزون کن!»",
+        "ref": "سورهٔ طه، بخشی از آیهٔ ۱۱۴ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#20:114"
+      }
+    ]
+  },
+  {
+    "id": "knowledge-wealth",
+    "topic": "ارزش دانش",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "الْعِلْمُ خَيْرٌ مِنَ الْمَالِ: الْعِلْمُ يَحْرُسُكَ وَأَنْتَ تَحْرُسُ المَالَ، وَالْمَالُ تَنْقُصُهُ النَّفَقَةُ، وَالْعِلْمُ يَزْكُوعَلَى الْإِنْفَاقِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۱۴۷",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/147/182",
+      "english": "O Kumayl, knowledge is better than wealth. Knowledge guards you, while you have to guard the wealth. Wealth decreases by spending, while knowledge multiplies by spending, and the results of wealth die as wealth decays."
+    },
+    "parallels": [
+      {
+        "arabic": "قُلْ هَلْ يَسْتَوِى ٱلَّذِينَ يَعْلَمُونَ وَٱلَّذِينَ لَا يَعْلَمُونَ",
+        "translation": "بگو: «آیا کسانی که می‌دانند با کسانی که نمی‌دانند یکسانند؟!",
+        "ref": "سورهٔ زمر، بخشی از آیهٔ ۹ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#39:9"
+      }
+    ]
+  },
+  {
+    "id": "golden-rule",
+    "topic": "انصاف",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "يَا بُنَيَّ اجْعَلْ نَفْسَكَ مِيزَاناً فِيمَا بَيْنَكَ وَبَيْنَ غَيْرِكَ، فَأَحْبِبْ لِغَيْرِكَ مَا تُحِبُّ لِنَفْسِكَ، وَاكْرَهْ لَهُ مَا تَكْرَهُ لَهَا، وَلَا تَظْلِمْ كَمَا لَا تُحِبُّ أَنْ تُظْلَمَ، وَأَحْسِنْ كَمَا تُحِبُّ أَنْ يُحْسَنَ إِلَيْكَ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، نامهٔ ۳۱",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/2/31/153",
+      "english": "O my child, make yourself the measure (for dealings) between you and others. Thus, you should desire for others what you desire for yourself and hate for others what you hate for yourself. Do not oppress as you do not like to be oppressed. Do good to others as you would like good to be done to you. Regard bad for yourself whatever you regard bad for others. Accept that (treatment) from others which you would like others to accept from you. Do not talk about what you do not know even though what you know be very little. Do not say to others what you do not like to be said to you."
+    },
+    "parallels": [
+      {
+        "arabic": "لا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
+        "translation": "",
+        "ref": "صحیح بخاری، ح ۱۳",
+        "school": "sunni",
+        "verifyUrl": "https://sunnah.com/bukhari:13",
+        "speaker": "پیامبر اکرم (ص)"
+      },
+      {
+        "arabic": "لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ - أَوْ قَالَ لِجَارِهِ - مَا يُحِبُّ لِنَفْسِهِ",
+        "translation": "",
+        "ref": "صحیح مسلم، ح ۴۵",
+        "school": "sunni",
+        "verifyUrl": "https://sunnah.com/muslim:45",
+        "speaker": "پیامبر اکرم (ص)"
+      }
+    ]
+  },
+  {
+    "id": "young-heart",
+    "topic": "تربیت فرزند",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "وَإِنَّمَا قَلْبُ الْحَدَثِ كَالْأَرْضِ الْخَالِيَةِ مَا أُلْقِيَ فِيهَا مِنْ شَيْ‏ءٍ قَبِلَتْهُ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، نامهٔ ۳۱",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/2/31/145",
+      "english": "O’ my child, when I noticed that I was of goodly age and noticed that I was increasing in weakness I hastened with my will for you and wrote down salient points of it lest death overtook me before I divulged to you what I have in my heart, or lest my wit be affected as my body has been affected, or the forces of passions or the mischiefs of the world overtake you making you like a stubborn camel. Certainly, the heart of a young man is like uncultivated land. It accepts whatever is strewn on it. So, I hastened to mould you properly before your heart hardened up and your mind became occupied, so that you might be ready to accept through your intelligence the results of the experience of others"
+    },
+    "parallels": [
+      {
+        "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ قُوٓا۟ أَنفُسَكُمْ وَأَهْلِيكُمْ نَارًۭا وَقُودُهَا ٱلنَّاسُ وَٱلْحِجَارَةُ",
+        "translation": "ای کسانی که ایمان آورده‌اید خود و خانواده خویش را از آتشی که هیزم آن انسانها و سنگهاست نگه دارید",
+        "ref": "سورهٔ تحریم، بخشی از آیهٔ ۶ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#66:6"
+      }
+    ]
+  },
+  {
+    "id": "lessons-life",
+    "topic": "درس گرفتن",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "مَا أَكْثَرَ الْعِبَرَ وأَقَلَّ الِاعْتِبَارَ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، حکمت ۲۹۷",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/3/297/364",
+      "english": "297. Amīr al-mu’minīn, peace be upon him, said: How many are the objects of lessons, but how few the taking of lessons. [1]"
+    },
+    "parallels": [
+      {
+        "arabic": "لَقَدْ كَانَ فِى قَصَصِهِمْ عِبْرَةٌۭ لِّأُو۟لِى ٱلْأَلْبَٰبِ",
+        "translation": "در سرگذشت آنها درس عبرتی برای صاحبان اندیشه بود!",
+        "ref": "سورهٔ یوسف، بخشی از آیهٔ ۱۱۱ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#12:111"
+      }
+    ]
+  },
+  {
+    "id": "envy",
+    "topic": "حسادت",
+    "source": {
+      "kind": "nahj",
+      "speaker": "امام علی (ع)",
+      "arabic": "لاَ تَحَاسَدُوا، فَإِنَّ الْحَسَدَ يَأْكُلُ الاْيمَانَ كَمَا تَأْكُلُ النَّارُ الْحَطَبَ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "نهج‌البلاغه، خطبهٔ ۸۶",
+      "verifyUrl": "https://thaqalayn.net/hadith/32/1/86/7",
+      "english": "You should know that even the smallest hypocrisy is like believing in more than one God, and keeping company of people who follow their desires is the key to obliviousness from religion, and is the seat of Satan. Be on your guard against falsehood because it is contrary to Faith. A truthful person is on the height of salvation and dignity, while the liar is on the edge of ignominy and degradation. Do not be jealous because jealousy eats away Faith just as fire eats away dried wood. Do not bear malice because, it is scraper (of virtues). And know that desires make wit forgetful and make memory oblivious. You should falsify desire because it is a deception, and he who has desires is in deceit."
+    },
+    "parallels": [
+      {
+        "arabic": "إِنَّ الْحَسَدَ يَأْكُلُ الإيمَانَ كَمَا تَأْكُلُ النَّارُ الْحَطَبَ",
+        "translation": "",
+        "ref": "الکافی، ج ۲، باب الحسد، ح ۲",
+        "school": "shia",
+        "grading": {
+          "value": "مجهول",
+          "by": "علامه مجلسی، مرآة العقول"
+        },
+        "verifyUrl": "https://thaqalayn.net/hadith/1/1/122/2",
+        "speaker": "امام صادق (ع)",
+        "english": "2. It is narrated from him (narrator of the Hadith above) from Ahmad ibn Muhammad from Muhammad ibn Khalid and al-Husayn ibn Sa’id from al-Nadr ibn Suwayd from al-Qasim ibn Sulayman from Jarrah al-Mada’ini from Abu ‘Abdillah (a.s.) who has said the following: “Envy consumes belief just as fire consumes firewood.” "
+      }
+    ]
+  },
+  {
+    "id": "truth-trust",
+    "topic": "راستی و امانت",
+    "source": {
+      "kind": "hadith",
+      "speaker": "امام صادق (ع)",
+      "arabic": "إِنَّ الله عَزَّ وَجَلَّ لَمْ يَبْعَثْ نَبِيّاً إِلا بِصِدْقِ الْحَدِيثِ وَأَدَاءِ الأمَانَةِ إِلَى الْبَرِّ وَالْفَاجِرِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب الصدق و اداء الامانة، ح ۱",
+      "grading": {
+        "value": "حسن",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/51/1",
+      "english": "1. Muhammad ibn Yahya has narrated from Ahmad ibn Muhammad ibn ‘Isa from Ali ibn al-Hakam from al-Husayn ibn abu al-‘Ala’ from abu ‘Abd Allah recipient of divine supreme covenant who has said the following: “Allah, the Most Majestic, the Most Holy, has not sent any prophet who would not be truthful in their words and trustworthy in returning the trust without discriminating between virtuous or otherwise people.” "
+    },
+    "parallels": [
+      {
+        "arabic": "إِنَّ ٱللَّهَ يَأْمُرُكُمْ أَن تُؤَدُّوا۟ ٱلْأَمَٰنَٰتِ إِلَىٰٓ أَهْلِهَا",
+        "translation": "خداوند به شما فرمان می‌دهد که امانتها را به صاحبانش بدهید!",
+        "ref": "سورهٔ نساء، بخشی از آیهٔ ۵۸ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#4:58"
+      }
+    ]
+  },
+  {
+    "id": "good-character",
+    "topic": "خوش‌اخلاقی",
+    "source": {
+      "kind": "hadith",
+      "speaker": "پیامبر اکرم (ص)",
+      "arabic": "إِنَّ صَاحِبَ الْخُلُقِ الْحَسَنِ لَهُ مِثْلُ أَجْرِ الصَّائِمِ الْقَائِمِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب حسن الخلق، ح ۵",
+      "grading": {
+        "value": "صحیح",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/49/5",
+      "english": "5. Abu Ali al-Ash’ari has narrated from Muhammad ibn ‘Abd al-Jabbar from Safwan from Dharih from Abu ‘Abdillah (a.s.) who has said the following: “The Messenger of Allah has said, ‘The reward for one who possesses excellent moral behavior is equal to the reward for one who worships all nights and fasts all days.”’ "
+    },
+    "parallels": [
+      {
+        "arabic": "إِنَّ مِنْ خِيَارِكُمْ أَحْسَنَكُمْ أَخْلاَقًا",
+        "translation": "",
+        "ref": "صحیح بخاری، ح ۳۵۵۹",
+        "school": "sunni",
+        "verifyUrl": "https://sunnah.com/bukhari:3559",
+        "speaker": "پیامبر اکرم (ص)"
+      }
+    ]
+  },
+  {
+    "id": "humility",
+    "topic": "فروتنی",
+    "source": {
+      "kind": "hadith",
+      "speaker": "پیامبر اکرم (ص)",
+      "arabic": "فَإِنَّ مَنْ تَوَاضَعَ لله رَفَعَهُ الله وَمَنْ تَكَبَّرَ خَفَضَهُ الله وَمَنِ اقْتَصَدَ فِي مَعِيشَتِهِ رَزَقَهُ الله",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب التواضع، ح ۳",
+      "grading": {
+        "value": "حسن کالصحیح",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/59/3",
+      "english": "3. Ibn abu ‘Umayr has narrated from ‘Abd al-Rahman ibn al-Hajjaj from Abu ‘Abdillah (a.s.) who has said the following: ‘‘In a Thursday evening the Messenger of Allah had completed his day’s fasting and dinner was served in the Mosque of Quba. He asked, ‘Is there any drink?’ Aws ibn Khuli brought him a bowl of milk mixed with honey. When he touched it with his lips he moved it away saying, ‘There are two drinks each of which is enough drink. I will not drink it and I am not making unlawful to drink it, but I want to be humble before Allah. Whoever is humble before Allah, He raises him up, and whoever is arrogant, Allah brings him low. Whoever economizes in his living Allah grants him sustenan"
+    },
+    "parallels": [
+      {
+        "arabic": "وَلَا تُصَعِّرْ خَدَّكَ لِلنَّاسِ وَلَا تَمْشِ فِى ٱلْأَرْضِ مَرَحًا ۖ إِنَّ ٱللَّهَ لَا يُحِبُّ كُلَّ مُخْتَالٍۢ فَخُورٍۢ",
+        "translation": "(پسرم!) با بی‌اعتنایی از مردم روی مگردان، و مغرورانه بر زمین راه مرو که خداوند هیچ متکبّر مغروری را دوست ندارد.",
+        "ref": "سورهٔ لقمان، آیهٔ ۱۸ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#31:18"
+      }
+    ]
+  },
+  {
+    "id": "self-account",
+    "topic": "حساب‌رسی روزانه",
+    "source": {
+      "kind": "hadith",
+      "speaker": "امام موسی کاظم (ع)",
+      "arabic": "لَيْسَ مِنَّا مَنْ لَمْ يُحَاسِبْ نَفْسَهُ فِي كُلِّ يَوْمٍ فَإِنْ عَمِلَ حَسَناً اسْتَزَادَ الله وَإِنْ عَمِلَ سَيِّئاً اسْتَغْفَرَ الله مِنْهُ وَتَابَ إِلَيْهِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب محاسبة العمل، ح ۲",
+      "grading": {
+        "value": "حسن",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/203/2",
+      "english": "2. Ali ibn Ibrahim has narrated from his father from Hammad ibn ‘Isa from Ibrahim ibn ‘Umar al-Yamani from abu al-Hassan (Ali ibn al-Husayn) (a.s.) who has said the following: “One who does not evaluate his deeds every day is not one of us. One must evaluate his deeds and pray to Allah to increase his good deeds, plead for forgiveness to Allah due to one’s committing evil deeds and turn to Him in repentance.” "
+    },
+    "parallels": [
+      {
+        "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱتَّقُوا۟ ٱللَّهَ وَلْتَنظُرْ نَفْسٌۭ مَّا قَدَّمَتْ لِغَدٍۢ",
+        "translation": "ای کسانی که ایمان آورده‌اید از (مخالفت) خدا بپرهیزید؛ و هر کس باید بنگرد تا برای فردایش چه چیز از پیش فرستاده",
+        "ref": "سورهٔ حشر، بخشی از آیهٔ ۱۸ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#59:18"
+      }
+    ]
+  },
+  {
+    "id": "silence",
+    "topic": "سکوت",
+    "source": {
+      "kind": "hadith",
+      "speaker": "امام رضا (ع)",
+      "arabic": "مِنْ عَلامَاتِ الْفِقْهِ الْحِلْمُ وَالْعِلْمُ وَالصَّمْتُ إِنَّ الصَّمْتَ بَابٌ مِنْ أَبْوَابِ الْحِكْمَةِ إِنَّ الصَّمْتَ يَكْسِبُ الْمَحَبَّةَ إِنَّهُ دَلِيلٌ عَلَى كُلِّ خَيْرٍ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب الصمت و حفظ اللسان، ح ۱",
+      "grading": {
+        "value": "صحیح",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/56/1",
+      "english": "1. Muhammad ibn Yahya has narrated from Ahmad ibn Muhammad ibn ‘Isa from Ahmad ibn Muhammad ibn abu Nasr who has said the following: “Abu al-Hassan al-Rida (a.s.) has said, ‘Of the signs of one’s intelligence is forbearance, knowledge and silence. Silence is one of the doors of wisdom. Silence earns love and it, certainly, is the guide to all good.’” "
+    },
+    "parallels": [
+      {
+        "arabic": "لِسَانُ الْعَاقِلِ وَرَاءَ قَلْبِهِ، وَقَلْبُ الْأَحْمَقِ وَرَاءَ لِسَانِهِ",
+        "translation": "",
+        "ref": "نهج‌البلاغه، حکمت ۴۰",
+        "school": "shia",
+        "verifyUrl": "https://thaqalayn.net/hadith/32/3/40/51",
+        "speaker": "امام علی (ع)",
+        "english": "40. Amīr al-mu’minīn, peace be upon him, said: The tongue of the wise man is behind his heart, and the heart of the fool is behind his tongue."
+      }
+    ]
+  },
+  {
+    "id": "lying",
+    "topic": "دروغ",
+    "source": {
+      "kind": "hadith",
+      "speaker": "امام محمد باقر (ع)",
+      "arabic": "إِنَّ الله عَزَّ وَجَلَّ جَعَلَ لِلشَّرِّ أَقْفَالاً وَجَعَلَ مَفَاتِيحَ تِلْكَ الأقْفَالِ الشَّرَابَ وَالْكَذِبُ شَرٌّ مِنَ الشَّرَابِ",
+      "translation": "",
+      "translator": "برگردان روان مشکات",
+      "ref": "الکافی، ج ۲، باب الکذب، ح ۳",
+      "grading": {
+        "value": "موثق",
+        "by": "علامه مجلسی، مرآة العقول"
+      },
+      "verifyUrl": "https://thaqalayn.net/hadith/1/1/139/3",
+      "english": "3. It is narrated from him (narrator of the Hadith above) from ‘Uthman ibn ‘Isa from ibn Muskan from Muhammad ibn Muslim from abu Ja’far (a.s.) who has said the following: “Allah, the Most Majestic, the Most Holy, has created certain locks for evil. He has made wine the key to those locks. Lying is more evil than wine.” "
+    },
+    "parallels": [
+      {
+        "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱتَّقُوا۟ ٱللَّهَ وَكُونُوا۟ مَعَ ٱلصَّٰدِقِينَ",
+        "translation": "ای کسانی که ایمان آورده‌اید! از (مخالفت فرمان) خدا بپرهیزید، و با صادقان باشید!",
+        "ref": "سورهٔ توبه، آیهٔ ۱۱۹ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#9:119"
+      }
+    ]
+  },
+  {
+    "id": "hope-relapse",
+    "topic": "وقتی دوباره خطا کردم",
+    "source": {
+      "kind": "quran",
+      "arabic": "قُلْ يَٰعِبَادِىَ ٱلَّذِينَ أَسْرَفُوا۟ عَلَىٰٓ أَنفُسِهِمْ لَا تَقْنَطُوا۟ مِن رَّحْمَةِ ٱللَّهِ ۚ إِنَّ ٱللَّهَ يَغْفِرُ ٱلذُّنُوبَ جَمِيعًا ۚ إِنَّهُۥ هُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
+      "translation": "بگو: «ای بندگان من که بر خود اسراف و ستم کرده‌اید! از رحمت خداوند نومید نشوید که خدا همه گناهان را می‌آمرزد، زیرا او بسیار آمرزنده و مهربان است.",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ زمر، آیهٔ ۵۳",
+      "verifyUrl": "https://tanzil.net/#39:53",
+      "ayah": {
+        "surah": 39,
+        "from": 53
+      }
+    },
+    "parallels": []
+  },
+  {
+    "id": "ease",
+    "topic": "سختی و امید",
+    "source": {
+      "kind": "quran",
+      "arabic": "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا إِنَّ مَعَ ٱلْعُسْرِ يُسْرًۭا",
+      "translation": "به یقین با (هر) سختی آسانی است! (آری) مسلّماً با (هر) سختی آسانی است،",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ شرح، آیات ۵ و ۶",
+      "verifyUrl": "https://tanzil.net/#94:5-6",
+      "ayah": {
+        "surah": 94,
+        "from": 5,
+        "to": 6
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "سَيَجْعَلُ ٱللَّهُ بَعْدَ عُسْرٍۢ يُسْرًۭا",
+        "translation": "خداوند بزودی بعد از سختیها آسانی قرار می‌دهد!",
+        "ref": "سورهٔ طلاق، بخشی از آیهٔ ۷ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#65:7"
+      }
+    ]
+  },
+  {
+    "id": "heart-rest",
+    "topic": "اضطراب و آرامش",
+    "source": {
+      "kind": "quran",
+      "arabic": "ٱلَّذِينَ ءَامَنُوا۟ وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ ٱللَّهِ ۗ أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ",
+      "translation": "آنها کسانی هستند که ایمان آورده‌اند، و دلهایشان به یاد خدا مطمئن (و آرام) است؛ آگاه باشید، تنها با یاد خدا دلها آرامش می‌یابد!",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ رعد، آیهٔ ۲۸",
+      "verifyUrl": "https://tanzil.net/#13:28",
+      "ayah": {
+        "surah": 13,
+        "from": 28
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "فَٱذْكُرُونِىٓ أَذْكُرْكُمْ وَٱشْكُرُوا۟ لِى وَلَا تَكْفُرُونِ",
+        "translation": "پس به یاد من باشید، تا به یاد شما باشم! و شکر مرا گویید و (در برابر نعمتهایم) کفران نکنید!",
+        "ref": "سورهٔ بقره، آیهٔ ۱۵۲ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#2:152"
+      }
+    ]
+  },
+  {
+    "id": "verify-news",
+    "topic": "شایعه و خبر",
+    "source": {
+      "kind": "quran",
+      "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِن جَآءَكُمْ فَاسِقٌۢ بِنَبَإٍۢ فَتَبَيَّنُوٓا۟ أَن تُصِيبُوا۟ قَوْمًۢا بِجَهَٰلَةٍۢ فَتُصْبِحُوا۟ عَلَىٰ مَا فَعَلْتُمْ نَٰدِمِينَ",
+      "translation": "ای کسانی که ایمان آورده‌اید! اگر شخص فاسقی خبری برای شما بیاورد، درباره آن تحقیق کنید، مبادا به گروهی از روی نادانی آسیب برسانید و از کرده خود پشیمان شوید!",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ حجرات، آیهٔ ۶",
+      "verifyUrl": "https://tanzil.net/#49:6",
+      "ayah": {
+        "surah": 49,
+        "from": 6
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "وَلَا تَقْفُ مَا لَيْسَ لَكَ بِهِۦ عِلْمٌ ۚ إِنَّ ٱلسَّمْعَ وَٱلْبَصَرَ وَٱلْفُؤَادَ كُلُّ أُو۟لَٰٓئِكَ كَانَ عَنْهُ مَسْـُٔولًۭا",
+        "translation": "از آنچه به آن آگاهی نداری، پیروی مکن، چرا که گوش و چشم و دل، همه مسؤولند.",
+        "ref": "سورهٔ اسراء، آیهٔ ۳۶ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#17:36"
+      }
+    ]
+  },
+  {
+    "id": "capacity",
+    "topic": "هدف واقع‌بینانه",
+    "source": {
+      "kind": "quran",
+      "arabic": "لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا",
+      "translation": "خداوند هیچ کس را، جز به اندازه تواناییش، تکلیف نمی‌کند.",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ بقره، بخشی از آیهٔ ۲۸۶",
+      "verifyUrl": "https://tanzil.net/#2:286",
+      "ayah": {
+        "surah": 2,
+        "from": 286
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "يُرِيدُ ٱللَّهُ بِكُمُ ٱلْيُسْرَ وَلَا يُرِيدُ بِكُمُ ٱلْعُسْرَ",
+        "translation": "خداوند، راحتی شما را می‌خواهد، نه زحمت شما را!",
+        "ref": "سورهٔ بقره، بخشی از آیهٔ ۱۸۵ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#2:185"
+      }
+    ]
+  },
+  {
+    "id": "parents",
+    "topic": "پدر و مادر",
+    "source": {
+      "kind": "quran",
+      "arabic": "وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوٓا۟ إِلَّآ إِيَّاهُ وَبِٱلْوَٰلِدَيْنِ إِحْسَٰنًا ۚ إِمَّا يَبْلُغَنَّ عِندَكَ ٱلْكِبَرَ أَحَدُهُمَآ أَوْ كِلَاهُمَا فَلَا تَقُل لَّهُمَآ أُفٍّۢ وَلَا تَنْهَرْهُمَا وَقُل لَّهُمَا قَوْلًۭا كَرِيمًۭا وَٱخْفِضْ لَهُمَا جَنَاحَ ٱلذُّلِّ مِنَ ٱلرَّحْمَةِ وَقُل رَّبِّ ٱرْحَمْهُمَا كَمَا رَبَّيَانِى صَغِيرًۭا",
+      "translation": "و پروردگارت فرمان داده: جز او را نپرستید! و به پدر و مادر نیکی کنید! هرگاه یکی از آن دو، یا هر دوی آنها، نزد تو به سن پیری رسند، کمترین اهانتی به آنها روا مدار! و بر آنها فریاد مزن! و گفتار لطیف و سنجیده و بزرگوارانه به آنها بگو! و بالهای تواضع خویش را از محبّت و لطف، در برابر آنان فرود آر! و بگو: «پروردگارا! همان‌گونه که آنها مرا در کوچکی تربیت کردند، مشمول رحمتشان قرار ده!»",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ اسراء، آیات ۲۳ و ۲۴",
+      "verifyUrl": "https://tanzil.net/#17:23-24",
+      "ayah": {
+        "surah": 17,
+        "from": 23,
+        "to": 24
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "أَيُّ الأعْمَالِ أَفْضَلُ قَالَ الصَّلاةُ لِوَقْتِهَا وَبِرُّ الْوَالِدَيْنِ وَالْجِهَادُ فِي سَبِيلِ الله عَزَّ وَجَلَّ",
+        "translation": "",
+        "ref": "الکافی، ج ۲، باب البر بالوالدين، ح ۴",
+        "school": "shia",
+        "grading": {
+          "value": "ضعیف على المشهور",
+          "by": "علامه مجلسی، مرآة العقول"
+        },
+        "verifyUrl": "https://thaqalayn.net/hadith/1/1/69/4",
+        "speaker": "امام صادق (ع)",
+        "english": "4. Al-Husayn ibn Muhammad has narrated from Mu’alla ibn Muhammad from al- Washsha’ from Mansur ibn Hazim from Abu ‘Abdillah (a.s.) who has said the following: “I asked Abu ‘Abdillah (a.s.) ‘Which deed is the best?’ The Imam said, ‘Prayer in its proper time, kindness to parents and hard work to strive for the cause of Allah, the Most Majestic, the Most Holy.’” "
+      }
+    ]
+  },
+  {
+    "id": "answer-peace",
+    "topic": "جواب بی‌ادبی",
+    "source": {
+      "kind": "quran",
+      "arabic": "وَعِبَادُ ٱلرَّحْمَٰنِ ٱلَّذِينَ يَمْشُونَ عَلَى ٱلْأَرْضِ هَوْنًۭا وَإِذَا خَاطَبَهُمُ ٱلْجَٰهِلُونَ قَالُوا۟ سَلَٰمًۭا",
+      "translation": "بندگان (خاص خداوند) رحمان، کسانی هستند که با آرامش و بی‌تکبّر بر زمین راه می‌روند؛ و هنگامی که جاهلان آنها را مخاطب سازند (و سخنان نابخردانه گویند)، به آنها سلام می‌گویند (و با بی‌اعتنایی و بزرگواری می‌گذرند)؛",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ فرقان، آیهٔ ۶۳",
+      "verifyUrl": "https://tanzil.net/#25:63",
+      "ayah": {
+        "surah": 25,
+        "from": 63
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "وَلَا تَسْتَوِى ٱلْحَسَنَةُ وَلَا ٱلسَّيِّئَةُ ۚ ٱدْفَعْ بِٱلَّتِى هِىَ أَحْسَنُ فَإِذَا ٱلَّذِى بَيْنَكَ وَبَيْنَهُۥ عَدَٰوَةٌۭ كَأَنَّهُۥ وَلِىٌّ حَمِيمٌۭ",
+        "translation": "هرگز نیکی و بدی یکسان نیست؛ بدی را با نیکی دفع کن، ناگاه (خواهی دید) همان کس که میان تو و او دشمنی است، گویی دوستی گرم و صمیمی است!",
+        "ref": "سورهٔ فصلت، آیهٔ ۳۴ (ترجمهٔ مکارم)",
+        "school": "quran",
+        "verifyUrl": "https://tanzil.net/#41:34"
+      }
+    ]
+  },
+  {
+    "id": "say-do",
+    "topic": "وفای به قول",
+    "source": {
+      "kind": "quran",
+      "arabic": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ لِمَ تَقُولُونَ مَا لَا تَفْعَلُونَ كَبُرَ مَقْتًا عِندَ ٱللَّهِ أَن تَقُولُوا۟ مَا لَا تَفْعَلُونَ",
+      "translation": "ای کسانی که ایمان آورده‌اید! چرا سخنی می‌گویید که عمل نمی‌کنید؟! نزد خدا بسیار موجب خشم است که سخنی بگویید که عمل نمی‌کنید!",
+      "translator": "ترجمهٔ آیت‌الله مکارم شیرازی",
+      "ref": "سورهٔ صف، آیات ۲ و ۳",
+      "verifyUrl": "https://tanzil.net/#61:2-3",
+      "ayah": {
+        "surah": 61,
+        "from": 2,
+        "to": 3
+      }
+    },
+    "parallels": [
+      {
+        "arabic": "إِنَّ الله عَزَّ وَجَلَّ لَمْ يَبْعَثْ نَبِيّاً إِلا بِصِدْقِ الْحَدِيثِ وَأَدَاءِ الأمَانَةِ إِلَى الْبَرِّ وَالْفَاجِرِ",
+        "translation": "",
+        "ref": "الکافی، ج ۲، باب الصدق و اداء الامانة، ح ۱",
+        "school": "shia",
+        "grading": {
+          "value": "حسن",
+          "by": "علامه مجلسی، مرآة العقول"
+        },
+        "verifyUrl": "https://thaqalayn.net/hadith/1/1/51/1",
+        "speaker": "امام صادق (ع)",
+        "english": "1. Muhammad ibn Yahya has narrated from Ahmad ibn Muhammad ibn ‘Isa from Ali ibn al-Hakam from al-Husayn ibn abu al-‘Ala’ from abu ‘Abd Allah recipient of divine supreme covenant who has said the following: “Allah, the Most Majestic, the Most Holy, has not sent any prophet who would not be truthful in their words and trustworthy in returning the trust without discriminating between virtuous or otherwise people.” "
+      }
+    ]
+  }
+]
