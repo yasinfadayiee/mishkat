@@ -11,8 +11,8 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const books = path.join(root, 'app', 'public', 'books')
 const out = path.join(root, 'content', 'jobs')
 // پاسخِ «عمیق‌تر» بلند است؛ کارها کوچک می‌مانند تا در یک پاسخ جا شوند
-const WORDS = 3500
-const MAX_ITEMS = 110
+const WORDS = 3000
+const MAX_ITEMS = 90
 
 // کتاب‌هایی که ترجمه دارند ولی «یعنی چه؟» و «عمیق‌تر» ندارند؛ این‌ها اول می‌آیند
 const ENRICH = ['Nahj-al-Balagha-Radi', 'sahifa', 'Risalat-al-Huquq-Abidin', 'Sifat-al-Shia-Saduq', 'Al-Kafi-Volume-2-Kulayni', 'tuhaf', 'ghurar']

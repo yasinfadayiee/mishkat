@@ -7,7 +7,7 @@ TASK: for EVERY item produce:
 - "gist" and "deep": see STYLE below.
 - "mirror": ONE sentence, second person (تو), that turns the passage into a mirror for the reader's own life so they can see and correct their own mistakes, e.g. «امروز کجا به‌جای فکرکردن، اول حرف زدی؟». Not a story about another person, not a named character. If the passage is purely historical, doctrinal or legal and no honest personal application exists, use "" (empty).
 
-OUTPUT: reply with ONLY one JSON code block: an array of {"id","fa","gist","deep","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after.
+OUTPUT: reply with ONLY one JSON code block: an array of {"id","fa","gist","deep","words","tags","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after.
 
 STRICT AUTHENTICITY RULES (religious app; fabrication is unacceptable)
 1. Never add another verse, hadith, story, miracle, or saying to "gist", "deep" or "mirror". Do not write «در روایت دیگری»، «پیامبر فرمود»، «امام صادق می‌فرماید».

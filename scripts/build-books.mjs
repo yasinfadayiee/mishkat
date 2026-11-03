@@ -68,7 +68,9 @@ const rich = (t) => {
   const gist = t.gist || e.gist
   const deep = t.deep || e.deep
   const mirror = e.mirror || t.mirror
-  return { fa: t.fa, nt: t.note, mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }) }
+  const words = t.words ?? e.words
+  const tags = t.tags ?? e.tags
+  return { fa: t.fa, nt: t.note, mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, x.m]) }), ...(tags?.length && { tg: tags }) }
 }
 
 const index = { shelves: SHELVES, books: [] }
@@ -340,6 +342,16 @@ for (const [col, title] of [
     d.sections.forEach((sec, si) => sec.chapters.forEach((c, ci) => c.items.forEach((it) => it.fa && rows.push([b.id, si, ci, it.n ?? it.i, it.fa]))))
   }
   write('search.json', rows)
+
+  // موضوع‌ها از برچسب‌های متن‌ها: { موضوع: [کتاب، بخش، باب، شمارهٔ متن، ترجمه، یعنی چه؟] }
+  const topics = {}
+  for (const b of index.books.filter((x) => x.kind === 'book' && x.translated)) {
+    const d = read(path.join(out, `${b.id}.json`))
+    d.sections.forEach((sec, si) =>
+      sec.chapters.forEach((c, ci) => c.items.forEach((it) => it.tg?.forEach((t) => (topics[t] ??= []).push([b.id, si, ci, it.n ?? it.i, it.fa, it.sm ?? ''])))),
+    )
+  }
+  write('topics.json', topics)
 }
 
 index.books.sort((a, b) => SHELVES.findIndex((s) => s.id === a.shelf) - SHELVES.findIndex((s) => s.id === b.shelf) || (a.order ?? 0) - (b.order ?? 0))

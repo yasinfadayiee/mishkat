@@ -47,7 +47,9 @@ for (const j of manifest) {
     const y = got.get(x.id)
     const id = Number(x.id.split('.')[1])
     const fa = (y.fa ?? x.fa ?? '').trim()
-    const rich = { gist: clean(y.gist ?? '', fa), deep: clean(y.deep ?? '', fa), mirror: clean(y.mirror ?? '', fa) }
+    const words = Array.isArray(y.words) ? y.words.filter((w) => w?.w && w?.m).slice(0, 3) : []
+    const tags = Array.isArray(y.tags) ? y.tags.filter((t) => typeof t === 'string').slice(0, 3) : []
+    const rich = { gist: clean(y.gist ?? '', fa), deep: clean(y.deep ?? '', fa), mirror: clean(y.mirror ?? '', fa), ...(words.length && { words }), ...(tags.length && { tags }) }
     return j.kind === 'enrich' ? { id, ...rich } : { id, fa, note: clean(y.note ?? '', fa), ...rich }
   })
   // کار «توضیح» جدا ذخیره می‌شود تا ترجمهٔ بازبینی‌شده دست نخورد

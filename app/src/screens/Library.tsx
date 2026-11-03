@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { loadBook, loadIndex, loadSearch, norm, savePlace, type Book, type BookMeta, type Chapter, type Hit, type Item, type Shelf } from '../books'
 import { CHAPTERS, lessonById, lessons } from '../data/lessons'
 import { MarkButton, ReaderShell } from '../reader'
+import { shareCard } from '../share'
+import { TopicGrid } from './Topics'
 import { fa, useStore } from '../store'
 import { ArabicText, Icon, Medallion } from '../ui'
 
@@ -18,7 +20,7 @@ const SPINE: Record<string, string> = {
 export type Open = { book: BookMeta; sec: number; ch: number } | null
 
 /** کتابخانه: قفسه‌ها، درس‌نامه‌ها و جست‌وجو در عنوان کتاب‌ها */
-export function Library({ openLesson, openBook, openQuran, openAt, openSurah }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openAt: (b: BookMeta, sec: number, ch: number) => void; openSurah: (n: number) => void }) {
+export function Library({ openLesson, openBook, openQuran, openAt, openSurah, openTopic }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openAt: (b: BookMeta, sec: number, ch: number) => void; openSurah: (n: number) => void; openTopic: (id: string) => void }) {
   const [idx, setIdx] = useState<{ shelves: Shelf[]; books: BookMeta[] } | null>(null)
   const [q, setQ] = useState('')
   const { p } = useStore()
@@ -85,6 +87,8 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah }: 
           </div>
         </section>
       )}
+
+      {!k && <TopicGrid open={openTopic} />}
 
       {!k && (
         <section className="shelf">
@@ -276,7 +280,7 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
           </header>
         )}
         {chapter?.items.map((it, k) => (
-          <TextBlock key={it.i} it={it} n={k + 1} showAr={showAr || !it.fa} marked={p.marks.some((m) => m.key === `b:${meta.id}:${it.i}`)} onMark={() => toggleMark({ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, text: it.fa ?? it.ar })} />
+          <TextBlock key={it.i} it={it} n={k + 1} ctx={{ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, source: `${meta.title}، ${chapter.t}`, shelf: meta.shelf }} showAr={showAr || !it.fa} marked={p.marks.some((m) => m.key === `b:${meta.id}:${it.i}`)} onMark={() => toggleMark({ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, text: it.fa ?? it.ar })} />
         ))}
         {book && (
           <nav className="reader-nav">
@@ -293,7 +297,14 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
   )
 }
 
-function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void }) {
+type TextCtx = { key: string; title: string; source: string; shelf?: string }
+
+function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void; ctx: TextCtx }) {
+  const { p, setNote } = useStore()
+  const note = p.notes[ctx.key]
+  const [writing, setWriting] = useState(false)
+  const [word, setWord] = useState<number | null>(null)
+  const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
   return (
     <article className="text-block">
       <div className="ayah-tools">
@@ -309,6 +320,14 @@ function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; sho
             {Icon.shield}
           </a>
         )}
+        {it.fa && (
+          <button className="mini-btn" aria-label="کارت تصویری برای فرستادن" onClick={() => shareCard({ ar: it.ar, gist: it.sm, fa: it.fa!, source: ctx.source, shelf: ctx.shelf })}>
+            {Icon.share}
+          </button>
+        )}
+        <button className={`mini-btn ${note?.note ? 'on' : ''}`} aria-label="یادداشت من" onClick={() => setWriting((x) => !x)}>
+          {Icon.pen}
+        </button>
         <MarkButton on={marked} onClick={onMark} />
       </div>
       {it.fa ? (
@@ -317,6 +336,19 @@ function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; sho
             <div className="tb-gist">
               <small>یعنی چه؟</small>
               <p>{it.sm}</p>
+            </div>
+          )}
+          {it.w && (
+            <div className="tb-words">
+              <small>واژه‌های کلیدی</small>
+              <div>
+                {it.w.map(([w], k) => (
+                  <button key={k} className={word === k ? 'on' : ''} onClick={() => setWord(word === k ? null : k)}>
+                    {w}
+                  </button>
+                ))}
+              </div>
+              {word !== null && it.w[word] && <p>{it.w[word][1]}</p>}
             </div>
           )}
           {it.dp ? (
@@ -340,7 +372,16 @@ function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; sho
           {it.mr && (
             <div className="tb-mirror">
               {Icon.life}
-              <p>{it.mr}</p>
+              <div>
+                <p>{it.mr}</p>
+                <textarea className="tb-answer" rows={note?.answer ? 3 : 1} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" defaultValue={note?.answer ?? ''} onBlur={(e) => e.target.value !== (note?.answer ?? '') && save({ answer: e.target.value })} />
+              </div>
+            </div>
+          )}
+          {(writing || note?.note) && (
+            <div className="tb-mynote">
+              <small>یادداشت من</small>
+              <textarea rows={3} autoFocus={writing} placeholder="هرچه از این متن فهمیدی یا می‌خواهی به یاد بماند…" defaultValue={note?.note ?? ''} onBlur={(e) => e.target.value !== (note?.note ?? '') && save({ note: e.target.value })} />
             </div>
           )}
           <div className={`tb-source ${it.sm ? 'quiet' : ''}`}>

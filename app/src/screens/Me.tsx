@@ -28,6 +28,34 @@ export function Me({ goTo, openLesson, openMark }: { goTo: (t: 'trust') => void;
         </p>
       </header>
 
+      {Object.keys(p.notes).length > 0 && (
+        <section className="shelf">
+          <div className="shelf-head">
+            <h2>آنچه نوشته‌ام</h2>
+            <small>پاسخ‌هایت به پرسش‌های آینه و یادداشت‌هایت روی متن‌ها</small>
+          </div>
+          <div className="marks">
+            {Object.entries(p.notes)
+              .sort((a, b) => b[1].at.localeCompare(a[1].at))
+              .map(([key, n]) => (
+                <button key={key} className="mark-row my-note" onClick={() => openMark(key)}>
+                  <small>
+                    {n.title} · {new Date(n.at).toLocaleDateString('fa-IR')}
+                  </small>
+                  <p className="mn-text">{n.text.length > 160 ? `${n.text.slice(0, 160)}…` : n.text}</p>
+                  {n.answer && (
+                    <p className="mn-answer">
+                      <em>{n.question}</em>
+                      {n.answer}
+                    </p>
+                  )}
+                  {n.note && <p className="mn-note">{n.note}</p>}
+                </button>
+              ))}
+          </div>
+        </section>
+      )}
+
       <section className="shelf">
         <div className="shelf-head">
           <h2>متن‌های نشان‌شده</h2>

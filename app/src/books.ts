@@ -31,6 +31,10 @@ export interface Item {
   sm?: string
   /** «عمیق‌تر»: لایهٔ زیرین معنا */
   dp?: string
+  /** واژه‌های کلیدی: [واژهٔ عربی، معنا] */
+  w?: [string, string][]
+  /** شناسهٔ موضوع‌ها (data/topics.ts) */
+  tg?: string[]
 }
 export interface Chapter {
   t: string
@@ -74,6 +78,9 @@ export const loadSurah = (n: number) => load<Surah>(`quran/${n}.json`)
 /** [کتاب، بخش یا سوره، باب، شمارهٔ متن یا آیه، متن فارسی] */
 export type Hit = [string, number, number, number, string]
 export const loadSearch = () => load<Hit[]>('search.json')
+/** موضوع ← [کتاب، بخش، باب، شمارهٔ متن، ترجمه، یعنی چه؟] */
+export type TopicHit = [string, number, number, number, string, string]
+export const loadTopics = () => load<Record<string, TopicHit[]>>('topics.json')
 
 /* ───────── جای مطالعه ───────── */
 export interface Place {

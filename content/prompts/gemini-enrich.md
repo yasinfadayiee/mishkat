@@ -2,9 +2,9 @@ You are writing explanations for "Mishkat" (مشکات), a Persian app whose goa
 
 INPUT: a JSON array. Each item: { "id": a string like "850.345", "ar": the verified Arabic text, "fa": its checked Persian translation }. The translation is already done; do NOT translate again.
 
-TASK: for EVERY item write "gist", "deep" and "mirror" (see STYLE below), based on the Arabic and its translation.
+TASK: for EVERY item write "gist", "deep", "words", "tags" and "mirror" (see STYLE below), based on the Arabic and its translation.
 
-OUTPUT: reply with ONLY one JSON code block: an array of {"id","gist","deep","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after. If your reply is cut off before the last item, the user will write «ادامه بده»; then reply with ONLY one JSON code block containing the remaining items.
+OUTPUT: reply with ONLY one JSON code block: an array of {"id","gist","deep","words","tags","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after. If your reply is cut off before the last item, the user will write «ادامه بده»; then reply with ONLY one JSON code block containing the remaining items.
 
 STRICT AUTHENTICITY RULES (religious app; fabrication is unacceptable)
 1. Never add another verse, hadith, story, miracle or saying. Do not write «در روایت دیگری»، «پیامبر فرمود»، «امام صادق می‌فرماید» about anything that is not in this item.

@@ -39,6 +39,17 @@ export interface Mark {
   at: string
 }
 
+/** یادداشتِ من روی یک متن: نوشتهٔ آزاد و پاسخ به پرسشِ آینه */
+export interface Note {
+  title: string
+  /** متنِ اصلی (برای نمایش در یادداشت‌ها) */
+  text: string
+  note?: string
+  answer?: string
+  question?: string
+  at: string
+}
+
 export interface Progress {
   onboarded: boolean
   name: string
@@ -54,6 +65,8 @@ export interface Progress {
   /** درس‌های نشان‌شده برای مطالعهٔ دوباره */
   saved: string[]
   marks: Mark[]
+  /** کلید: q:سوره:آیه یا b:کتاب:شناسه */
+  notes: Record<string, Note>
   /** کاربر خودش پوسته انتخاب کرده است (وگرنه پوستهٔ خودکار) */
   themeSet?: boolean
 }
@@ -73,6 +86,7 @@ const initial: Progress = {
   programs: {},
   saved: [],
   marks: [],
+  notes: {},
 }
 
 function load(): Progress {
@@ -127,6 +141,7 @@ interface Store {
   addJournal: (lessonId: string, text: string) => void
   toggleSaved: (lessonId: string) => void
   toggleMark: (m: Omit<Mark, 'at'>) => void
+  setNote: (key: string, patch: Partial<Note> & Pick<Note, 'title' | 'text'>) => void
   streak: number
 }
 
@@ -185,6 +200,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         set((x) => ({ ...x, journal: [{ lessonId, text, date: today }, ...x.journal] })),
       toggleMark: (m) =>
         set((x) => ({ ...x, marks: x.marks.some((k) => k.key === m.key) ? x.marks.filter((k) => k.key !== m.key) : [{ ...m, at: today }, ...x.marks] })),
+      setNote: (key, patch) =>
+        set((x) => {
+          const n = { ...x.notes[key], ...patch, at: today }
+          const notes = { ...x.notes }
+          if (n.note?.trim() || n.answer?.trim()) notes[key] = n
+          else delete notes[key]
+          return { ...x, notes }
+        }),
       toggleSaved: (lessonId) =>
         set((x) => ({ ...x, saved: x.saved.includes(lessonId) ? x.saved.filter((i) => i !== lessonId) : [lessonId, ...x.saved] })),
     }

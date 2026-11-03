@@ -9,6 +9,7 @@ import { BookToc, ChapterReader, Library } from './screens/Library'
 import { Me, Trust } from './screens/Me'
 import { Onboarding } from './screens/Onboarding'
 import { Quran, SurahReader } from './screens/Quran'
+import { TopicReader } from './screens/Topics'
 import { StoreProvider, useStore } from './store'
 import { Girih, Icon } from './ui'
 
@@ -22,7 +23,7 @@ const NAV: { id: Exclude<Tab, 'trust'>; label: string; icon: keyof typeof Icon }
 ]
 
 /** آنچه روی صفحه باز است (درس‌نامه، سوره، فهرست کتاب یا یک باب) */
-type View = { kind: 'lesson'; id: string } | { kind: 'surah'; n: number } | { kind: 'toc'; book: BookMeta } | { kind: 'chapter'; book: BookMeta; sec: number; ch: number } | null
+type View = { kind: 'lesson'; id: string } | { kind: 'surah'; n: number } | { kind: 'toc'; book: BookMeta } | { kind: 'chapter'; book: BookMeta; sec: number; ch: number } | { kind: 'topic'; id: string } | null
 
 const introSeen = () => {
   try {
@@ -112,7 +113,7 @@ function Shell() {
           <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             {tab === 'home' && <Home openLesson={openLesson} openQuran={openQuran} openBook={openBook} openPlace={openPlace} goTo={setTab} />}
             {tab === 'quran' && <Quran open={(n) => setView({ kind: 'surah', n })} />}
-            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} openAt={(b, sec, ch) => openBook(b, sec, ch)} openSurah={(n) => setView({ kind: 'surah', n })} />}
+            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} openAt={(b, sec, ch) => openBook(b, sec, ch)} openSurah={(n) => setView({ kind: 'surah', n })} openTopic={(id) => setView({ kind: 'topic', id })} />}
             {tab === 'me' && <Me goTo={setTab} openLesson={openLesson} openMark={openMark} />}
             {tab === 'trust' && <Trust back={() => setTab('home')} />}
           </motion.div>
@@ -132,6 +133,7 @@ function Shell() {
         {lesson && <LessonPlayer key={lesson.id} lesson={lesson} onClose={close} />}
         {view?.kind === 'surah' && <SurahReader key="surah" n={view.n} onClose={close} go={(n) => setView({ kind: 'surah', n })} />}
         {view?.kind === 'toc' && <BookToc key={`toc-${view.book.id}`} meta={view.book} onClose={close} open={(sec, ch) => (setBack(view), setView({ kind: 'chapter', book: view.book, sec, ch }))} />}
+        {view?.kind === 'topic' && <TopicReader key={`topic-${view.id}`} id={view.id} onClose={close} openAt={(b, sec, ch) => (setBack(view), setView({ kind: 'chapter', book: b, sec, ch }))} openSurah={(n) => (setBack(view), setView({ kind: 'surah', n }))} />}
         {view?.kind === 'chapter' && <ChapterReader key={`ch-${view.book.id}`} meta={view.book} sec={view.sec} ch={view.ch} onClose={close} go={(sec, ch) => setView({ ...view, sec, ch })} />}
       </AnimatePresence>
     </div>
