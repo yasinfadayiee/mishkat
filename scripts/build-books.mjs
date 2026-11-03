@@ -36,9 +36,18 @@ const fa2 = (t) => (t && title2.get(t)) || t
 // ترجمهٔ متن‌ها: content/translations/<bookId>/*.json → { id: {fa, note, mirror} }
 const translations = (bookId) => {
   const dir = path.join(trDir, bookId)
+  // چند شماره در منبع تکراری است (مثلاً غرر)؛ ترجمه‌های هم‌شماره به ترتیب کتاب به متن‌ها می‌رسند
   const m = new Map()
-  if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) for (const x of read(path.join(dir, f))) if (x.fa?.trim()) m.set(x.id, x)
-  return m
+  let size = 0
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).sort((a, b) => a.localeCompare(b, 'en', { numeric: true })) : []
+  for (const f of files)
+    for (const x of read(path.join(dir, f)))
+      if (x.fa?.trim()) {
+        if (!m.has(x.id)) m.set(x.id, [])
+        m.get(x.id).push(x)
+        size++
+      }
+  return { size, get: (id) => (m.get(id)?.length > 1 ? m.get(id).shift() : m.get(id)?.[0]) }
 }
 
 const index = { shelves: SHELVES, books: [] }
