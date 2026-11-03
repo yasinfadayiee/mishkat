@@ -54,7 +54,10 @@ async function pickModel() {
     .filter((m) => m.supportedGenerationMethods?.includes('generateContent') && /pro/i.test(m.name) && !/vision|tts|image|embed|preview-tts/i.test(m.name))
     .map((m) => m.name.replace('models/', ''))
   const version = (n) => Number((n.match(/gemini-(\d+(?:\.\d+)?)/) ?? [0, 0])[1])
-  pro.sort((a, b) => version(b) - version(a) || Number(/latest/.test(b)) - Number(/latest/.test(a)) || a.length - b.length)
+  // «آرگون» همان قوی‌ترین مدل سایت Gemini است؛ اگر در دسترس باشد اول آن
+  const argon = (json.models ?? []).map((m) => m.name.replace('models/', '')).filter((n) => /argon/i.test(n) && !/tts|image|live/i.test(n))
+  pro.unshift(...argon)
+  pro.sort((a, b) => Number(/argon/i.test(b)) - Number(/argon/i.test(a)) || version(b) - version(a) || Number(/latest/.test(b)) - Number(/latest/.test(a)) || a.length - b.length)
   if (!pro.length) throw new Error('هیچ مدل Pro در دسترس این کلید نیست؛ با --model نام مدل را بده')
   return pro[0]
 }

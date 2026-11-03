@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "مشکات · Gemini",
+  "version": "0.1.0",
+  "description": "کارهای ترجمهٔ مشکات را یکی‌یکی در Gemini (آرگون، سطح اندیشگر بالا) اجرا و نتیجه را در پوشهٔ پروژه ذخیره می‌کند.",
+  "host_permissions": ["http://127.0.0.1:8791/*"],
+  "permissions": ["storage"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{ "matches": ["https://gemini.google.com/*"], "js": ["content.js"], "run_at": "document_idle" }]
+}
