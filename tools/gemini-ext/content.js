@@ -79,12 +79,9 @@
     ed.focus()
     document.execCommand('selectAll')
     document.execCommand('delete')
-    // insertText در این ویرایشگر در نخستین «خط تازه» می‌ایستد؛ پس خط‌به‌خط، با پاراگرافِ تازه میانشان
-    const lines = text.split('\n')
-    lines.forEach((line, k) => {
-      if (line) document.execCommand('insertText', false, line)
-      if (k < lines.length - 1) document.execCommand('insertParagraph')
-    })
+    // ویرایشگر Gemini پس از نخستین «خط تازه» بقیهٔ متن را نمی‌پذیرد؛ پس همه در یک خط
+    // (بخش JSON از اول یک‌خطی است و دستورها با فاصله هم خوانا می‌مانند)
+    document.execCommand('insertText', false, text.replace(/\s*\n+\s*/g, '  '))
     await sleep(2000)
     const bare = (t) => t.replace(/\s+/g, '').length
     if (bare(ed.innerText) < bare(text) * 0.97) throw new Error(`متن کامل در کادر ننشست (${bare(ed.innerText)} از ${bare(text)})`)
