@@ -79,9 +79,15 @@
     ed.focus()
     document.execCommand('selectAll')
     document.execCommand('delete')
-    document.execCommand('insertText', false, text)
-    await sleep(1500)
-    if (ed.innerText.trim().length < text.trim().length * 0.97) throw new Error('متن کامل در کادر ننشست')
+    // insertText در این ویرایشگر در نخستین «خط تازه» می‌ایستد؛ پس خط‌به‌خط، با پاراگرافِ تازه میانشان
+    const lines = text.split('\n')
+    lines.forEach((line, k) => {
+      if (line) document.execCommand('insertText', false, line)
+      if (k < lines.length - 1) document.execCommand('insertParagraph')
+    })
+    await sleep(2000)
+    const bare = (t) => t.replace(/\s+/g, '').length
+    if (bare(ed.innerText) < bare(text) * 0.97) throw new Error(`متن کامل در کادر ننشست (${bare(ed.innerText)} از ${bare(text)})`)
   }
 
   async function send() {
