@@ -27,6 +27,10 @@ export interface Item {
   nt?: string
   /** پرسشی برای سنجیدن زندگی خود */
   mr?: string
+  /** «یعنی چه؟»: یک جمله به زبان خودمانی */
+  sm?: string
+  /** «عمیق‌تر»: لایهٔ زیرین معنا */
+  dp?: string
 }
 export interface Chapter {
   t: string

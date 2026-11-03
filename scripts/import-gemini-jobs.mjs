@@ -30,7 +30,7 @@ for (const f of files) {
     }
   }
   if (!Array.isArray(list)) continue
-  for (const x of list) if (typeof x?.id === 'string' && /^\d{3}\.\d+$/.test(x.id) && x.fa?.trim()) got.set(x.id, x)
+  for (const x of list) if (typeof x?.id === 'string' && /^\d{3,4}\.\d+$/.test(x.id) && (x.fa ?? x.gist)?.trim()) got.set(x.id, x)
 }
 
 let done = 0
@@ -41,15 +41,17 @@ for (const j of manifest) {
   const have = data.filter((x) => got.has(x.id))
   if (!have.length) continue
   if (have.length < data.length) partial.push(`${j.job} (${have.length}/${data.length})`)
+  // «نقل شده» بی‌خطر است و جایگزین می‌شود؛ بقیهٔ واژه‌های ممنوع در بازبینی دستی دیده می‌شوند
+  const clean = (t, fa = '') => (fa.includes('نقل شده') ? t : t.replaceAll('نقل شده', 'آمده')).trim()
   const list = have.map((x) => {
     const y = got.get(x.id)
-    let note = (y.note ?? '').trim()
-    let mirror = (y.mirror ?? '').trim()
-    // «نقل شده» بی‌خطر است و جایگزین می‌شود؛ بقیهٔ واژه‌های ممنوع در بازبینی دستی دیده می‌شوند
-    if (!y.fa.includes('نقل شده')) (note = note.replaceAll('نقل شده', 'آمده'), (mirror = mirror.replaceAll('نقل شده', 'آمده')))
-    return { id: Number(x.id.split('.')[1]), fa: y.fa.trim(), note, mirror }
+    const id = Number(x.id.split('.')[1])
+    const fa = (y.fa ?? x.fa ?? '').trim()
+    const rich = { gist: clean(y.gist ?? '', fa), deep: clean(y.deep ?? '', fa), mirror: clean(y.mirror ?? '', fa) }
+    return j.kind === 'enrich' ? { id, ...rich } : { id, fa, note: clean(y.note ?? '', fa), ...rich }
   })
-  const dir = path.join(root, 'content', 'translations', j.book)
+  // کار «توضیح» جدا ذخیره می‌شود تا ترجمهٔ بازبینی‌شده دست نخورد
+  const dir = path.join(root, 'content', j.kind === 'enrich' ? 'enrich' : 'translations', j.book)
   fs.mkdirSync(dir, { recursive: true })
   fs.writeFileSync(path.join(dir, `job-${j.job}-fa.json`), JSON.stringify(list, null, 1))
   if (have.length === data.length) done++

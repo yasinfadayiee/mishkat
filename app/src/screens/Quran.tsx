@@ -94,7 +94,7 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
   const ayahs = (s?.ayahs ?? []).map(([ar, f], k) => [k === 0 && n !== 1 && n !== 9 ? stripBasmala(ar) : ar, f] as const)
 
   return (
-    <ReaderShell
+    <ReaderShell tone="quran"
       title={s ? `سورهٔ ${name}` : ''}
       onClose={onClose}
       scrollRef={scroller}

@@ -4,9 +4,13 @@ import { fa, useStore, type ThemeId } from '../store'
 import { Icon } from '../ui'
 
 const THEMES: { id: ThemeId; name: string; colors: string[] }[] = [
-  { id: 'emerald', name: 'شب زمردی', colors: ['#06201a', '#3fcf9f', '#e6c27d'] },
-  { id: 'isfahan', name: 'فیروزه‌ای اصفهان', colors: ['#08172f', '#3fd3d8', '#ecc77f'] },
+  { id: 'auto', name: 'همراه با آسمان (خودکار)', colors: ['#3a2a5c', '#f2b866', '#0d2347'] },
+  { id: 'dawn', name: 'سحر', colors: ['#1d1638', '#f0a3a8', '#f3cf8a'] },
   { id: 'parchment', name: 'کاغذ کاهی', colors: ['#f7efdf', '#0e7a5c', '#9a6f27'] },
+  { id: 'noon', name: 'کاشیِ ظهر', colors: ['#eef6f4', '#0f7f86', '#b3832f'] },
+  { id: 'dusk', name: 'عصر و مغرب', colors: ['#2a1418', '#e8875a', '#f0c27a'] },
+  { id: 'isfahan', name: 'شبِ فیروزه‌ای', colors: ['#08172f', '#3fd3d8', '#ecc77f'] },
+  { id: 'emerald', name: 'شب زمردی', colors: ['#06201a', '#3fcf9f', '#e6c27d'] },
 ]
 
 /** یادداشت‌ها: نشان‌ها، دفتر، تمرین‌ها و تنظیمات */
@@ -114,7 +118,7 @@ export function Me({ goTo, openLesson, openMark }: { goTo: (t: 'trust') => void;
         </label>
         <div className="grid three" style={{ marginTop: 12 }}>
           {THEMES.map((t) => (
-            <button key={t.id} className={`theme-swatch ${p.theme === t.id ? 'on' : ''}`} onClick={() => set((x) => ({ ...x, theme: t.id }))}>
+            <button key={t.id} className={`theme-swatch ${p.theme === t.id ? 'on' : ''}`} onClick={() => set((x) => ({ ...x, theme: t.id, themeSet: true }))}>
               <span className="dots" style={{ paddingLeft: 6 }}>
                 {t.colors.map((c) => (
                   <i key={c} style={{ background: c }} />

@@ -1,0 +1,554 @@
+/* ═════════ نسخهٔ ۰.۶: آسمانِ زنده، رنگِ هر کتاب، تذهیب ═════════ */
+
+/* ───────── پوسته‌های تازه ───────── */
+:root[data-theme='dawn'] {
+  --bg0: #120d24;
+  --bg1: #1d1638;
+  --bg2: #2a1f4d;
+  --card: rgba(46, 34, 84, 0.58);
+  --card-solid: #261c47;
+  --card-hi: rgba(74, 56, 128, 0.5);
+  --line: rgba(240, 163, 168, 0.18);
+  --line-strong: rgba(243, 207, 138, 0.42);
+  --ink: #f7eee6;
+  --ink-2: #ddd2e6;
+  --muted: #a99bbf;
+  --gold: #f3cf8a;
+  --gold-2: #d49a5c;
+  --gold-soft: rgba(243, 207, 138, 0.13);
+  --accent: #f0a3a8;
+  --accent-soft: rgba(240, 163, 168, 0.15);
+  --pattern: rgba(240, 163, 168, 0.07);
+  --glow: rgba(255, 170, 150, 0.5);
+  --shadow: 0 18px 50px rgba(5, 0, 20, 0.5);
+  --sky-a: #3a2a5c;
+  --sky-b: #120d24;
+  color-scheme: dark;
+}
+
+:root[data-theme='noon'] {
+  --bg0: #e3efed;
+  --bg1: #eef6f4;
+  --bg2: #dbe9e6;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-solid: #ffffff;
+  --card-hi: rgba(255, 255, 255, 0.95);
+  --line: rgba(15, 127, 134, 0.16);
+  --line-strong: rgba(179, 131, 47, 0.42);
+  --ink: #12302f;
+  --ink-2: #2f4c4a;
+  --muted: #66807c;
+  --gold: #a5741f;
+  --gold-2: #85590f;
+  --gold-soft: rgba(179, 131, 47, 0.11);
+  --accent: #0f7f86;
+  --accent-soft: rgba(15, 127, 134, 0.1);
+  --pattern: rgba(15, 127, 134, 0.07);
+  --glow: rgba(255, 200, 90, 0.45);
+  --shadow: 0 14px 40px rgba(10, 70, 72, 0.13);
+  --sky-a: #eef6f4;
+  --sky-b: #cfe5e1;
+  color-scheme: light;
+}
+
+:root[data-theme='dusk'] {
+  --bg0: #1a0c0f;
+  --bg1: #2a1418;
+  --bg2: #3a1c1f;
+  --card: rgba(70, 32, 34, 0.55);
+  --card-solid: #3b1d20;
+  --card-hi: rgba(110, 50, 44, 0.48);
+  --line: rgba(240, 194, 122, 0.17);
+  --line-strong: rgba(240, 194, 122, 0.42);
+  --ink: #f8ecdf;
+  --ink-2: #e6d2c4;
+  --muted: #b79a8b;
+  --gold: #f0c27a;
+  --gold-2: #cf8f45;
+  --gold-soft: rgba(240, 194, 122, 0.13);
+  --accent: #e8875a;
+  --accent-soft: rgba(232, 135, 90, 0.15);
+  --pattern: rgba(232, 135, 90, 0.07);
+  --glow: rgba(255, 160, 90, 0.55);
+  --shadow: 0 18px 50px rgba(20, 0, 0, 0.5);
+  --sky-a: #5a2a26;
+  --sky-b: #1a0c0f;
+  color-scheme: dark;
+}
+
+/* پس‌زمینه با نور ملایمِ هنگامِ روز */
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, var(--glow), transparent 60%) fixed,
+    radial-gradient(900px 500px at 0% 110%, var(--accent-soft), transparent 70%) fixed,
+    linear-gradient(180deg, var(--bg1), var(--bg0)) fixed;
+  transition: background-color 1.2s ease;
+}
+:root[data-theme='parchment'] body,
+:root[data-theme='noon'] body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(255, 210, 120, 0.35), transparent 60%) fixed,
+    linear-gradient(180deg, var(--bg1), var(--bg0)) fixed;
+}
+
+/* ───────── رنگ هر قفسه ───────── */
+[data-shelf='quran'] { --tone: #0f5a45; --tone-2: #06281f; --tone-hi: #e6c27d; --tone-ink: #fff4dc; }
+[data-shelf='nahj'] { --tone: #1f4597; --tone-2: #0b1d47; --tone-hi: #f0c97e; --tone-ink: #fff3db; }
+[data-shelf='arbaa'] { --tone: #0e6f78; --tone-2: #06343a; --tone-hi: #9fe3dc; --tone-ink: #eefcf9; }
+[data-shelf='saduq'] { --tone: #9a4a2e; --tone-2: #4a1d10; --tone-hi: #f3c08a; --tone-ink: #fff1e2; }
+[data-shelf='other'] { --tone: #5b2e6e; --tone-2: #2a1236; --tone-hi: #e6b8f0; --tone-ink: #fbefff; }
+[data-shelf='sunni'] { --tone: #3d4a5a; --tone-2: #1b222c; --tone-hi: #cfd8e3; --tone-ink: #f3f6fa; }
+
+/* ───────── آسمانِ زنده ───────── */
+.masthead {
+  isolation: isolate;
+}
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+.sky-grad {
+  position: absolute;
+  inset: 0;
+  transition: background 2s ease;
+}
+.sky-sahar .sky-grad { background: linear-gradient(180deg, #120d2e 0%, #3a2a66 42%, #b0607a 78%, #f0a37e 100%); }
+.sky-morning .sky-grad { background: linear-gradient(180deg, #7fb6d9 0%, #b9d8e6 45%, #f6dcae 85%, #f9c987 100%); }
+.sky-noon .sky-grad { background: linear-gradient(180deg, #2f8fc4 0%, #6fbbe0 45%, #c9ecf2 90%); }
+.sky-asr .sky-grad { background: linear-gradient(180deg, #4f7fb0 0%, #e9a96b 62%, #f4c98c 100%); }
+.sky-maghrib .sky-grad { background: linear-gradient(180deg, #1f1840 0%, #6b2f5c 40%, #d9604a 78%, #f2a35c 100%); }
+.sky-night .sky-grad { background: linear-gradient(180deg, #040915 0%, #0b1a3a 55%, #14305c 100%); }
+
+.sky-girih {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(255, 240, 210, 0.07);
+}
+.sky-morning .sky-girih,
+.sky-noon .sky-girih {
+  color: rgba(255, 255, 255, 0.1);
+}
+
+.sky-stars i {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff8e6;
+  box-shadow: 0 0 6px rgba(255, 245, 220, 0.9);
+  animation: twinkle 5s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+.sky-body {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  border-radius: 50%;
+  transition: left 60s linear, top 60s linear;
+}
+.sky-body.sun {
+  background: radial-gradient(circle, #fff8dd 0%, #ffe39a 45%, #ffc860 70%);
+  box-shadow: 0 0 40px 18px rgba(255, 214, 120, 0.55), 0 0 140px 60px rgba(255, 200, 110, 0.3);
+}
+.sky-asr .sky-body.sun,
+.sky-maghrib .sky-body.sun {
+  background: radial-gradient(circle, #fff0d0 0%, #ffb067 55%, #f07d47 75%);
+  box-shadow: 0 0 50px 22px rgba(255, 140, 80, 0.55), 0 0 160px 70px rgba(255, 120, 70, 0.3);
+}
+.sky-body.moon {
+  width: 42px;
+  height: 42px;
+  background: radial-gradient(circle at 36% 38%, #fffdf2 0%, #efe6c8 55%, #cbbf9a 100%);
+  box-shadow: 0 0 30px 8px rgba(255, 246, 214, 0.35);
+}
+.sky-body.moon::after {
+  /* هلال: سایهٔ گرد روی ماه */
+  content: '';
+  position: absolute;
+  inset: -2px -2px -2px 10px;
+  border-radius: 50%;
+  background: inherit;
+  filter: brightness(0.22) saturate(0.5);
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+}
+
+.sky-city {
+  position: absolute;
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 40%;
+}
+.sky-city .far { fill: rgba(0, 0, 0, 0.28); }
+.sky-city .near { fill: rgba(6, 10, 20, 0.82); }
+.sky-city .lights { fill: transparent; }
+.sky-night .sky-city .lights,
+.sky-sahar .sky-city .lights,
+.sky-maghrib .sky-city .lights {
+  fill: #ffd27a;
+  filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.9));
+  animation: lamp 6s ease-in-out infinite;
+}
+@keyframes lamp {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.sky-morning .sky-city .near,
+.sky-noon .sky-city .near { fill: rgba(16, 50, 58, 0.78); }
+.sky-morning .sky-city .far,
+.sky-noon .sky-city .far { fill: rgba(16, 60, 70, 0.25); }
+
+.sky-fade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, var(--bg1));
+}
+
+.masthead-text {
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+}
+.sky-morning ~ .masthead-text,
+.sky-noon ~ .masthead-text {
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
+}
+.sky-morning ~ .masthead-text h1,
+.sky-noon ~ .masthead-text h1,
+.sky-morning ~ .masthead-text .mast-hi,
+.sky-noon ~ .masthead-text .mast-hi {
+  color: #0d2b33 !important;
+}
+.sky-morning ~ .masthead-text p,
+.sky-noon ~ .masthead-text p,
+.sky-morning ~ .masthead-text .mast-date,
+.sky-noon ~ .masthead-text .mast-date {
+  color: #23464d !important;
+}
+.mast-phase {
+  color: var(--gold);
+}
+
+/* ───────── تذهیب: کارت‌های امروز ───────── */
+.daily-card {
+  position: relative;
+  border: 1px solid var(--line-strong) !important;
+  box-shadow: var(--shadow);
+  outline: 1px solid var(--line);
+  outline-offset: -7px;
+  overflow: hidden;
+}
+.daily-card::before,
+.daily-card::after {
+  /* گوشه‌های تذهیب */
+  content: '';
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  background:
+    radial-gradient(circle at 0 0, transparent 14px, var(--gold) 15px, var(--gold) 16px, transparent 17px),
+    radial-gradient(circle at 0 0, var(--gold-soft) 0 22px, transparent 23px);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.daily-card::before { top: 6px; left: 6px; }
+.daily-card::after { bottom: 6px; right: 6px; transform: rotate(180deg); }
+.dc-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dc-kicker::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg);
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--glow);
+}
+.dc-ar {
+  font-size: calc(1.5rem * var(--ts, 1)) !important;
+  line-height: 2.1 !important;
+}
+
+/* سرفصل‌ها با گل‌بوته */
+.hs-head h2,
+.shelf-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hs-head h2::before,
+.shelf-head h2::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  flex: none;
+  background: linear-gradient(135deg, var(--gold), var(--gold-2));
+  clip-path: polygon(50% 0, 61% 26%, 85% 15%, 74% 39%, 100% 50%, 74% 61%, 85% 85%, 61% 74%, 50% 100%, 39% 74%, 15% 85%, 26% 61%, 0 50%, 26% 39%, 15% 15%, 39% 26%);
+  filter: drop-shadow(0 0 6px var(--glow));
+}
+
+/* ───────── شمسه ───────── */
+.medallion {
+  display: block;
+}
+.medallion .m-petals path {
+  fill: none;
+  stroke: var(--tone-hi, var(--gold));
+  stroke-width: 1.6;
+}
+.medallion .m-ring {
+  fill: none;
+  stroke: var(--tone-hi, var(--gold));
+  stroke-width: 1.4;
+}
+.medallion .m-star { fill: var(--tone-hi, var(--gold)); opacity: 0.9; }
+.medallion .m-dot { fill: var(--tone-2, var(--bg0)); }
+
+/* ───────── جلد کتاب‌ها ───────── */
+.book-tile[data-shelf] {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 22%, var(--card)), var(--card)) !important;
+  border-color: color-mix(in srgb, var(--tone-hi) 28%, transparent) !important;
+}
+.book-tile[data-shelf] .book-spine {
+  position: relative;
+  width: 64px;
+  min-height: 96px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 6px, transparent 6px),
+    linear-gradient(160deg, var(--tone), var(--tone-2)) !important;
+  border: 1px solid color-mix(in srgb, var(--tone-hi) 55%, transparent);
+  overflow: hidden;
+}
+.book-tile[data-shelf] .book-spine::after {
+  /* کادر طلاییِ جلد */
+  content: '';
+  position: absolute;
+  inset: 5px 5px 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--tone-hi) 60%, transparent);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.book-tile[data-shelf] .book-spine .medallion {
+  width: 34px;
+  height: 34px;
+  margin: 0 3px 0 0;
+}
+.book-tile[data-shelf] .book-spine span {
+  display: none;
+}
+.book-tile[data-shelf] .bt-meta em {
+  color: var(--tone-hi) !important;
+}
+:root[data-theme='parchment'] .book-tile[data-shelf] .bt-meta em,
+:root[data-theme='noon'] .book-tile[data-shelf] .bt-meta em {
+  color: var(--tone) !important;
+}
+.book-tile[data-shelf]:hover .medallion {
+  animation: spin-slow 12s linear infinite;
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+/* کتاب‌های برگزیدهٔ خانه */
+.feat-book[data-shelf] {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--tone), var(--tone-2)) !important;
+  border: 1px solid color-mix(in srgb, var(--tone-hi) 40%, transparent) !important;
+  color: var(--tone-ink) !important;
+}
+.feat-book[data-shelf] b { color: var(--tone-ink) !important; }
+.feat-book[data-shelf] small { color: color-mix(in srgb, var(--tone-ink) 72%, transparent) !important; }
+.feat-book[data-shelf] .medallion {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  left: -22px;
+  bottom: -26px;
+  opacity: 0.35;
+}
+
+/* ───────── خوانشگرِ هر کتاب به رنگ همان کتاب ───────── */
+.reader[data-shelf] .study-bar {
+  border-bottom: 2px solid color-mix(in srgb, var(--tone-hi) 45%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tone) 30%, var(--bg1)), var(--bg1)) !important;
+}
+.reader[data-shelf] .study-progress b {
+  background: linear-gradient(90deg, var(--tone-hi), var(--gold)) !important;
+}
+.reader[data-shelf] .book-cover,
+.reader[data-shelf] .chapter-head {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(600px 220px at 50% -40%, color-mix(in srgb, var(--tone-hi) 22%, transparent), transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--card-solid)), color-mix(in srgb, var(--tone-2) 60%, var(--card-solid))) !important;
+  border: 1px solid color-mix(in srgb, var(--tone-hi) 40%, transparent) !important;
+  color: var(--tone-ink);
+}
+.reader[data-shelf] .book-cover h1,
+.reader[data-shelf] .chapter-head h1 {
+  color: var(--tone-ink) !important;
+}
+.reader[data-shelf] .book-cover .eyebrow,
+.reader[data-shelf] .chapter-head .eyebrow {
+  color: var(--tone-hi) !important;
+}
+.reader[data-shelf] .book-cover p,
+.reader[data-shelf] .chapter-head p,
+.reader[data-shelf] .book-facts {
+  color: color-mix(in srgb, var(--tone-ink) 80%, transparent) !important;
+}
+.cover-medallion {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 6px;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--tone-hi) 45%, transparent));
+}
+.reader[data-shelf] .toc-n,
+.reader[data-shelf] .ayah-badge {
+  background: color-mix(in srgb, var(--tone) 35%, transparent) !important;
+  color: var(--tone-hi) !important;
+  border-color: color-mix(in srgb, var(--tone-hi) 45%, transparent) !important;
+}
+:root[data-theme='parchment'] .reader[data-shelf] .toc-n,
+:root[data-theme='noon'] .reader[data-shelf] .toc-n,
+:root[data-theme='parchment'] .reader[data-shelf] .ayah-badge,
+:root[data-theme='noon'] .reader[data-shelf] .ayah-badge {
+  color: var(--tone) !important;
+}
+.reader[data-shelf] .text-block {
+  border-inline-start: 3px solid color-mix(in srgb, var(--tone-hi) 35%, transparent);
+}
+
+/* ───────── جزئیاتِ زنده ───────── */
+.continue-card,
+.lesson-feature,
+.daily-card,
+.book-tile,
+.feat-book {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.continue-card:hover,
+.lesson-feature:hover,
+.feat-book:hover {
+  transform: translateY(-3px);
+}
+.situations button {
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.situations button:hover {
+  transform: translateY(-2px);
+  background: var(--gold-soft);
+}
+.tabbar button.on {
+  box-shadow: 0 0 0 1px var(--line-strong), 0 6px 20px -6px var(--glow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-stars i,
+  .sky-city .lights,
+  .book-tile[data-shelf]:hover .medallion {
+    animation: none;
+  }
+}
+
+/* ───────── خواندنِ عمیق: «یعنی چه؟»، «عمیق‌تر»، متن ───────── */
+.tb-gist {
+  position: relative;
+  margin: 4px 0 14px;
+  padding: 16px 18px 16px 16px;
+  border-radius: 16px;
+  background:
+    radial-gradient(400px 120px at 100% 0, color-mix(in srgb, var(--tone-hi, var(--gold)) 16%, transparent), transparent 70%),
+    var(--card-hi);
+  border: 1px solid color-mix(in srgb, var(--tone-hi, var(--gold)) 30%, transparent);
+}
+.tb-gist small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2px;
+}
+.tb-gist small::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: currentColor;
+}
+.tb-gist p {
+  margin: 6px 0 0;
+  font-size: calc(1.14rem * var(--ts, 1));
+  line-height: 2;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tb-deep {
+  margin: 0 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  overflow: hidden;
+}
+.tb-deep summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.tb-deep summary::-webkit-details-marker {
+  display: none;
+}
+.tb-deep summary i {
+  display: grid;
+  width: 18px;
+  transition: transform 0.3s ease;
+  transform: rotate(-90deg);
+}
+.tb-deep[open] summary i {
+  transform: rotate(90deg);
+}
+.tb-deep p {
+  margin: 0;
+  padding: 0 16px 12px;
+  font-size: calc(1rem * var(--ts, 1));
+  line-height: 2.05;
+  color: var(--ink-2);
+}
+.tb-deep p:last-child {
+  padding-bottom: 16px;
+}
+
+.tb-source.quiet {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+.tb-source.quiet > small {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.tb-source.quiet .tb-fa {
+  font-size: calc(0.95rem * var(--ts, 1));
+  color: var(--ink-2);
+}

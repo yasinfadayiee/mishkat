@@ -50,6 +50,27 @@ const translations = (bookId) => {
   return { size, get: (id) => (m.get(id)?.length > 1 ? m.get(id).shift() : m.get(id)?.[0]) }
 }
 
+// «یعنی چه؟» و «عمیق‌تر»: یا در خود فایل ترجمه، یا جدا در content/enrich/<bookId>/ (برای متن‌هایی که از قبل ترجمه داشتند)
+const enrichDir = path.join(root, 'content', 'enrich')
+const enrichCache = new Map()
+const enrichOf = (bookId) => {
+  if (!enrichCache.has(bookId)) {
+    const m = new Map()
+    const dir = path.join(enrichDir, bookId)
+    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) for (const x of read(path.join(dir, f))) if (x.gist?.trim()) m.set(x.id, x)
+    enrichCache.set(bookId, m)
+  }
+  return enrichCache.get(bookId)
+}
+let currentBook = ''
+const rich = (t) => {
+  const e = enrichOf(currentBook).get(t.id) ?? {}
+  const gist = t.gist || e.gist
+  const deep = t.deep || e.deep
+  const mirror = e.mirror || t.mirror
+  return { fa: t.fa, nt: t.note, mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }) }
+}
+
 const index = { shelves: SHELVES, books: [] }
 
 /* ───────── قرآن ───────── */
@@ -67,6 +88,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
 {
   const wt = read(path.join(root, 'corpus', 'sahifa-index.json')).parse.wikitext['*']
   const tr = translations('sahifa')
+  currentBook = 'sahifa'
   const parts = wt.split(/^==(?!=)(.*?)==\s*$/m)
   const chapters = []
   let id = 0
@@ -92,7 +114,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
     const items = paras.map((ar) => {
       id++
       const t = tr.get(id)
-      return { i: id, ar, ...(t && { fa: t.fa, nt: t.note, mr: t.mirror }) }
+      return { i: id, ar, ...(t && { ...rich(t) }) }
     })
     chapters.push({ t: `دعای ${chapters.length + 1}`, ta: rest.join(':').trim() || num.trim(), items })
   }
@@ -104,6 +126,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
 {
   const lines = fs.readFileSync(path.join(raw, 'ghurar.mARkdown'), 'utf8').split('\n')
   const tr = translations('ghurar')
+  currentBook = 'ghurar'
   const clean = (t) => t.replace(/\bms\d+\b/g, '').replace(/\s+/g, ' ').trim()
   const sections = []
   let fasl = ''
@@ -120,7 +143,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
       if (!sec) sections.push((sec = { t: '', chapters: [] }))
       let ch = sec.chapters.at(-1)
       if (!ch) sec.chapters.push((ch = { t: fasl || 'متفرقه', items: [] }))
-      ch.items.push({ i: id, ar: m[2].trim(), ...(t && { fa: t.fa, nt: t.note, mr: t.mirror }) })
+      ch.items.push({ i: id, ar: m[2].trim(), ...(t && { ...rich(t) }) })
     }
     cur = null
   }
@@ -167,6 +190,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
 {
   const lines = fs.readFileSync(path.join(raw, 'tuhaf.mARkdown'), 'utf8').split('\n')
   const tr = translations('tuhaf')
+  currentBook = 'tuhaf'
   // آغاز بخش هر معصوم در فایل (شمارهٔ سطر)
   const parts = [
     [1, 'سخنان پیامبر (ص)'],
@@ -217,7 +241,7 @@ index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', autho
     if (text.split(' ').length < 3) continue
     id++
     const t = tr.get(id)
-    sec.chapters.at(-1).items.push({ i: id, ar: text, ...(t && { fa: t.fa, nt: t.note, mr: t.mirror }) })
+    sec.chapters.at(-1).items.push({ i: id, ar: text, ...(t && { ...rich(t) }) })
   }
   for (const s of sections) s.chapters = s.chapters.filter((c) => c.items.length)
   for (const s of sections) for (const c of s.chapters) c.t = fa2(c.t)
@@ -230,6 +254,7 @@ const cleanGrade = (s) => (s ?? '').replace(/\s+/g, ' ').trim()
 for (const [bookId, meta] of Object.entries(BOOKS)) {
   const data = read(path.join(raw, `${bookId}.json`))
   const tr = translations(bookId)
+  currentBook = bookId
   const isNahj = bookId.startsWith('Nahj')
   const sections = []
   for (const h of data) {
@@ -247,7 +272,7 @@ for (const [bookId, meta] of Object.entries(BOOKS)) {
       ['بهبودی', cleanGrade(h.behbudiGrading)],
     ].filter(([, v]) => v)
     const t = tr.get(h.id)
-    ch.items.push({ i: h.id, ar: (h.arabicText ?? '').trim(), u: h.URL, ...(g.length && { g }), ...(t && { fa: t.fa, nt: t.note, mr: t.mirror }) })
+    ch.items.push({ i: h.id, ar: (h.arabicText ?? '').trim(), u: h.URL, ...(g.length && { g }), ...(t && { ...rich(t) }) })
   }
   const slug = bookId.replace(/[’']/g, '')
   // نهج‌البلاغه به ترتیب رایج: خطبه‌ها، نامه‌ها، حکمت‌ها؛ حکمت‌ها بیست‌تا بیست‌تا در یک صفحه

@@ -4,15 +4,12 @@ import { lastPlace, loadBook, loadIndex, loadSurahs, type BookMeta, type Item, t
 import { lessonById, lessons } from '../data/lessons'
 import { situations } from '../data/paths'
 import type { Situation } from '../data/types'
-import { fa, useStore } from '../store'
-import { ArabicText, Icon, Sheet } from '../ui'
+import { Sky } from '../sky'
+import { fa, PHASE_NAME, phaseOf, useStore } from '../store'
+import { ArabicText, Icon, Medallion, Sheet } from '../ui'
 
 function greeting() {
-  const h = new Date().getHours()
-  if (h < 5) return 'شب‌بخیر'
-  if (h < 12) return 'صبح بخیر'
-  if (h < 17) return 'روز بخیر'
-  return 'عصر بخیر'
+  return { sahar: 'سحر بخیر', morning: 'صبح بخیر', noon: 'ظهر بخیر', asr: 'عصر بخیر', maghrib: 'عصر بخیر', night: 'شب بخیر' }[phaseOf()]
 }
 
 function dates() {
@@ -98,12 +95,12 @@ export function Home({
   return (
     <div className="home2">
       <header className="masthead">
-        <div className="masthead-art" style={{ backgroundImage: "url(art/home-night.webp)" }} />
-        <div className="masthead-fade" />
+        <Sky />
         <div className="masthead-text">
           <div className="mast-date">
             {shamsi}
             {qamari && <span> · {qamari}</span>}
+            <span className="mast-phase"> · هنگامِ {PHASE_NAME[phaseOf()]}</span>
           </div>
           <div className="mast-hi">
             {greeting()}
@@ -211,12 +208,14 @@ export function Home({
             </button>
           </div>
           <div className="featured">
-            <button className="feat-book quran-book" onClick={() => openQuran()}>
+            <button className="feat-book quran-book" data-shelf="quran" onClick={() => openQuran()}>
+              <Medallion />
               <b>قرآن کریم</b>
               <small>۱۱۴ سوره · ترجمهٔ کامل</small>
             </button>
             {featured.map((b) => (
-              <button key={b.id} className="feat-book" onClick={() => openBook(b)}>
+              <button key={b.id} className="feat-book" data-shelf={b.shelf} onClick={() => openBook(b)}>
+                <Medallion />
                 <b>{b.title}</b>
                 <small>
                   {fa(b.count)} متن{b.translated ? ` · ${fa(b.translated)} با ترجمه` : ''}

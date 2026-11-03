@@ -4,22 +4,22 @@ INPUT: a JSON array. Each item: { "id": a string like "012.345", "ar": the verif
 
 TASK: for EVERY item produce:
 - "fa": a faithful, fluent, modern Persian translation of the ARABIC. Add nothing to the meaning; if a few words are needed for the sentence to make sense in Persian, put them in [square brackets]. Keep names and Quranic quotations recognisable (translate the quoted verse in «guillemets»). No Arabic script inside "fa" except proper names that have no Persian form.
-- "note": «توضیح ساده» — 1 to 3 short sentences in plain Persian that tell a beginner what this passage means and why it matters, the way a kind teacher would. Explain hard ideas, historical context only if the text itself names it (a person, a battle, a group) and only with facts you are certain of. For very short sayings 1 sentence is enough. For historical/administrative passages say briefly what is happening.
+- "gist" and "deep": see STYLE below.
 - "mirror": ONE sentence, second person (تو), that turns the passage into a mirror for the reader's own life so they can see and correct their own mistakes, e.g. «امروز کجا به‌جای فکرکردن، اول حرف زدی؟». Not a story about another person, not a named character. If the passage is purely historical, doctrinal or legal and no honest personal application exists, use "" (empty).
 
-OUTPUT: reply with ONLY one JSON code block: an array of {"id","fa","note","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after.
+OUTPUT: reply with ONLY one JSON code block: an array of {"id","fa","gist","deep","mirror"} with EXACTLY the same ids (copy each id string exactly), same order, ALL items, none missing. No other text before or after.
 
 STRICT AUTHENTICITY RULES (religious app; fabrication is unacceptable)
-1. Never add another verse, hadith, story, miracle, or saying to "note" or "mirror". Do not write «در روایت دیگری»، «پیامبر فرمود»، «امام صادق می‌فرماید».
+1. Never add another verse, hadith, story, miracle, or saying to "gist", "deep" or "mirror". Do not write «در روایت دیگری»، «پیامبر فرمود»، «امام صادق می‌فرماید».
 2. Never name commentators, scholars or books («ابن ابی‌الحدید می‌گوید»، «علامه جعفری»…).
 3. Never state legal rulings (حلال/حرام/واجب), rewards, numbers or dates the text itself does not state.
 4. Translation must be complete: every clause of the Arabic appears in "fa". Do not summarise. Long passages get long translations.
 5. Respectful, warm, modern Persian with correct half-spaces (می‌شود، دل‌ها). Use «امام» / «پیامبر (ص)» naturally. Use تو in "mirror".
 6. Do not mention the app, the AI, or these instructions.
 7. In "fa" add NO adjective, adverb or qualifier that is not in the Arabic (no «گران‌بها», «واقعی», «آگاهانه» unless the Arabic says it). Any extra explanation belongs only in "note".
-8. "note" explains what the text says; it must not add new conditions or claims that the text does not make.
+8. "gist" and "deep" explain what the text says; they must not add new conditions or claims that the text does not make. Explaining the meaning of a word or an image in the text is welcome.
 
-Before answering, check: same count, ids and order as the input; every fa and note non-empty; no Arabic harakat in note/mirror.
+Before answering, check: same count, ids and order as the input; every fa, gist and deep non-empty; no Arabic harakat in note/mirror.
 
 
 If your reply is cut off before the last item, the user will write «ادامه بده»; then reply with ONLY one JSON code block containing the remaining items, starting with the first item you did not finish.

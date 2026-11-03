@@ -207,3 +207,20 @@ export function Recitation({ surah, from, to }: { surah: number; from: number; t
     </button>
   )
 }
+
+/** شمسه: ترنج دوازده‌پر به سبک تذهیب، برای جلد کتاب‌ها و سرلوحه‌ها */
+export function Medallion({ className = '' }: { className?: string }) {
+  const petals = Array.from({ length: 12 }, (_, i) => i * 30)
+  return (
+    <svg className={`medallion ${className}`} viewBox="-50 -50 100 100" aria-hidden="true">
+      <g className="m-petals">
+        {petals.map((a) => (
+          <path key={a} d="M0 -46 C8 -34 8 -24 0 -16 C-8 -24 -8 -34 0 -46 Z" transform={`rotate(${a})`} />
+        ))}
+      </g>
+      <circle className="m-ring" r="17" />
+      <path className="m-star" d="M0 -14 L4 -4 L14 0 L4 4 L0 14 L-4 4 L-14 0 L-4 -4 Z" />
+      <circle className="m-dot" r="3" />
+    </svg>
+  )
+}

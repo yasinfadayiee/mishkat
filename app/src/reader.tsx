@@ -18,12 +18,15 @@ export function ReaderShell({
   actions,
   children,
   scrollRef,
+  tone,
 }: {
   title: string
   onClose: () => void
   actions?: ReactNode
   children: ReactNode
   scrollRef?: RefObject<HTMLDivElement | null>
+  /** قفسهٔ کتاب؛ رنگ خوانشگر را تعیین می‌کند */
+  tone?: string
 }) {
   const own = useRef<HTMLDivElement>(null)
   const scroller = scrollRef ?? own
@@ -58,7 +61,7 @@ export function ReaderShell({
   }, [onClose])
 
   return (
-    <motion.div className="study reader" style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
+    <motion.div className="study reader" data-shelf={tone} style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
       <div className="study-progress">
         <b style={{ transform: `scaleX(${progress})` }} />
       </div>

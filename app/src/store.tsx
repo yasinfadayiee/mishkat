@@ -1,6 +1,22 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
-export type ThemeId = 'emerald' | 'isfahan' | 'parchment'
+export type ThemeId = 'auto' | 'emerald' | 'isfahan' | 'parchment' | 'dawn' | 'noon' | 'dusk'
+
+/** هنگامِ روز؛ پوستهٔ «خودکار» رنگ‌هایش را با آن عوض می‌کند */
+export type Phase = 'sahar' | 'morning' | 'noon' | 'asr' | 'maghrib' | 'night'
+export function phaseOf(d = new Date()): Phase {
+  let h = d.getHours() + d.getMinutes() / 60
+  // فقط برای آزمایش در حالت توسعه: localStorage['mishkat.hour']
+  if (import.meta.env.DEV) h = Number(localStorage.getItem('mishkat.hour') ?? h)
+  if (h >= 3.5 && h < 6) return 'sahar'
+  if (h >= 6 && h < 11) return 'morning'
+  if (h >= 11 && h < 15) return 'noon'
+  if (h >= 15 && h < 17.5) return 'asr'
+  if (h >= 17.5 && h < 20) return 'maghrib'
+  return 'night'
+}
+export const PHASE_THEME: Record<Phase, Exclude<ThemeId, 'auto'>> = { sahar: 'dawn', morning: 'parchment', noon: 'noon', asr: 'dusk', maghrib: 'dusk', night: 'isfahan' }
+export const PHASE_NAME: Record<Phase, string> = { sahar: 'سحر', morning: 'صبح', noon: 'ظهر', asr: 'عصر', maghrib: 'مغرب', night: 'شب' }
 
 export interface Habit {
   lessonId: string
@@ -38,6 +54,8 @@ export interface Progress {
   /** درس‌های نشان‌شده برای مطالعهٔ دوباره */
   saved: string[]
   marks: Mark[]
+  /** کاربر خودش پوسته انتخاب کرده است (وگرنه پوستهٔ خودکار) */
+  themeSet?: boolean
 }
 
 const KEY = 'mishkat.progress.v1'
@@ -45,7 +63,7 @@ const KEY = 'mishkat.progress.v1'
 const initial: Progress = {
   onboarded: false,
   name: '',
-  theme: 'emerald',
+  theme: 'auto',
   completed: {},
   quiz: {},
   habits: [],
@@ -60,7 +78,10 @@ const initial: Progress = {
 function load(): Progress {
   try {
     const raw = localStorage.getItem(KEY)
-    if (raw) return { ...initial, ...JSON.parse(raw) }
+    if (raw) {
+      const x: Progress = { ...initial, ...JSON.parse(raw) }
+      return x.themeSet ? x : { ...x, theme: 'auto' }
+    }
   } catch {
     /* حالت خصوصی مرورگر یا ذخیره‌سازی مسدود */
   }
@@ -120,8 +141,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch {
       /* بدون ذخیره‌سازی هم اپ کار می‌کند */
     }
-    document.documentElement.dataset.theme = p.theme
   }, [p])
+
+  // پوستهٔ خودکار هر چند دقیقه با هنگامِ روز هماهنگ می‌شود
+  useEffect(() => {
+    const apply = () => {
+      const phase = phaseOf()
+      document.documentElement.dataset.phase = phase
+      document.documentElement.dataset.theme = p.theme === 'auto' ? PHASE_THEME[phase] : p.theme
+    }
+    apply()
+    const t = setInterval(apply, 5 * 60000)
+    return () => clearInterval(t)
+  }, [p.theme])
 
   const set = useCallback((fn: (p: Progress) => Progress) => setP((prev) => fn(prev)), [])
 

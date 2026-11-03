@@ -4,7 +4,7 @@ import { loadBook, loadIndex, loadSearch, norm, savePlace, type Book, type BookM
 import { CHAPTERS, lessonById, lessons } from '../data/lessons'
 import { MarkButton, ReaderShell } from '../reader'
 import { fa, useStore } from '../store'
-import { ArabicText, Icon } from '../ui'
+import { ArabicText, Icon, Medallion } from '../ui'
 
 const SPINE: Record<string, string> = {
   quran: 'spine-emerald',
@@ -146,8 +146,9 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah }: 
             </div>
             <div className="book-grid">
               {list.map((b) => (
-                <motion.button key={b.id} className="book-tile" onClick={() => (b.kind === 'quran' ? openQuran() : openBook(b))} whileHover={{ y: -3 }}>
+                <motion.button key={b.id} className="book-tile" data-shelf={b.shelf} onClick={() => (b.kind === 'quran' ? openQuran() : openBook(b))} whileHover={{ y: -3 }}>
                   <span className={`book-spine ${SPINE[b.shelf]}`}>
+                    <Medallion />
                     <span>{b.title}</span>
                   </span>
                   <span className="bt-text">
@@ -179,9 +180,10 @@ export function BookToc({ meta, onClose, open }: { meta: BookMeta; onClose: () =
   const k = norm(q.trim())
 
   return (
-    <ReaderShell title={meta.title} onClose={onClose}>
+    <ReaderShell title={meta.title} onClose={onClose} tone={meta.shelf}>
       <div className="reader-body">
         <header className="book-cover">
+          <Medallion className="cover-medallion" />
           <div className="eyebrow">{meta.author}</div>
           <h1>{meta.title}</h1>
           <p>{meta.desc}</p>
@@ -255,6 +257,7 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
     <ReaderShell
       title={title}
       onClose={onClose}
+      tone={meta.shelf}
       scrollRef={scroller}
       actions={
         anyFa ? (
@@ -308,15 +311,31 @@ function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; sho
         )}
         <MarkButton on={marked} onClick={onMark} />
       </div>
-      {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
       {it.fa ? (
         <>
-          <p className="tb-fa">{it.fa}</p>
-          {it.nt && (
-            <div className="tb-note">
-              <b>توضیح ساده</b>
-              <p>{it.nt}</p>
+          {it.sm && (
+            <div className="tb-gist">
+              <small>یعنی چه؟</small>
+              <p>{it.sm}</p>
             </div>
+          )}
+          {it.dp ? (
+            <details className="tb-deep" open={!it.sm}>
+              <summary>
+                <span>عمیق‌تر</span>
+                <i>{Icon.next}</i>
+              </summary>
+              {it.dp.split(/\n+/).map((t, k) => (
+                <p key={k}>{t}</p>
+              ))}
+            </details>
+          ) : (
+            it.nt && (
+              <div className="tb-note">
+                <b>توضیح</b>
+                <p>{it.nt}</p>
+              </div>
+            )
           )}
           {it.mr && (
             <div className="tb-mirror">
@@ -324,9 +343,17 @@ function TextBlock({ it, n, showAr, marked, onMark }: { it: Item; n: number; sho
               <p>{it.mr}</p>
             </div>
           )}
+          <div className={`tb-source ${it.sm ? 'quiet' : ''}`}>
+            {it.sm && <small>متن و ترجمهٔ دقیق</small>}
+            {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
+            <p className="tb-fa">{it.fa}</p>
+          </div>
         </>
       ) : (
-        <p className="tb-pending">ترجمهٔ فارسی این متن هنوز آماده نیست.</p>
+        <>
+          {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
+          <p className="tb-pending">ترجمهٔ فارسی این متن هنوز آماده نیست.</p>
+        </>
       )}
     </article>
   )
