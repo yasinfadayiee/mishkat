@@ -37,7 +37,8 @@
   const generating = () => buttons().some((b) => /توقف|Stop/.test(label(b)))
   const sendBtn = () => buttons().find((b) => /ارسال کردن پیام|Send message/.test(label(b)))
   const picker = () => buttons().find((b) => /انتخاب‌گر حالت|mode picker/i.test(label(b)))
-  const lastReply = () => [...document.querySelectorAll('model-response')].at(-1)
+  // نام عنصرِ پاسخ در نسخه‌های مختلف رابط Gemini فرق کرده است
+  const lastReply = () => [...document.querySelectorAll('model-response-content, model-response')].at(-1)
 
   async function waitFor(fn, ms = 20000) {
     const t0 = Date.now()
@@ -102,8 +103,10 @@
       await sleep(3000)
       const txt = lastReply()?.innerText ?? ''
       ct(`پاسخ: ${txt.length.toLocaleString('fa-IR')} حرف`)
+      // هنگام «اندیشیدن» متن مدتی تغییر نمی‌کند؛ پایانِ واقعی یعنی بلوک JSON بسته شده، یا سکوتی طولانی
+      const closed = [...(lastReply()?.querySelectorAll('code, pre') ?? [])].some((e) => /\]\s*$/.test(e.innerText))
       if (!generating() && txt === last && txt) {
-        if ((still += 3) >= 12) return lastReply()
+        if ((still += 3) >= (closed ? 12 : 150)) return lastReply()
       } else still = 0
       last = txt
     }
