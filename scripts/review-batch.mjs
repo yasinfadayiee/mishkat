@@ -14,7 +14,7 @@ const CLAIMS = [
   [/بهشت/, /جن|فردوس|رضوان/],
   [/دوزخ|جهنم/, /نار|جهنم|جحيم|سعير/],
   [/ثواب|پاداش/, /ثواب|أجر|اجر|جزاء|جزا/],
-  [/پیامبر|رسول خدا/, /رسول|نبي|النبى|محمد|صلى الله عليه/],
+  [/پیامبر|رسول خدا/, /رسول|نبي|النبى|محمد|صلى الله عليه|پیامبر/],
   [/قرآن|آیه/, /قرآن|القرآن|آية|اية|تعالى|عز وجل|قال الله/],
 ]
 // صفت‌ها و قیدهایی که مترجم ماشینی گاهی از خودش اضافه می‌کند
@@ -31,7 +31,7 @@ input.forEach((x, k) => {
   // سخن کوتاه عربی در فارسی طبیعتاً چند برابر می‌شود
   if (r > 2.4 && words(x.ar) >= 8) why.push(`ترجمه بلند (${r.toFixed(2)})`)
   const all = `${y.fa} ${y.note} ${y.mirror}`
-  for (const [fa, ar] of CLAIMS) if (fa.test(y.note + ' ' + y.mirror) && !ar.test(x.ar)) why.push(`توضیح: «${all.match(fa)[0]}» در عربی نیست`)
+  for (const [fa, ar] of CLAIMS) if (fa.test(y.note + ' ' + y.mirror) && !ar.test(`${x.ar} ${x.speaker ?? ""} ${x.topic ?? ""}`)) why.push(`توضیح: «${all.match(fa)[0]}» در عربی نیست`)
   for (const e of EXTRAS) if (y.fa.includes(e)) why.push(`صفت «${e}» در ترجمه`)
   if (/[۰-۹0-9]/.test(y.note) && !ARABIC_NUM.test(x.ar)) why.push('عدد در توضیح')
   if (/\[[^\]]{25,}\]/.test(y.fa)) why.push('افزودهٔ بلند در قلاب')
