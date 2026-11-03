@@ -40,7 +40,7 @@ function useSaying() {
   useEffect(() => {
     loadBook('Nahj-al-Balagha-Radi')
       .then((b) => {
-        const pool = b.sections.flatMap((sec, si) => sec.chapters.flatMap((c, ci) => c.items.filter((i) => i.fa && i.ar.split(' ').length < 40).map((item) => ({ item, label: `نهج‌البلاغه، ${item.n ? `حکمت ${fa(item.n)}` : c.t}`, sec: si, ch: ci }))))
+        const pool = b.sections.flatMap((sec, si) => sec.chapters.flatMap((c, ci) => c.items.filter((i) => i.fa && i.n && !/الرضي|وروي|وقد روى/.test(i.ar) && i.ar.split(' ').length < 40).map((item) => ({ item, label: `نهج‌البلاغه، ${item.n ? `حکمت ${fa(item.n)}` : c.t}`, sec: si, ch: ci }))))
         if (pool.length) setS(pool[(today * 7) % pool.length])
       })
       .catch(() => setS(null))
