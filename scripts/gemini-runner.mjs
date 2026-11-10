@@ -84,7 +84,22 @@ async function generate(model, contents) {
       contents,
       generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 65536, temperature: 0.4, ...(useThinking && { thinkingConfig: { thinkingLevel: 'high' } }) },
     }
-    const { status, json } = await call(`${API}/models/${model}:generateContent`, body)
+    let res
+    try {
+      res = await call(`${API}/models/${model}:generateContent`, body)
+    } catch (e) {
+      // قطع شبکه: صبر و تلاش دوباره
+      log(`شبکه: ${e.message}؛ ${30 * attempt} ثانیه صبر، تلاش ${attempt}`)
+      await sleep(30_000 * attempt)
+      continue
+    }
+    const { status, json } = res
+    // 403 با صفحهٔ HTML از سوی گوگل = مسدودی موقت شبکه، نه خطای کلید
+    if (status === 403 && /<html|DOCTYPE/i.test(json.error?.message ?? '')) {
+      log(`403 شبکه؛ ${60 * attempt} ثانیه صبر، تلاش ${attempt}`)
+      await sleep(60_000 * attempt)
+      continue
+    }
     if (status === 200) {
       const c = json.candidates?.[0]
       return { text: (c?.content?.parts ?? []).filter((p) => !p.thought).map((p) => p.text ?? '').join(''), finish: c?.finishReason }
@@ -105,9 +120,34 @@ async function generate(model, contents) {
   throw new Error('پس از چند تلاش پاسخی نیامد')
 }
 
+// --chunk N: هر کار را در تکه‌های N‌تایی می‌فرستد (مدل‌های سبک در تکهٔ کوچک توضیح کامل‌تری می‌نویسند)
+// --redo-thin M: در خروجی‌های موجود، متن‌هایی را که «deep»شان کوتاه‌تر از M نویسه است دوباره می‌خواهد
+const CHUNK = Number(arg('chunk', 0))
+const THIN = Number(arg('redo-thin', 0))
+const DEEPER = `\n\nIMPORTANT: "deep" must be 2–4 real paragraphs (at least 600 characters in total) following the STYLE: the image or key word, why it is true, how it shows up in today's life, and a common misunderstanding. A one- or two-sentence "deep" is a failure. Never add claims, rulings or stories that are not in the Arabic.`
+
 async function runJob(model, j) {
   const prompt = fs.readFileSync(path.join(jobsDir, `${j.job}.txt`), 'utf8')
-  const want = JSON.parse(prompt.slice(prompt.lastIndexOf('\n[') + 1)).map((x) => x.id)
+  const cut = prompt.lastIndexOf('\n[')
+  const all = JSON.parse(prompt.slice(cut + 1))
+  const outFile = path.join(outDir, `${j.job}.json`)
+  const old = fs.existsSync(outFile) ? JSON.parse(fs.readFileSync(outFile, 'utf8')) : []
+  const keep = new Map(old.filter((x) => !THIN || (x.deep ?? '').length >= THIN).map((x) => [x.id, x]))
+  const need = all.filter((x) => !keep.has(x.id))
+  const size = CHUNK || need.length || 1
+  for (let i = 0; i < need.length; i += size) {
+    const part = need.slice(i, i + size)
+    const text = CHUNK || THIN ? `${prompt.slice(0, cut)}${DEEPER}\n${JSON.stringify(part)}` : prompt
+    const r = await runPart(model, j, text, part.map((x) => x.id))
+    for (const x of r) keep.set(x.id, x)
+    // متنی که هنوز دوباره نیامده، نسخهٔ قبلی‌اش می‌ماند تا اگر کار نیمه‌کاره ماند چیزی از دست نرود
+    const prev = new Map(old.map((x) => [x.id, x]))
+    fs.writeFileSync(outFile, JSON.stringify(all.filter((x) => keep.has(x.id) || prev.has(x.id)).map((x) => keep.get(x.id) ?? prev.get(x.id)), null, 1))
+  }
+  return { done: all.filter((x) => keep.has(x.id)).length, total: all.length }
+}
+
+async function runPart(model, j, prompt, want) {
   const got = new Map()
   const contents = [{ role: 'user', parts: [{ text: prompt }] }]
   for (let turn = 0; turn < 6 && got.size < want.length; turn++) {
@@ -119,15 +159,15 @@ async function runJob(model, j) {
     log(`کار ${j.job}: ${got.size}/${want.length} (${finish ?? '?'})؛ ادامه از ${next}`)
     contents.push({ role: 'model', parts: [{ text }] }, { role: 'user', parts: [{ text: `ادامه بده. reply with ONLY one JSON code block with the remaining items, starting with id "${next}".` }] })
   }
-  const items = want.filter((id) => got.has(id)).map((id) => got.get(id))
-  fs.writeFileSync(path.join(outDir, `${j.job}.json`), JSON.stringify(items, null, 1))
-  return { done: items.length, total: want.length }
+  return want.filter((id) => got.has(id)).map((id) => got.get(id))
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(jobsDir, 'manifest.json'), 'utf8'))
 const done = (j) => {
   const f = path.join(outDir, `${j.job}.json`)
-  return fs.existsSync(f) && JSON.parse(fs.readFileSync(f, 'utf8')).length >= j.count
+  if (!fs.existsSync(f)) return false
+  const a = JSON.parse(fs.readFileSync(f, 'utf8'))
+  return a.length >= j.count && (!THIN || a.every((x) => (x.deep ?? '').length >= THIN))
 }
 const todo = manifest.filter((j) => Number(j.job) >= FROM && Number(j.job) <= TO && !done(j))
 log(`${todo.length} کار مانده (از ${manifest.length})`)
