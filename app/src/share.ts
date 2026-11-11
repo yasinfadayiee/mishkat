@@ -68,9 +68,9 @@ export async function shareCard({ ar, gist, fa, source, shelf = 'nahj' }: { ar: 
   ctx.direction = 'rtl'
   ctx.textAlign = 'center'
   ctx.fillStyle = '#fff8ea'
-  ctx.font = '54px "Amiri", serif'
+  ctx.font = '54px "ArParen", "Amiri", serif'
   let y = 320
-  const arLines = wrap(ctx, ar.replace(/\s+/g, ' ').trim(), W - 220).slice(0, 6)
+  const arLines = wrap(ctx, ar.replace(/^[\s۰-۹٠-٩0-9]+[.\-–]\s*/, '').replace(/\s+/g, ' ').trim(), W - 220).slice(0, 6)
   for (const l of arLines) (ctx.fillText(l, W / 2, y), (y += 86))
 
   y += 30
