@@ -18,13 +18,13 @@ export const BOOKS = {
   'Nahj-al-Balagha-Radi': { title: 'نهج‌البلاغه', author: 'گردآوری سید رضی (د. ۴۰۶ ق)', shelf: 'nahj', desc: 'خطبه‌ها، نامه‌ها و سخنان کوتاه امیرالمؤمنین علی (ع).', order: 1 },
   'Risalat-al-Huquq-Abidin': { title: 'رسالهٔ حقوق', author: 'منسوب به امام سجاد (ع)', shelf: 'other', desc: 'پنجاه حق: حق خدا، خود، اعضای بدن، پدر و مادر، همسر، همسایه و دیگران.', order: 1 },
   ...Object.fromEntries(
-    kafiVol.map((d, i) => [`Al-Kafi-Volume-${i + 1}-Kulayni`, { title: `الکافی، جلد ${i + 1}`, author: kulayni, shelf: 'arbaa', desc: d, order: i + 1 }]),
+    kafiVol.map((d, i) => [`Al-Kafi-Volume-${i + 1}-Kulayni`, { title: `الکافی، جلد ${(i + 1).toLocaleString('fa-IR')}`, author: kulayni, shelf: 'arbaa', desc: d, order: i + 1 }]),
   ),
   ...Object.fromEntries(
-    [1, 2, 3, 4, 5].map((i) => [`Man-La-Yahduruh-al-Faqih-Volume-${i}-Saduq`, { title: `من لا یحضره الفقیه، جلد ${i}`, author: saduq, shelf: 'arbaa', desc: 'یکی از کتب اربعه؛ بیشتر احادیث احکام.', order: 10 + i }]),
+    [1, 2, 3, 4, 5].map((i) => [`Man-La-Yahduruh-al-Faqih-Volume-${i}-Saduq`, { title: `من لا یحضره الفقیه، جلد ${i.toLocaleString('fa-IR')}`, author: saduq, shelf: 'arbaa', desc: 'یکی از کتب اربعه؛ بیشتر احادیث احکام.', order: 10 + i }]),
   ),
   ...Object.fromEntries(
-    [1, 2, 3, 4].map((i) => [`Tahdhib-al-Ahkam-Volume-${i}-Tusi`, { title: `تهذیب الاحکام، جلد ${i}`, author: tusi, shelf: 'arbaa', desc: 'یکی از کتب اربعه؛ احادیث احکام.', order: 20 + i }]),
+    [1, 2, 3, 4].map((i) => [`Tahdhib-al-Ahkam-Volume-${i}-Tusi`, { title: `تهذیب الاحکام، جلد ${i.toLocaleString('fa-IR')}`, author: tusi, shelf: 'arbaa', desc: 'یکی از کتب اربعه؛ احادیث احکام.', order: 20 + i }]),
   ),
   'Al-Amali-Saduq': { title: 'امالی', author: saduq, shelf: 'saduq', desc: 'احادیثی که شیخ صدوق در ۹۷ مجلس برای شاگردانش املا کرد: اخلاق، سیره و فضایل.', order: 1 },
   'Al-Khisal-Saduq': { title: 'خصال', author: saduq, shelf: 'saduq', desc: 'احادیث دسته‌بندی‌شده بر پایهٔ عدد: یک خصلت، دو خصلت… تا بیش از صد.', order: 2 },

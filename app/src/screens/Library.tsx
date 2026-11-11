@@ -218,7 +218,7 @@ export function BookToc({ meta, onClose, open }: { meta: BookMeta; onClose: () =
                     <button onClick={() => open(si, ci)}>
                       <span className="toc-t">
                         {c.t || `بخش ${fa(ci + 1)}`}
-                        {c.ta && <small lang={/[ً-ْ]/.test(c.ta) ? 'ar' : undefined}>{c.ta}</small>}
+                        {c.ta && c.ta !== c.t && <small lang={/[ً-ْ]/.test(c.ta) ? 'ar' : undefined}>{c.ta}</small>}
                       </span>
                       <span className="toc-n">
                         {fa(c.items.length)}
@@ -276,7 +276,7 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
           <header className="chapter-head">
             <div className="eyebrow">{book?.sections[sec].t || meta.title}</div>
             <h1>{chapter.t}</h1>
-            {chapter.ta && <p className={/[ً-ْ]/.test(chapter.ta) ? 'arabic' : ''}>{chapter.ta}</p>}
+            {chapter.ta && chapter.ta !== chapter.t && <p className={/[ً-ْ]/.test(chapter.ta) ? 'arabic' : ''}>{chapter.ta}</p>}
           </header>
         )}
         {chapter?.items.map((it, k) => (
@@ -303,6 +303,7 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
   const { p, setNote } = useStore()
   const note = p.notes[ctx.key]
   const [writing, setWriting] = useState(false)
+  const [answering, setAnswering] = useState(false)
   const [word, setWord] = useState<number | null>(null)
   const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
   return (
@@ -374,7 +375,14 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
               {Icon.life}
               <div>
                 <p>{it.mr}</p>
-                <textarea className="tb-answer" rows={note?.answer ? 3 : 1} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" defaultValue={note?.answer ?? ''} onBlur={(e) => e.target.value !== (note?.answer ?? '') && save({ answer: e.target.value })} />
+                {/* جعبهٔ پاسخ فقط با لمس باز می‌شود تا صفحهٔ ۹۰ متنی شلوغ نشود */}
+                {answering || note?.answer ? (
+                  <textarea className="tb-answer" rows={3} autoFocus={answering && !note?.answer} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" defaultValue={note?.answer ?? ''} onBlur={(e) => e.target.value !== (note?.answer ?? '') && save({ answer: e.target.value })} />
+                ) : (
+                  <button className="link-btn tb-answer-open" onClick={() => setAnswering(true)}>
+                    پاسخ من ←
+                  </button>
+                )}
               </div>
             </div>
           )}

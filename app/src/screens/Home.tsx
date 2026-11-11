@@ -90,7 +90,7 @@ export function Home({
       .catch(() => setBooks([]))
   }, [])
   const nahj = books.find((b) => b.id === 'Nahj-al-Balagha-Radi')
-  const featured = ['Nahj-al-Balagha-Radi', 'sahifa', 'Al-Kafi-Volume-2-Kulayni', 'Risalat-al-Huquq-Abidin', 'Al-Khisal-Saduq', 'Al-Amali-Saduq'].map((id) => books.find((b) => b.id === id)).filter((b): b is BookMeta => !!b)
+  const featured = ['Nahj-al-Balagha-Radi', 'ghurar', 'sahifa', 'Risalat-al-Huquq-Abidin', 'Sifat-al-Shia-Saduq', 'Al-Kafi-Volume-2-Kulayni'].map((id) => books.find((b) => b.id === id)).filter((b): b is BookMeta => !!b)
 
   return (
     <div className="home2">
@@ -145,7 +145,7 @@ export function Home({
               <div className="dc-kicker">سخن امروز · امام علی (ع)</div>
               <ArabicText kind="hadith" text={saying.item.ar} className="dc-ar" />
               <p className="dc-fa">{saying.item.fa}</p>
-              {saying.item.nt && <p className="dc-note">{saying.item.nt}</p>}
+              {(saying.item.sm ?? saying.item.nt) && <p className="dc-note">{saying.item.sm ?? saying.item.nt}</p>}
               {saying.item.mr && (
                 <p className="dc-mirror">
                   {Icon.life} {saying.item.mr}

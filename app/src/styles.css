@@ -1,3 +1,10 @@
+/* فونت Amiri پرانتز را در متن راست‌به‌چپ وارونه می‌کشد؛ فقط پرانتز و قلاب‌ها با وزیرمتن */
+@font-face {
+  font-family: 'ArParen';
+  src: url('./assets/paren.woff2') format('woff2');
+  unicode-range: U+0028-0029, U+005B, U+005D, U+007B, U+007D;
+}
+
 /* ───────── پوسته‌ها ───────── */
 :root,
 :root[data-theme='emerald'] {
@@ -119,11 +126,11 @@ a {
 }
 
 .quran {
-  font-family: 'Amiri Quran', 'Amiri', serif;
+  font-family: 'ArParen', 'Amiri Quran', 'Amiri', serif;
   line-height: 2.35;
 }
 .arabic {
-  font-family: 'Amiri', serif;
+  font-family: 'ArParen', 'Amiri', serif;
   line-height: 2.1;
 }
 
@@ -827,7 +834,7 @@ a.btn {
   transition: 0.25s;
 }
 .word .ar {
-  font-family: 'Amiri', serif;
+  font-family: 'ArParen', 'Amiri', serif;
   font-size: 22px;
   color: var(--gold);
   display: block;
@@ -1192,7 +1199,7 @@ a.btn {
   margin: 6px 0 10px;
 }
 .verse-mark {
-  font-family: 'Amiri Quran', serif;
+  font-family: 'ArParen', 'Amiri Quran', serif;
   color: var(--gold);
 }
 

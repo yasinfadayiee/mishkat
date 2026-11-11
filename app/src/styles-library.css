@@ -263,7 +263,7 @@
   font-size: 12.5px;
 }
 .toc-t small[lang='ar'] {
-  font-family: 'Amiri', serif;
+  font-family: 'ArParen', 'Amiri', serif;
   font-size: 15px;
 }
 .toc-n {
@@ -1014,4 +1014,9 @@
     width: 38px;
     height: 38px;
   }
+}
+
+.tb-answer-open {
+  margin-top: 6px;
+  font-size: 13px;
 }

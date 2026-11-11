@@ -695,7 +695,7 @@ body {
   gap: 6px;
 }
 .tb-words button {
-  font-family: 'Amiri', serif;
+  font-family: 'ArParen', 'Amiri', serif;
   font-size: 19px;
   padding: 2px 14px 6px;
   border-radius: 12px;

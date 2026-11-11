@@ -63,14 +63,22 @@ const enrichOf = (bookId) => {
   return enrichCache.get(bookId)
 }
 let currentBook = ''
+/** فارسیِ خوانا: کسرهٔ اضافه («زندگیِ مدرنِ ما»، «برایِ») که مترجم ماشینی زیاد می‌گذارد برداشته می‌شود؛
+ *  «ه‌یِ / ه‌ی» اضافه به «هٔ» استاندارد برمی‌گردد. متن عربی و واژه‌های عربی دست نمی‌خورند. */
+export const faClean = (s) =>
+  typeof s === 'string'
+    ? s
+        .replace(/ه‌?یِ(?=[\s،؛.]|$)/g, 'هٔ')
+        .replace(/([؀-ۿ‌])ِ/g, '$1')
+    : s
 const rich = (t) => {
   const e = enrichOf(currentBook).get(t.id) ?? {}
-  const gist = t.gist || e.gist
-  const deep = t.deep || e.deep
-  const mirror = e.mirror || t.mirror
+  const gist = faClean(t.gist || e.gist)
+  const deep = faClean(t.deep || e.deep)
+  const mirror = faClean(e.mirror || t.mirror)
   const words = t.words ?? e.words
   const tags = t.tags ?? e.tags
-  return { fa: t.fa, nt: t.note, mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, x.m]) }), ...(tags?.length && { tg: tags }) }
+  return { fa: t.fa, nt: faClean(t.note), mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, faClean(x.m)]) }), ...(tags?.length && { tg: tags }) }
 }
 
 const index = { shelves: SHELVES, books: [] }

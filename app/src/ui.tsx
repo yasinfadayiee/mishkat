@@ -149,7 +149,8 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
 export function ArabicText({ kind, text, className = '' }: { kind: SourceText['kind'] | 'quran' | 'shia' | 'sunni'; text: string; className?: string }) {
   return (
     <div className={`${kind === 'quran' ? 'quran' : 'arabic'} ${className}`} lang="ar" dir="rtl">
-      {text}
+      {/* شمارهٔ متن («۱۵۶.») جدا نشان داده می‌شود؛ در خودِ متن عربی تکرارش نمی‌کنیم */}
+      {kind === 'quran' ? text : text.replace(/^[\s۰-۹٠-٩0-9]+[.\-–]\s*/, '')}
     </div>
   )
 }
