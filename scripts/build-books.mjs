@@ -370,3 +370,6 @@ for (const f of fs.readdirSync(out, { recursive: true })) {
   if (fs.statSync(p).isFile()) size += fs.statSync(p).size
 }
 console.log(`${index.books.length} کتاب، ${index.books.reduce((s, b) => s + b.count, 0).toLocaleString('fa-IR')} متن، ${index.books.reduce((s, b) => s + b.translated, 0).toLocaleString('fa-IR')} با ترجمه — ${(size / 1e6).toFixed(1)} مگابایت`)
+
+// پیوند سخن‌های یکسان غرر و نهج‌البلاغه
+await import('./link-books.mjs')

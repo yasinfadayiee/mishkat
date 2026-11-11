@@ -33,6 +33,8 @@ export interface Item {
   dp?: string
   /** واژه‌های کلیدی: [واژهٔ عربی، معنا] */
   w?: [string, string][]
+  /** همین سخن در کتاب دیگر: [کتاب، بخش، باب، شناسهٔ متن، برچسب مثل «حکمت ۸۶»] */
+  x?: [string, number, number, number, string][]
   /** شناسهٔ موضوع‌ها (data/topics.ts) */
   tg?: string[]
 }

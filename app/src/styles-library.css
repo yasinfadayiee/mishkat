@@ -1020,3 +1020,24 @@
   margin-top: 6px;
   font-size: 13px;
 }
+
+.tb-cross {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.text-block.flash {
+  animation: tb-flash 2.4s ease-out;
+  border-radius: 14px;
+}
+@keyframes tb-flash {
+  0%, 30% {
+    box-shadow: 0 0 0 2px var(--gold, #d8b26a);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}

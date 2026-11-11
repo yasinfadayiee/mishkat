@@ -237,7 +237,7 @@ export function BookToc({ meta, onClose, open }: { meta: BookMeta; onClose: () =
 }
 
 /** خواندن یک باب */
-export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; sec: number; ch: number; onClose: () => void; go: (sec: number, ch: number) => void }) {
+export function ChapterReader({ meta, sec, ch, focus, onClose, go, openOther }: { meta: BookMeta; sec: number; ch: number; focus?: number; onClose: () => void; go: (sec: number, ch: number) => void; openOther?: (book: string, sec: number, ch: number, focus: number) => void }) {
   const [book, setBook] = useState<Book | null>(null)
   const [showAr, setShowAr] = useState(true)
   const scroller = useRef<HTMLDivElement>(null)
@@ -250,9 +250,12 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
   const pos = flat.findIndex(([a, b]) => a === sec && b === ch)
 
   useEffect(() => {
-    scroller.current?.scrollTo({ top: 0 })
+    // از پیوند «همین سخن در…» آمده‌ایم: همان متن را نشان بده
+    const target = focus !== undefined ? scroller.current?.querySelector<HTMLElement>(`[data-i="${focus}"]`) : null
+    if (target) (target.scrollIntoView({ block: 'start' }), target.classList.add('flash'))
+    else scroller.current?.scrollTo({ top: 0 })
     if (chapter) savePlace({ book: meta.id, title: meta.title, sec, ch, label: chapter.t })
-  }, [chapter, meta, sec, ch])
+  }, [chapter, meta, sec, ch, focus])
 
   const title = chapter ? `${meta.title} · ${chapter.t}` : meta.title
   const anyFa = chapter?.items.some((i) => i.fa)
@@ -280,7 +283,7 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
           </header>
         )}
         {chapter?.items.map((it, k) => (
-          <TextBlock key={it.i} it={it} n={k + 1} ctx={{ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, source: `${meta.title}، ${chapter.t}`, shelf: meta.shelf }} showAr={showAr || !it.fa} marked={p.marks.some((m) => m.key === `b:${meta.id}:${it.i}`)} onMark={() => toggleMark({ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, text: it.fa ?? it.ar })} />
+          <TextBlock key={it.i} it={it} n={k + 1} openOther={openOther} ctx={{ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, source: `${meta.title}، ${chapter.t}`, shelf: meta.shelf }} showAr={showAr || !it.fa} marked={p.marks.some((m) => m.key === `b:${meta.id}:${it.i}`)} onMark={() => toggleMark({ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, text: it.fa ?? it.ar })} />
         ))}
         {book && (
           <nav className="reader-nav">
@@ -299,7 +302,7 @@ export function ChapterReader({ meta, sec, ch, onClose, go }: { meta: BookMeta; 
 
 type TextCtx = { key: string; title: string; source: string; shelf?: string }
 
-function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void; ctx: TextCtx }) {
+function TextBlock({ it, n, showAr, marked, onMark, ctx, openOther }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void; ctx: TextCtx; openOther?: (book: string, sec: number, ch: number, focus: number) => void }) {
   const { p, setNote } = useStore()
   const note = p.notes[ctx.key]
   const [writing, setWriting] = useState(false)
@@ -307,7 +310,7 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
   const [word, setWord] = useState<number | null>(null)
   const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
   return (
-    <article className="text-block">
+    <article className="text-block" data-i={it.i}>
       <div className="ayah-tools">
         <span className="ayah-badge">{fa(it.n ?? n)}</span>
         {it.g?.map(([by, v]) => (
@@ -397,6 +400,15 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
             {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
             <p className="tb-fa">{it.fa}</p>
           </div>
+          {openOther && it.x?.length ? (
+            <div className="tb-cross">
+              {it.x.map(([b, s, c, i, label]) => (
+                <button key={`${b}-${i}`} className="link-btn" onClick={() => openOther(b, s, c, i)}>
+                  همین سخن در {b === 'ghurar' ? 'غررالحکم' : 'نهج‌البلاغه'}، {label} ←
+                </button>
+              ))}
+            </div>
+          ) : null}
         </>
       ) : (
         <>

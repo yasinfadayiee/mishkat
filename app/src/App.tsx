@@ -23,7 +23,7 @@ const NAV: { id: Exclude<Tab, 'trust'>; label: string; icon: keyof typeof Icon }
 ]
 
 /** آنچه روی صفحه باز است (درس‌نامه، سوره، فهرست کتاب یا یک باب) */
-type View = { kind: 'lesson'; id: string } | { kind: 'surah'; n: number } | { kind: 'toc'; book: BookMeta } | { kind: 'chapter'; book: BookMeta; sec: number; ch: number } | { kind: 'topic'; id: string } | null
+type View = { kind: 'lesson'; id: string } | { kind: 'surah'; n: number } | { kind: 'toc'; book: BookMeta } | { kind: 'chapter'; book: BookMeta; sec: number; ch: number; focus?: number } | { kind: 'topic'; id: string } | null
 
 const introSeen = () => {
   try {
@@ -134,7 +134,21 @@ function Shell() {
         {view?.kind === 'surah' && <SurahReader key="surah" n={view.n} onClose={close} go={(n) => setView({ kind: 'surah', n })} />}
         {view?.kind === 'toc' && <BookToc key={`toc-${view.book.id}`} meta={view.book} onClose={close} open={(sec, ch) => (setBack(view), setView({ kind: 'chapter', book: view.book, sec, ch }))} />}
         {view?.kind === 'topic' && <TopicReader key={`topic-${view.id}`} id={view.id} onClose={close} openAt={(b, sec, ch) => (setBack(view), setView({ kind: 'chapter', book: b, sec, ch }))} openSurah={(n) => (setBack(view), setView({ kind: 'surah', n }))} />}
-        {view?.kind === 'chapter' && <ChapterReader key={`ch-${view.book.id}`} meta={view.book} sec={view.sec} ch={view.ch} onClose={close} go={(sec, ch) => setView({ ...view, sec, ch })} />}
+        {view?.kind === 'chapter' && (
+          <ChapterReader
+            key={`ch-${view.book.id}`}
+            meta={view.book}
+            sec={view.sec}
+            ch={view.ch}
+            focus={view.focus}
+            onClose={close}
+            go={(sec, ch) => setView({ ...view, sec, ch, focus: undefined })}
+            openOther={async (id, sec, ch, focus) => {
+              const other = (await loadIndex()).books.find((b) => b.id === id)
+              if (other) (setBack(view), setView({ kind: 'chapter', book: other, sec, ch, focus }))
+            }}
+          />
+        )}
       </AnimatePresence>
     </div>
   )
