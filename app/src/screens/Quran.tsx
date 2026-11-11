@@ -9,6 +9,23 @@ const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَ
 type Mode = 'both' | 'ar' | 'fa'
 const pad = (n: number) => String(n).padStart(3, '0')
 
+/** قاریان (فایل‌های هر آیه از everyayah.com) */
+const RECITERS = [
+  { id: 'Alafasy_128kbps', name: 'مشاری العفاسی' },
+  { id: 'Parhizgar_48kbps', name: 'شهریار پرهیزگار' },
+  { id: 'Minshawy_Murattal_128kbps', name: 'محمدصدیق منشاوی' },
+  { id: 'Abdul_Basit_Murattal_192kbps', name: 'عبدالباسط (ترتیل)' },
+  { id: 'Husary_128kbps', name: 'محمود خلیل حصری' },
+] as const
+const RKEY = 'mishkat.reciter'
+const savedReciter = () => {
+  try {
+    return localStorage.getItem(RKEY) ?? RECITERS[0].id
+  } catch {
+    return RECITERS[0].id
+  }
+}
+
 /** فهرست سوره‌ها */
 export function Quran({ open }: { open: (n: number) => void }) {
   const [list, setList] = useState<SurahMeta[]>([])
@@ -27,7 +44,7 @@ export function Quran({ open }: { open: (n: number) => void }) {
       <header className="quiet-head">
         <div className="eyebrow">قرآن کریم</div>
         <h1 className="h1">۱۱۴ سوره، با ترجمهٔ کامل</h1>
-        <p className="muted">متن عثمانی «تنزیل» · ترجمهٔ آیت‌الله مکارم شیرازی · تلاوت مشاری العفاسی</p>
+        <p className="muted">متن عثمانی «تنزیل» · ترجمهٔ آیت‌الله مکارم شیرازی · تلاوت با پنج قاری</p>
       </header>
       <label className="lib-search">
         {Icon.search}
@@ -53,7 +70,14 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
   const [s, setS] = useState<Surah | null>(null)
   const [mode, setMode] = useState<Mode>('both')
   const [playing, setPlaying] = useState<number | null>(null)
+  const [reciter, setReciter] = useState(savedReciter)
+  // تکرار یک آیه برای حفظ کردن
+  const [repeat, setRepeat] = useState(false)
   const audio = useRef<HTMLAudioElement | null>(null)
+  const repeatRef = useRef(repeat)
+  repeatRef.current = repeat
+  const reciterRef = useRef(reciter)
+  reciterRef.current = reciter
   const scroller = useRef<HTMLDivElement>(null)
   const { p, toggleMark } = useStore()
 
@@ -68,21 +92,34 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
 
   useEffect(() => () => audio.current?.pause(), [])
 
-  const play = (k: number) => {
+  const start = (k: number) => {
     if (!audio.current) {
       audio.current = new Audio()
       audio.current.onerror = () => setPlaying(null)
     }
-    if (playing === k) {
-      audio.current.pause()
-      return setPlaying(null)
-    }
-    // پس از پایان هر آیه، آیهٔ بعد پخش می‌شود
-    audio.current.onended = () => (s && k < s.ayahs.length ? play(k + 1) : setPlaying(null))
-    audio.current.src = `https://everyayah.com/data/Alafasy_128kbps/${pad(n)}${pad(k)}.mp3`
+    // پس از پایان هر آیه: همان آیه (حالت تکرار) یا آیهٔ بعد
+    audio.current.onended = () => (repeatRef.current ? start(k) : s && k < s.ayahs.length ? start(k + 1) : setPlaying(null))
+    audio.current.src = `https://everyayah.com/data/${reciterRef.current}/${pad(n)}${pad(k)}.mp3`
     audio.current.play().catch(() => setPlaying(null))
     setPlaying(k)
     document.getElementById(`a-${k}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  }
+  const play = (k: number) => {
+    if (playing === k) {
+      audio.current?.pause()
+      return setPlaying(null)
+    }
+    start(k)
+  }
+  const pickReciter = (id: string) => {
+    setReciter(id)
+    reciterRef.current = id
+    try {
+      localStorage.setItem(RKEY, id)
+    } catch {
+      /* بدون ذخیره */
+    }
+    if (playing) start(playing)
   }
 
   const name = s?.name.replace(/^سُورَةُ\s*/, '') ?? ''
@@ -115,10 +152,15 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
           </div>
           {s && (
             <p className="muted">
-              سورهٔ {fa(n)} · {fa(s.ayahs.length)} آیه
+              سورهٔ {fa(n)}، {fa(s.ayahs.length)} آیه
             </p>
           )}
           {s && n !== 1 && n !== 9 && <div className="bismillah quran">{BISMILLAH}</div>}
+          {s && (
+            <button className="btn btn-gold surah-play" onClick={() => (playing ? play(playing) : start(1))}>
+              {playing ? Icon.pause : Icon.sound} {playing ? 'توقف تلاوت' : 'شنیدن کل سوره'}
+            </button>
+          )}
         </header>
 
         {!s && <p className="muted center">در حال باز کردن سوره…</p>}
@@ -168,8 +210,20 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
       <AnimatePresence>
         {playing && (
           <motion.div className="now-playing" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
-            {Icon.sound} تلاوت آیهٔ {fa(playing)}
-            <button onClick={() => play(playing)}>{Icon.pause}</button>
+            {Icon.sound} آیهٔ {fa(playing)}
+            <select value={reciter} onChange={(e) => pickReciter(e.target.value)} aria-label="قاری">
+              {RECITERS.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <button className={repeat ? 'on' : ''} onClick={() => setRepeat((x) => !x)} aria-label="تکرار این آیه" title="تکرار این آیه">
+              ↻
+            </button>
+            <button onClick={() => play(playing)} aria-label="توقف">
+              {Icon.pause}
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

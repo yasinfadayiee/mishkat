@@ -99,8 +99,8 @@ export function Home({
         <div className="masthead-text">
           <div className="mast-date">
             {shamsi}
-            {qamari && <span> · {qamari}</span>}
-            <span className="mast-phase"> · هنگامِ {PHASE_NAME[phaseOf()]}</span>
+            {qamari && <span>، {qamari}</span>}
+            <span className="mast-phase">، هنگام {PHASE_NAME[phaseOf()]}</span>
           </div>
           <div className="mast-hi">
             {greeting()}
