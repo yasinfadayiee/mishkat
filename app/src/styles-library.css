@@ -1141,3 +1141,28 @@
   color: var(--gold);
   font-size: 12.5px;
 }
+
+.me-tools {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.me-tools .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.me-tools .btn svg {
+  width: 18px;
+}
+.remind-field select {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  text-align: end;
+}
+.remind-field select option {
+  color: #111;
+}

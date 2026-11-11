@@ -68,6 +68,8 @@ export interface Progress {
   marks: Mark[]
   /** کلید: q:سوره:آیه یا b:کتاب:شناسه */
   notes: Record<string, Note>
+  /** ساعت یادآور روزانه (۰ تا ۲۳)، یا خاموش */
+  remindHour?: number | null
   /** کاربر خودش پوسته انتخاب کرده است (وگرنه پوستهٔ خودکار) */
   themeSet?: boolean
 }

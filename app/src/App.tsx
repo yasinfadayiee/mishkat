@@ -10,6 +10,7 @@ import { Me, Trust } from './screens/Me'
 import { Onboarding } from './screens/Onboarding'
 import { Quran, SurahReader } from './screens/Quran'
 import { TopicReader } from './screens/Topics'
+import { scheduleReminders } from './reminder'
 import { StoreProvider, useStore } from './store'
 import { Girih, Icon } from './ui'
 
@@ -51,6 +52,12 @@ function Shell() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [tab])
+
+  // یادآورهای روزانه با هر بار باز شدن برنامه برای ۳۰ روز آینده تازه می‌شوند
+  const remindHour = p.remindHour
+  useEffect(() => {
+    if (remindHour !== undefined && remindHour !== null) scheduleReminders(remindHour).catch(() => {})
+  }, [remindHour])
 
   const openLesson = (id: string) => setView({ kind: 'lesson', id })
   const openQuran = (n?: number) => (n ? setView({ kind: 'surah', n }) : (setView(null), setTab('quran')))

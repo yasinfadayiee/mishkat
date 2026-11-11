@@ -1,3 +1,5 @@
+import { exportNotes } from '../export-notes'
+import { canRemind, scheduleReminders } from '../reminder'
 import { motion } from 'framer-motion'
 import { lessonById, lessons } from '../data/lessons'
 import { fa, useStore, type ThemeId } from '../store'
@@ -139,6 +141,31 @@ export function Me({ goTo, openLesson, openMark }: { goTo: (t: 'trust') => void;
       <section className="shelf">
         <div className="shelf-head">
           <h2>تنظیمات</h2>
+        </div>
+        <div className="me-tools">
+          <button className="btn btn-ghost" onClick={() => exportNotes(p)}>
+            {Icon.pen} خروجی دفتر (برای چاپ یا PDF)
+          </button>
+          {canRemind() && (
+            <label className="name-field remind-field">
+              <span>یادآور روزانه</span>
+              <select
+                value={p.remindHour ?? ''}
+                onChange={async (e) => {
+                  const h = e.target.value === '' ? null : Number(e.target.value)
+                  const ok = await scheduleReminders(h)
+                  set((x) => ({ ...x, remindHour: ok ? h : null }))
+                }}
+              >
+                <option value="">خاموش</option>
+                {[6, 7, 8, 9, 12, 17, 20, 21, 22].map((h) => (
+                  <option key={h} value={h}>
+                    ساعت {fa(h)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
         <label className="name-field">
           <span>نام تو</span>
