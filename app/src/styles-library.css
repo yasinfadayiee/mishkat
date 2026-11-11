@@ -1067,3 +1067,77 @@
     box-shadow: 0 0 0 2px transparent;
   }
 }
+
+/* برنامهٔ مطالعه */
+.plan-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+.plan-top {
+  display: grid;
+  gap: 8px;
+}
+.plan-top b {
+  display: block;
+  font-size: 16px;
+}
+.plan-top small {
+  color: var(--gold);
+  font-size: 12.5px;
+}
+.plan-bar {
+  height: 5px;
+  border-radius: 99px;
+  background: var(--line);
+  overflow: hidden;
+}
+.plan-bar i {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+}
+.plan-today {
+  display: grid;
+  gap: 6px;
+}
+.plan-ch {
+  text-align: start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--gold-soft);
+  color: var(--ink);
+  font-size: 14px;
+}
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.plan-stop {
+  justify-self: start;
+  font-size: 12px;
+  opacity: 0.7;
+}
+.plan-list {
+  display: grid;
+  gap: 10px;
+}
+.plan-pick {
+  display: grid;
+  gap: 4px;
+  text-align: start;
+  padding: 14px 16px;
+}
+.plan-pick small {
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.plan-pick span {
+  color: var(--gold);
+  font-size: 12.5px;
+}

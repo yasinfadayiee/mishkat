@@ -61,7 +61,8 @@ export interface Progress {
   checkins: Record<string, string[]>
   studyDays: string[]
   journal: JournalEntry[]
-  programs: Record<string, { startedAt: string }>
+  /** برنامه‌های مطالعه: روزهای خوانده‌شده (شمارهٔ روز از ۰) */
+  programs: Record<string, { startedAt: string; done?: number[] }>
   /** درس‌های نشان‌شده برای مطالعهٔ دوباره */
   saved: string[]
   marks: Mark[]
@@ -142,6 +143,10 @@ interface Store {
   toggleSaved: (lessonId: string) => void
   toggleMark: (m: Omit<Mark, 'at'>) => void
   setNote: (key: string, patch: Partial<Note> & Pick<Note, 'title' | 'text'>) => void
+  /** شروع یا کنار گذاشتن برنامهٔ مطالعه، و علامت روز خوانده‌شده */
+  startPlan: (id: string) => void
+  stopPlan: (id: string) => void
+  togglePlanDay: (id: string, day: number) => void
   streak: number
 }
 
@@ -210,6 +215,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }),
       toggleSaved: (lessonId) =>
         set((x) => ({ ...x, saved: x.saved.includes(lessonId) ? x.saved.filter((i) => i !== lessonId) : [lessonId, ...x.saved] })),
+      startPlan: (id) => set((x) => ({ ...x, programs: { ...x.programs, [id]: x.programs[id] ?? { startedAt: today, done: [] } } })),
+      stopPlan: (id) =>
+        set((x) => {
+          const programs = { ...x.programs }
+          delete programs[id]
+          return { ...x, programs }
+        }),
+      togglePlanDay: (id, day) =>
+        set((x) => {
+          const cur = x.programs[id] ?? { startedAt: today, done: [] }
+          const done = cur.done ?? []
+          return { ...x, programs: { ...x.programs, [id]: { ...cur, done: done.includes(day) ? done.filter((d) => d !== day) : [...done, day] } } }
+        }),
     }
   }, [p, set])
 

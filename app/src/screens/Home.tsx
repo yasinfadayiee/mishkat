@@ -1,3 +1,4 @@
+import { PlanSection } from './Plans'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { lastPlace, loadBook, loadIndex, loadSurahs, type BookMeta, type Item, type Place, type SurahMeta } from '../books'
@@ -199,6 +200,8 @@ export function Home({
             ))}
           </div>
         </section>
+
+        <PlanSection openAt={(meta, sec, ch) => openBook(meta, sec, ch)} />
 
         <section className="home-sec">
           <div className="hs-head">
