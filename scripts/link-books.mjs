@@ -51,6 +51,38 @@ for (const g of G) {
   links++
 }
 for (const n of N) if (n.it.x) n.it.x = n.it.x.slice(0, 3)
+
+// اعراب: اگر حروف سخن غرر عیناً در متن اعراب‌دار نهج‌البلاغه آمده باشد، همان بخش اعراب‌دار (فیلد v) نمایش داده می‌شود.
+// هیچ اعرابی حدس زده نمی‌شود؛ متن ar دست نمی‌خورد و برای تطبیق با منبع می‌ماند.
+const H = /[ً-ٰٟـ]/
+const fold = (c) => ({ 'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ى': 'ي', 'ی': 'ي', 'ة': 'ه', 'ؤ': 'و', 'ئ': 'ي' })[c] ?? c
+const letters = (t) => {
+  let s = ''
+  const pos = []
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i]
+    if (H.test(c)) continue
+    if (/[ء-ي]/.test(c)) (s += fold(c)), pos.push(i)
+    else if (/\s/.test(c) && s && s.at(-1) !== ' ') (s += ' '), pos.push(i)
+  }
+  return { s, pos }
+}
+const NV = N.map((n) => ({ ar: n.it.ar, ...letters(n.it.ar) }))
+let vocal = 0
+for (const g of G) {
+  delete g.it.v
+  if (!g.it.x) continue
+  const want = letters(g.it.ar.replace(/\[[^\]]*\]/g, '')).s.trim()
+  for (const n of NV) {
+    const k = n.s.indexOf(want)
+    if (k < 0) continue
+    let end = n.pos[k + want.length - 1] + 1
+    while (end < n.ar.length && H.test(n.ar[end])) end++
+    g.it.v = n.ar.slice(n.pos[k], end)
+    vocal++
+    break
+  }
+}
 fs.writeFileSync(path.join(dir, 'Nahj-al-Balagha-Radi.json'), JSON.stringify(nahj))
 fs.writeFileSync(path.join(dir, 'ghurar.json'), JSON.stringify(ghurar))
-console.log(`پیوند غرر ↔ نهج: ${links} سخن غرر، ${N.filter((n) => n.it.x).length} متن نهج`)
+console.log(`پیوند غرر ↔ نهج: ${links} سخن غرر، ${N.filter((n) => n.it.x).length} متن نهج؛ اعراب از نهج برای ${vocal} سخن غرر`)

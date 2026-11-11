@@ -397,7 +397,8 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx, openOther }: { it: Item
           )}
           <div className={`tb-source ${it.sm ? 'quiet' : ''}`}>
             {it.sm && <small>متن و ترجمهٔ دقیق</small>}
-            {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
+            {showAr && <ArabicText kind="hadith" text={it.v ?? it.ar} className="tb-ar" />}
+            {showAr && it.v && <small className="tb-vocal">اعراب از متن نهج‌البلاغه</small>}
             <p className="tb-fa">{it.fa}</p>
           </div>
           {openOther && it.x?.length ? (
