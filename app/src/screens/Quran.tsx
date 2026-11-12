@@ -2,6 +2,7 @@ import { AnimatePresence, m } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { loadSurah, loadSurahs, norm, savePlace, type Surah, type SurahMeta } from '../books'
 import { MarkButton, ReaderShell } from '../reader'
+import { go, href } from '../router'
 import { fa, useStore } from '../store'
 import { Icon } from '../ui'
 
@@ -27,7 +28,8 @@ const savedReciter = () => {
 }
 
 /** فهرست سوره‌ها */
-export function Quran({ open }: { open: (n: number) => void }) {
+export function Quran() {
+  const open = (n: number) => go(href.surah(n))
   const [list, setList] = useState<SurahMeta[]>([])
   const [q, setQ] = useState('')
   useEffect(() => {
@@ -66,7 +68,8 @@ export function Quran({ open }: { open: (n: number) => void }) {
 }
 
 /** خواندن یک سوره */
-export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void; go: (n: number) => void }) {
+export function SurahReader({ n, ayah, onClose }: { n: number; ayah?: number; onClose: () => void }) {
+  const goSurah = (x: number) => go(href.surah(x), true)
   const [s, setS] = useState<Surah | null>(null)
   const [mode, setMode] = useState<Mode>('both')
   const [playing, setPlaying] = useState<number | null>(null)
@@ -85,10 +88,38 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
     setS(null)
     loadSurah(n).then((x) => {
       setS(x)
-      savePlace({ book: 'quran', title: 'قرآن کریم', sec: n, ch: 0, label: `سورهٔ ${x.name.replace(/^سُورَةُ\s*/, '')}` })
+      savePlace({ book: 'quran', title: 'قرآن کریم', sec: n, ch: 0, label: `سورهٔ ${x.name.replace(/^سُورَةُ\s*/, '')}`, ...(ayah && { i: ayah }) })
     })
     scroller.current?.scrollTo({ top: 0 })
-  }, [n])
+  }, [n, ayah])
+
+  // ایستادن روی همان آیه و پررنگ کردن یک لحظه‌ای آن
+  useEffect(() => {
+    if (!s || !ayah) return
+    const el = document.getElementById(`a-${ayah}`)
+    if (!el) return
+    el.scrollIntoView({ block: 'center' })
+    el.classList.remove('flash')
+    void el.offsetWidth
+    el.classList.add('flash')
+  }, [s, ayah])
+
+  // «ادامهٔ مطالعه» آیه‌ای را که بالای صفحه است نگه می‌دارد
+  useEffect(() => {
+    const el = scroller.current
+    if (!el || !s) return
+    let t: ReturnType<typeof setTimeout> | undefined
+    const onScroll = () => {
+      clearTimeout(t)
+      t = setTimeout(() => {
+        const top = el.getBoundingClientRect().top + 90
+        const first = [...el.querySelectorAll<HTMLElement>('[id^="a-"]')].find((x) => x.getBoundingClientRect().bottom > top)
+        if (first) savePlace({ book: 'quran', title: 'قرآن کریم', sec: n, ch: 0, label: `سورهٔ ${s.name.replace(/^سُورَةُ\s*/, '')}`, i: Number(first.id.slice(2)) })
+      }, 400)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => (el.removeEventListener('scroll', onScroll), clearTimeout(t))
+  }, [s, n])
 
   useEffect(() => () => audio.current?.pause(), [])
 
@@ -198,10 +229,10 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
 
         {s && (
           <nav className="reader-nav">
-            <button className="btn btn-ghost" disabled={n === 1} onClick={() => go(n - 1)}>
+            <button className="btn btn-ghost" disabled={n === 1} onClick={() => goSurah(n - 1)}>
               {Icon.back} سورهٔ قبل
             </button>
-            <button className="btn btn-ghost" disabled={n === 114} onClick={() => go(n + 1)}>
+            <button className="btn btn-ghost" disabled={n === 114} onClick={() => goSurah(n + 1)}>
               سورهٔ بعد {Icon.next}
             </button>
           </nav>

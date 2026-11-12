@@ -55,11 +55,12 @@ export interface Progress {
   name: string
   theme: ThemeId
   completed: Record<string, string>
-  quiz: Record<string, boolean>
-  habits: Habit[]
-  /** کلید: تاریخ روز؛ مقدار: شناسهٔ درس‌هایی که تمرینشان آن روز انجام شد */
-  checkins: Record<string, string[]>
-  studyDays: string[]
+  /** تمرین‌هایی که در پایان درس‌نامه‌ها پذیرفته شده */
+  habits?: Habit[]
+  /** فیلدهای نسخه‌های قدیمی (آزمون، ثبت روزانه و روزهای پیاپی)؛ دیگر به کار نمی‌روند ولی برای سازگاری پاک نمی‌شوند */
+  quiz?: Record<string, boolean>
+  checkins?: Record<string, string[]>
+  studyDays?: string[]
   journal: JournalEntry[]
   /** برنامه‌های مطالعه: روزهای خوانده‌شده (شمارهٔ روز از ۰) */
   programs: Record<string, { startedAt: string; done?: number[] }>
@@ -70,6 +71,8 @@ export interface Progress {
   notes: Record<string, Note>
   /** ساعت یادآور روزانه (۰ تا ۲۳)، یا خاموش */
   remindHour?: number | null
+  /** باب‌هایی که تا آخر خوانده شده: کتاب ← ["بخش-باب"]؛ فقط نشانهٔ جای مطالعه است */
+  readCh?: Record<string, string[]>
   /** کاربر خودش پوسته انتخاب کرده است (وگرنه پوستهٔ خودکار) */
   themeSet?: boolean
 }
@@ -81,10 +84,7 @@ const initial: Progress = {
   name: '',
   theme: 'auto',
   completed: {},
-  quiz: {},
   habits: [],
-  checkins: {},
-  studyDays: [],
   journal: [],
   programs: {},
   saved: [],
@@ -112,35 +112,11 @@ export const dayKey = (d = new Date()) => {
   return `${y}-${m}-${day}`
 }
 
-const addDays = (d: Date, n: number) => {
-  const x = new Date(d)
-  x.setDate(x.getDate() + n)
-  return x
-}
-
-/** روزهای پیاپی مطالعه یا تمرین، تا امروز (یا دیروز اگر امروز هنوز کاری نشده) */
-export function streakOf(p: Progress) {
-  const active = new Set([...p.studyDays, ...Object.keys(p.checkins).filter((k) => p.checkins[k].length)])
-  let cursor = new Date()
-  if (!active.has(dayKey(cursor))) cursor = addDays(cursor, -1)
-  let n = 0
-  while (active.has(dayKey(cursor))) {
-    n++
-    cursor = addDays(cursor, -1)
-  }
-  return n
-}
-
-export function activeDays(p: Progress) {
-  return new Set([...p.studyDays, ...Object.keys(p.checkins).filter((k) => p.checkins[k].length)])
-}
-
 interface Store {
   p: Progress
   set: (fn: (p: Progress) => Progress) => void
   completeLesson: (id: string) => void
   adoptHabit: (lessonId: string, short: string) => void
-  toggleCheckin: (lessonId: string) => void
   addJournal: (lessonId: string, text: string) => void
   toggleSaved: (lessonId: string) => void
   toggleMark: (m: Omit<Mark, 'at'>) => void
@@ -149,7 +125,8 @@ interface Store {
   startPlan: (id: string) => void
   stopPlan: (id: string) => void
   togglePlanDay: (id: string, day: number) => void
-  streak: number
+  /** باب به آخر رسید */
+  markRead: (book: string, sec: number, ch: number) => void
 }
 
 const Ctx = createContext<Store | null>(null)
@@ -184,25 +161,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return {
       p,
       set,
-      streak: streakOf(p),
       completeLesson: (id) =>
         set((x) => ({
           ...x,
           completed: { ...x.completed, [id]: x.completed[id] ?? today },
-          studyDays: x.studyDays.includes(today) ? x.studyDays : [...x.studyDays, today],
         })),
       adoptHabit: (lessonId, short) =>
         set((x) =>
-          x.habits.some((h) => h.lessonId === lessonId)
+          (x.habits ?? []).some((h) => h.lessonId === lessonId)
             ? x
-            : { ...x, habits: [...x.habits, { lessonId, short, addedAt: today }] },
+            : { ...x, habits: [...(x.habits ?? []), { lessonId, short, addedAt: today }] },
         ),
-      toggleCheckin: (lessonId) =>
-        set((x) => {
-          const list = x.checkins[today] ?? []
-          const next = list.includes(lessonId) ? list.filter((i) => i !== lessonId) : [...list, lessonId]
-          return { ...x, checkins: { ...x.checkins, [today]: next } }
-        }),
       addJournal: (lessonId, text) =>
         set((x) => ({ ...x, journal: [{ lessonId, text, date: today }, ...x.journal] })),
       toggleMark: (m) =>
@@ -217,6 +186,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         }),
       toggleSaved: (lessonId) =>
         set((x) => ({ ...x, saved: x.saved.includes(lessonId) ? x.saved.filter((i) => i !== lessonId) : [lessonId, ...x.saved] })),
+      markRead: (book, sec, ch) =>
+        set((x) => {
+          const k = `${sec}-${ch}`
+          const list = x.readCh?.[book] ?? []
+          return list.includes(k) ? x : { ...x, readCh: { ...x.readCh, [book]: [...list, k] } }
+        }),
       startPlan: (id) => set((x) => ({ ...x, programs: { ...x.programs, [id]: x.programs[id] ?? { startedAt: today, done: [] } } })),
       stopPlan: (id) =>
         set((x) => {

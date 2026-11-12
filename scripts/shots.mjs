@@ -117,6 +117,9 @@ for (const sc of scenes) {
       if (process.env.SLOW) await call('Network.emulateNetworkConditions', { offline: false, latency: 562.5, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 })
       bytes = 0
       reqs.clear()
+      // بدون این، رفتن به نشانیِ هم‌سند (فقط hash متفاوت) صفحه را از نو بار نمی‌کند
+      await call('Page.navigate', { url: 'about:blank' })
+      await sleep(150)
       const t0 = Date.now()
       await call('Page.navigate', { url: `${base}index.html${sc.hash ?? ''}` })
       let ready = 0
@@ -143,6 +146,7 @@ for (const sc of scenes) {
       }
       await sleep(sc.wait ?? 1200)
       const dims = await ev(`(()=>{const r=document.querySelector('.reader-scroll, .study-scroll');return {doc: document.documentElement.scrollHeight, reader: r ? r.scrollHeight : 0}})()`)
+      if (sc.probe) console.log('probe:', JSON.stringify(await ev(sc.probe)))
       const shotName = `${sc.name}-${size}-${theme}`
       let shot
       if (sc.full && size === 'phone') {

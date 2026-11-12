@@ -414,15 +414,12 @@ body {
   margin: 0 auto 6px;
   filter: drop-shadow(0 0 14px color-mix(in srgb, var(--tone-hi) 45%, transparent));
 }
-.reader[data-shelf] .toc-n,
 .reader[data-shelf] .ayah-badge {
   min-width: 28px;
   background: color-mix(in srgb, var(--tone) 35%, transparent) !important;
   color: var(--tone-hi) !important;
   border-color: color-mix(in srgb, var(--tone-hi) 45%, transparent) !important;
 }
-:root[data-theme='parchment'] .reader[data-shelf] .toc-n,
-:root[data-theme='noon'] .reader[data-shelf] .toc-n,
 :root[data-theme='parchment'] .reader[data-shelf] .ayah-badge,
 :root[data-theme='noon'] .reader[data-shelf] .ayah-badge {
   background: var(--tone) !important;

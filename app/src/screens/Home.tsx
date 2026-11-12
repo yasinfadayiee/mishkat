@@ -1,4 +1,5 @@
 import { PlanSection } from './Plans'
+import { go, href } from '../router'
 import { m } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { lastPlace, loadDaily, loadIndex, loadSurahs, type BookMeta, type DailyAyah, type DailySaying, type Place, type SurahMeta } from '../books'
@@ -46,19 +47,11 @@ function useDaily() {
   return d
 }
 
-export function Home({
-  openLesson,
-  openQuran,
-  openBook,
-  openPlace,
-  goTo,
-}: {
-  openLesson: (id: string) => void
-  openQuran: (n?: number) => void
-  openBook: (b: BookMeta, sec?: number, ch?: number) => void
-  openPlace: (p: Place) => void
-  goTo: (tab: 'library' | 'trust') => void
-}) {
+export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
+  const openLesson = (id: string) => go(href.lesson(id))
+  const openQuran = (n?: number, a?: number) => go(n ? href.surah(n, a) : '/quran')
+  const openBook = (b: BookMeta, sec?: number, ch?: number, i?: number) => go(sec === undefined ? href.toc(b.id) : href.chapter(b.id, sec, ch ?? 0, i))
+  const goTo = (t: 'library' | 'trust') => go(`/${t}`)
   const { p } = useStore()
   const { shamsi, qamari } = dates()
   const [sit, setSit] = useState<Situation | null>(null)
@@ -122,7 +115,7 @@ export function Home({
               <p className="dc-fa">{ayah.fa}</p>
               <footer>
                 <span>{surahs[ayah.n - 1] && `سورهٔ ${surahs[ayah.n - 1].name}، آیهٔ ${ayah.ayah}`}</span>
-                <button className="link-btn" onClick={() => openQuran(ayah.n)}>
+                <button className="link-btn" onClick={() => openQuran(ayah.n, Number(daily!.ayah.a.split('-')[0]) || undefined)}>
                   خواندن سوره ←
                 </button>
               </footer>
@@ -142,7 +135,7 @@ export function Home({
               <footer>
                 <span>نهج‌البلاغه، حکمت {fa(saying.n)}</span>
                 {nahj && (
-                  <button className="link-btn" onClick={() => openBook(nahj, saying.sec, saying.ch)}>
+                  <button className="link-btn" onClick={() => openBook(nahj, saying.sec, saying.ch, saying.i)}>
                     در کتاب ←
                   </button>
                 )}

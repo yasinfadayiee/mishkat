@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { loadIndex, type BookMeta } from '../books'
 import { useSearch, type SearchHit } from '../search'
+import { go, href } from '../router'
 import { fa } from '../store'
 import { Icon } from '../ui'
 
@@ -54,7 +55,8 @@ const snippet = (t: string, words: string[], len = 240) => {
 const MAIN = ['quran', 'Nahj-al-Balagha-Radi', 'ghurar']
 
 /** صفحهٔ جست‌وجو: نتیجه‌ها کتاب‌به‌کتاب با تعداد هر گروه، فیلتر کتاب و جست‌وجوهای اخیر */
-export function SearchPage({ open, initial = '' }: { open: (h: SearchHit, meta?: BookMeta) => void; initial?: string }) {
+export function SearchPage({ initial = '' }: { initial?: string }) {
+  const open = (h: SearchHit) => go(h.book === 'quran' ? href.surah(h.sec, h.i) : href.chapter(h.book, h.sec, h.ch, h.i))
   const [q, setQ] = useState(initial)
   const [books, setBooks] = useState<BookMeta[]>([])
   const [only, setOnly] = useState<string | null>(null)
@@ -84,6 +86,12 @@ export function SearchPage({ open, initial = '' }: { open: (h: SearchHit, meta?:
   const order = (id: string) => (MAIN.indexOf(id) + 1 || 9)
   const groups = Object.entries(res?.hits ?? {}).sort((a, b) => order(a[0]) - order(b[0]))
   const total = Object.values(res?.counts ?? {}).reduce((s, n) => s + n, 0)
+
+  // واژهٔ جست‌وجو در نشانی می‌ماند تا با «بازگشت» از یک نتیجه، همین فهرست دوباره بیاید
+  useEffect(() => {
+    const t = setTimeout(() => go(q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : '/search', true), 400)
+    return () => clearTimeout(t)
+  }, [q])
 
   useEffect(() => {
     if (!res?.done || !total) return
@@ -159,7 +167,7 @@ export function SearchPage({ open, initial = '' }: { open: (h: SearchHit, meta?:
                 </h2>
                 <div className="marks">
                   {shown.map((h) => (
-                    <button key={`${h.sec}:${h.ch}:${h.i}`} className="mark-row" onClick={() => open(h, meta)}>
+                    <button key={`${h.sec}:${h.ch}:${h.i}`} className="mark-row" onClick={() => open(h)}>
                       <small>{place(h)}</small>
                       {h.ar ? (
                         <p className="arabic" lang="ar">

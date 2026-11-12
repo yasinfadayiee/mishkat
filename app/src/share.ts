@@ -102,3 +102,39 @@ export async function shareCard({ ar, gist, fa, source, shelf = 'nahj' }: { ar: 
   a.click()
   setTimeout(() => URL.revokeObjectURL(a.href), 4000)
 }
+
+/** پیوند یک متن: پنجرهٔ هم‌رسانی گوشی، یا رونوشت در حافظه */
+export async function shareLink(url: string, title: string) {
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, url })
+      return
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return
+    }
+  }
+  await copyText(url, 'پیوند رونوشت شد')
+}
+
+/** رونوشت متن در حافظه، با پیام کوتاه */
+export async function copyText(text: string, done = 'رونوشت شد') {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const t = document.createElement('textarea')
+    t.value = text
+    document.body.append(t)
+    t.select()
+    document.execCommand('copy')
+    t.remove()
+  }
+  toast(done)
+}
+
+/* ───────── پیام کوتاه پایین صفحه ───────── */
+type ToastFn = (msg: string) => void
+let listener: ToastFn | null = null
+export const toast = (msg: string) => listener?.(msg)
+export const onToast = (fn: ToastFn | null) => {
+  listener = fn
+}

@@ -73,7 +73,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
   const [scale, setScale] = useState(readScale)
   const s = lesson.source
   const sh = lesson.sharh
-  const adopted = p.habits.some((h) => h.lessonId === lesson.id)
+  const adopted = (p.habits ?? []).some((h) => h.lessonId === lesson.id)
   const chapter = chapterOf(lesson.id)
   const station = lessons.findIndex((l) => l.id === lesson.id) + 1
 

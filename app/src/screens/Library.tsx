@@ -1,11 +1,10 @@
-import { m } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import { loadIndex, norm, type BookMeta, type Shelf } from '../books'
-import { CHAPTERS, LESSONS as lessons, lessonCard as lessonById } from '../data/lesson-index'
-import { Skeleton } from '../load'
-import { TopicGrid } from './TopicGrid'
+import { loadIndex, type BookMeta } from '../books'
+import { CHAPTERS, lessonCard } from '../data/lesson-index'
+import { Load, Skeleton, useLoad } from '../load'
+import { go, href } from '../router'
 import { fa, useStore } from '../store'
 import { Icon, Medallion } from '../ui'
+import { TopicGrid } from './TopicGrid'
 
 const SPINE: Record<string, string> = {
   quran: 'spine-emerald',
@@ -16,122 +15,159 @@ const SPINE: Record<string, string> = {
   sunni: 'spine-stone',
 }
 
-export type Open = { book: BookMeta; sec: number; ch: number } | null
+const TABS = [
+  ['', 'کتاب‌ها'],
+  ['topics', 'موضوع‌ها'],
+  ['lessons', 'درس‌نامه‌ها'],
+] as const
 
-/** کتابخانه: قفسه‌ها، درس‌نامه‌ها و جست‌وجو در عنوان کتاب‌ها */
-export function Library({ openLesson, openBook, openQuran, openTopic, openSearch }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openTopic: (id: string) => void; openSearch: (q: string) => void }) {
-  const [idx, setIdx] = useState<{ shelves: Shelf[]; books: BookMeta[] } | null>(null)
-  const [q, setQ] = useState('')
+/** وضع ترجمهٔ یک کتاب، کوتاه */
+export const trLabel = (b: BookMeta) => (b.translated >= b.count ? 'ترجمهٔ کامل' : b.translated ? `${fa(b.translated)} از ${fa(b.count)} با ترجمه` : 'فقط متن عربی')
+
+function BookTile({ b }: { b: BookMeta }) {
+  return (
+    <button className="book-tile" data-shelf={b.shelf} onClick={() => go(b.kind === 'quran' ? '/quran' : href.toc(b.id))}>
+      <span className={`book-spine ${SPINE[b.shelf]}`}>
+        <Medallion />
+        <span>{b.title}</span>
+      </span>
+      <span className="bt-text">
+        <b>{b.title}</b>
+        <small>{b.author}</small>
+        <span className="bt-meta">
+          {fa(b.count)} متن
+          {b.translated > 0 && <em>{trLabel(b)}</em>}
+        </span>
+      </span>
+    </button>
+  )
+}
+
+/** کتابخانه: کتاب‌ها، موضوع‌ها و درس‌نامه‌ها در سه زبانه */
+export function Library({ sub }: { sub?: string }) {
+  const idx = useLoad(loadIndex, [])
   const { p } = useStore()
-  useEffect(() => {
-    loadIndex().then(setIdx).catch(() => setIdx(null))
-  }, [])
-  const k = norm(q.trim())
-  const books = (idx?.books ?? []).filter((b) => !k || norm(`${b.title} ${b.author} ${b.desc}`).includes(k))
-  const saved = p.saved.map(lessonById).filter((l) => !!l)
+  const tab = sub === 'topics' || sub === 'lessons' ? sub : ''
+  const books = idx.data?.books ?? []
+  const translated = books.filter((b) => b.translated > 0)
+  const full = books.filter((b) => b.translated >= b.count).length
+  const arabicOnly = books.filter((b) => !b.translated)
+  const saved = p.saved.map(lessonCard).filter((l) => !!l)
+
   return (
     <div className="fade-up">
       <header className="quiet-head">
         <div className="eyebrow">کتابخانه</div>
-        <h1 className="h1">
-          {idx ? `${fa(idx.books.length + 1)} کتاب، ${fa(idx.books.reduce((s, b) => s + b.count, 0))} متن` : 'کتابخانه'}
-        </h1>
-        <p className="muted">متن عربی هر کتاب کامل و از منبع است. ترجمهٔ فارسی و توضیح ساده، کتاب‌به‌کتاب افزوده می‌شود.</p>
+        <h1 className="h1">{idx.data ? `${fa(books.length)} کتاب، ${fa(full)} با ترجمهٔ کامل` : 'کتابخانه'}</h1>
+        <p className="muted">متن عربی همهٔ کتاب‌ها کامل و از منبع است. ترجمهٔ فارسی و توضیح ساده کتاب‌به‌کتاب افزوده می‌شود.</p>
       </header>
-      <label className="lib-search">
+      <button className="lib-search search-btn" onClick={() => go('/search')}>
         {Icon.search}
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجو در نام کتاب‌ها؛ یا در متن‌ها" />
-      </label>
+        <span>جست‌وجو در متن همهٔ کتاب‌ها</span>
+        <kbd aria-hidden>/</kbd>
+      </button>
+      <div className="seg-tabs" role="tablist" aria-label="بخش‌های کتابخانه">
+        {TABS.map(([id, label]) => (
+          <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => go(id ? `/library/${id}` : '/library', true)}>
+            {label}
+          </button>
+        ))}
+      </div>
 
-      {k.length >= 2 && (
-        <button className="card search-jump" onClick={() => openSearch(q)}>
-          {Icon.search} جست‌وجوی «{q.trim()}» در متن همهٔ کتاب‌ها ←
-        </button>
+      {tab === '' && (
+        <Load r={idx} what="کتابخانه" skel={<Skeleton kind="list" rows={6} />}>
+          {() => (
+            <>
+              <section className="shelf">
+                <div className="shelf-head">
+                  <h2>با ترجمهٔ فارسی</h2>
+                  <small>{fa(translated.length)} کتاب</small>
+                </div>
+                <div className="book-grid">
+                  {translated.map((b) => (
+                    <BookTile key={b.id} b={b} />
+                  ))}
+                </div>
+              </section>
+              <details className="shelf arabic-shelf">
+                <summary>
+                  <span>
+                    <b>فقط متن عربی</b>
+                    <small>ترجمه در راه است؛ {fa(arabicOnly.length)} کتاب</small>
+                  </span>
+                  <i>{Icon.next}</i>
+                </summary>
+                {(idx.data?.shelves ?? []).map((s) => {
+                  const list = arabicOnly.filter((b) => b.shelf === s.id)
+                  if (!list.length) return null
+                  return (
+                    <div key={s.id} className="sub-shelf">
+                      <h3>{s.title}</h3>
+                      <div className="book-grid">
+                        {list.map((b) => (
+                          <BookTile key={b.id} b={b} />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </details>
+            </>
+          )}
+        </Load>
       )}
 
-      {!k && <TopicGrid open={openTopic} />}
+      {tab === 'topics' && <TopicGrid open={(id) => go(href.topic(id))} />}
 
-      {!k && (
-        <section className="shelf">
-          <div className="shelf-head">
-            <h2>درس‌نامه‌ها</h2>
-            <small>شرح جمله‌به‌جملهٔ {fa(lessons.length)} متن برگزیده، در پنج موضوع</small>
-          </div>
-          <div className="lesson-shelf">
-            {CHAPTERS.map((c) => (
-              <div key={c.id} className="topic-card">
-                <b>{c.title}</b>
-                <small>{c.subtitle}</small>
-                <ol>
-                  {c.lessons.map((id) => {
-                    const l = lessonById(id)
-                    return (
-                      l && (
-                        <li key={id}>
-                          <button onClick={() => openLesson(id)}>
-                            <span>{l.title}</span>
-                            {p.completed[id] && <i>{Icon.check}</i>}
-                          </button>
-                        </li>
-                      )
-                    )
-                  })}
-                </ol>
+      {tab === 'lessons' && (
+        <>
+          {saved.length > 0 && (
+            <section className="shelf">
+              <div className="shelf-head">
+                <h2>درس‌نامه‌های نشان‌شده</h2>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {saved.length > 0 && !k && (
-        <section className="shelf">
-          <div className="shelf-head">
-            <h2>درس‌نامه‌های نشان‌شده</h2>
-          </div>
-          <div className="saved-row">
-            {saved.map((l) => (
-              <button key={l!.id} className="saved-card" onClick={() => openLesson(l!.id)}>
-                <span className="saved-art" style={{ backgroundImage: `url(${l!.cover})` }} />
-                <b>{l!.title}</b>
-                <small>{l!.ref}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {(idx?.shelves ?? []).map((s) => {
-        const list = books.filter((b) => b.shelf === s.id)
-        if (!list.length) return null
-        return (
-          <section key={s.id} className="shelf">
+              <div className="saved-row">
+                {saved.map((l) => (
+                  <button key={l!.id} className="saved-card" onClick={() => go(href.lesson(l!.id))}>
+                    <span className="saved-art" style={{ backgroundImage: `url(${l!.cover})` }} />
+                    <b>{l!.title}</b>
+                    <small>{l!.ref}</small>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+          <section className="shelf">
             <div className="shelf-head">
-              <h2>{s.title}</h2>
-              <small>{fa(list.length)} کتاب</small>
+              <h2>درس‌نامه‌ها</h2>
+              <small>شرح جمله‌به‌جملهٔ {fa(CHAPTERS.reduce((n, c) => n + c.lessons.length, 0))} متن برگزیده، در پنج موضوع</small>
             </div>
-            <div className="book-grid">
-              {list.map((b) => (
-                <m.button key={b.id} className="book-tile" data-shelf={b.shelf} onClick={() => (b.kind === 'quran' ? openQuran() : openBook(b))} whileHover={{ y: -3 }}>
-                  <span className={`book-spine ${SPINE[b.shelf]}`}>
-                    <Medallion />
-                    <span>{b.title}</span>
-                  </span>
-                  <span className="bt-text">
-                    <b>{b.title}</b>
-                    <small>{b.author}</small>
-                    <span className="bt-meta">
-                      {fa(b.count)} متن
-                      {b.translated > 0 && <em>{b.translated >= b.count ? 'ترجمهٔ کامل' : `${fa(b.translated)} با ترجمه`}</em>}
-                    </span>
-                  </span>
-                </m.button>
+            <div className="lesson-shelf">
+              {CHAPTERS.map((c) => (
+                <div key={c.id} className="topic-card">
+                  <b>{c.title}</b>
+                  <small>{c.subtitle}</small>
+                  <ol>
+                    {c.lessons.map((id) => {
+                      const l = lessonCard(id)
+                      return (
+                        l && (
+                          <li key={id}>
+                            <button onClick={() => go(href.lesson(id))}>
+                              <span>{l.title}</span>
+                              {p.completed[id] && <i aria-label="خوانده شده">{Icon.check}</i>}
+                            </button>
+                          </li>
+                        )
+                      )
+                    })}
+                  </ol>
+                </div>
               ))}
             </div>
           </section>
-        )
-      })}
-      {!idx && <Skeleton kind="list" rows={6} />}
+        </>
+      )}
     </div>
   )
 }
-

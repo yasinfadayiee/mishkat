@@ -3,13 +3,14 @@ import { loadIndex, loadTopic, type BookMeta } from '../books'
 import { LoadFail, Skeleton, useLoad } from '../load'
 import { TOPICS } from '../data/topics'
 import { ReaderShell } from '../reader'
+import { go, href } from '../router'
 import { fa } from '../store'
 import { Medallion } from '../ui'
 
 type Row = { book: string; sec: number; ch: number; i: number; n: number; fa: string; sm: string }
 
 /** صفحهٔ یک موضوع: همهٔ متن‌های مرتبط، به ترتیبِ قرآن، نهج‌البلاغه، غرر و بقیه */
-export function TopicReader({ id, onClose, openAt, openSurah }: { id: string; onClose: () => void; openAt: (b: BookMeta, sec: number, ch: number, focus?: number) => void; openSurah: (n: number, ayah?: number) => void }) {
+export function TopicReader({ id, onClose }: { id: string; onClose: () => void }) {
   const topic = TOPICS.find((t) => t.id === id)!
   const [books, setBooks] = useState<BookMeta[]>([])
   const r = useLoad(() => loadTopic(id), [id])
@@ -64,9 +65,7 @@ export function TopicReader({ id, onClose, openAt, openSurah }: { id: string; on
                   key={`${r.sec}:${r.ch}:${r.i}`}
                   className="topic-item"
                   onClick={() => {
-                    if (b === 'quran') return openSurah(r.sec, r.i)
-                    const m = books.find((x) => x.id === b)
-                    if (m) openAt(m, r.sec, r.ch, r.i)
+                    go(b === 'quran' ? href.surah(r.sec, r.i) : href.chapter(b, r.sec, r.ch, r.i))
                   }}
                 >
                   {r.sm && <b>{r.sm}</b>}

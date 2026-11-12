@@ -35,6 +35,14 @@ export const Icon = {
   bookmark: S(<path d="M7 4h10v16l-5-3.5L7 20z" />),
   bookmarked: S(<path d="M7 4h10v16l-5-3.5L7 20z" fill="currentColor" />),
   search: S(<><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>),
+  dict: S(<><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5z" /><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19v3H7.5" /><path d="M9 7.5h6M9 11h4" /></>),
+  rahl: S(<><path d="M3 8.2c3-1.2 6-.9 9 1.1 3-2 6-2.3 9-1.1l-1.6 4.6c-2.5-.9-5-.5-7.4 1.2-2.4-1.7-4.9-2.1-7.4-1.2z" /><path d="M12 9.3v5.6M7.5 15 16.5 20.5M16.5 15 7.5 20.5" /></>),
+  gear: S(<><circle cx="12" cy="12" r="3" /><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" /><circle cx="12" cy="12" r="6.6" /></>),
+  more: S(<><circle cx="5.5" cy="12" r="1.4" fill="currentColor" /><circle cx="12" cy="12" r="1.4" fill="currentColor" /><circle cx="18.5" cy="12" r="1.4" fill="currentColor" /></>),
+  copy: S(<><rect x="8" y="8" width="11" height="12" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h8" /></>),
+  card: S(<><rect x="4" y="4" width="16" height="16" rx="2.5" /><path d="m4 16 4.5-4.5 3.5 3.5 2.5-2.5L20 18" /><circle cx="15.5" cy="8.5" r="1.5" /></>),
+  flag: S(<><path d="M6 21V4" /><path d="M6 4h11l-2 4 2 4H6" /></>),
+  list: S(<><path d="M9 6h11M9 12h11M9 18h11" /><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" strokeWidth={2.6} /></>),
   download: S(<><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" /><path d="M5 19h14" /></>),
   sound: S(<><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></>),
 }
@@ -59,78 +67,62 @@ export function Girih({ id = 'g', size = 96 }: { id?: string; size?: number }) {
   )
 }
 
-/* ───────── چراغ (مشکات) ───────── */
-export function Lamp({ level = 1, className }: { level?: number; className?: string }) {
-  const l = Math.max(0.12, Math.min(1, level))
-  return (
-    <svg viewBox="0 0 120 150" className={className} aria-hidden>
-      <defs>
-        <radialGradient id="halo" cx="50%" cy="62%" r="50%">
-          <stop offset="0%" stopColor="#ffd987" stopOpacity={0.9 * l} />
-          <stop offset="60%" stopColor="#ffb648" stopOpacity={0.25 * l} />
-          <stop offset="100%" stopColor="#ffb648" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="glass" x1="0" x2="1">
-          <stop offset="0" stopColor="#f7d68e" stopOpacity="0.35" />
-          <stop offset="0.5" stopColor="#fff3d1" stopOpacity={0.35 + 0.5 * l} />
-          <stop offset="1" stopColor="#c99543" stopOpacity="0.35" />
-        </linearGradient>
-        <linearGradient id="brass" x1="0" x2="1">
-          <stop offset="0" stopColor="#9a6b25" />
-          <stop offset="0.5" stopColor="#f3d491" />
-          <stop offset="1" stopColor="#8a5d1d" />
-        </linearGradient>
-      </defs>
-      <circle className="halo" cx="60" cy="92" r="58" fill="url(#halo)" />
-      <path d="M60 0v22" stroke="url(#brass)" strokeWidth="2" strokeDasharray="3 2" />
-      <path d="M48 26h24l-4 8H52z" fill="url(#brass)" />
-      <path d="M44 36h32c0 0 12 14 12 36s-14 36-28 36-28-14-28-36 12-36 12-36z" fill="url(#glass)" stroke="url(#brass)" strokeWidth="2" />
-      <path d="M52 40c-6 10-8 20-8 32" stroke="#fff6dc" strokeOpacity="0.4" strokeWidth="2" fill="none" />
-      <g className="lamp-flame" style={{ transform: `scale(${0.55 + 0.45 * l})` }}>
-        <path d="M60 58c7 9 10 15 10 22a10 10 0 0 1-20 0c0-7 3-13 10-22z" fill="#ffc35a" />
-        <path d="M60 68c4 5 5.5 8.5 5.5 12a5.5 5.5 0 0 1-11 0c0-3.5 1.5-7 5.5-12z" fill="#fff6d6" />
-      </g>
-      <path d="M50 108h20l-3 8H53z" fill="url(#brass)" />
-      <circle cx="60" cy="121" r="3" fill="url(#brass)" />
-    </svg>
-  )
-}
-
-/* ───────── جرقه‌های طلایی ───────── */
-export function Sparks({ show }: { show: boolean }) {
-  const parts = useRef(
-    Array.from({ length: 34 }, () => ({
-      x: (Math.random() - 0.5) * 520,
-      y: -Math.random() * 520 - 80,
-      d: 0.9 + Math.random() * 1.3,
-      s: 0.5 + Math.random(),
-    })),
-  )
-  return (
-    <AnimatePresence>
-      {show &&
-        parts.current.map((p, i) => (
-          <m.i
-            key={i}
-            className="spark"
-            style={{ left: '50%', top: '55%', scale: p.s }}
-            initial={{ x: 0, y: 0, opacity: 1 }}
-            animate={{ x: p.x, y: p.y, opacity: 0 }}
-            transition={{ duration: p.d, ease: [0.15, 0.7, 0.3, 1] }}
-          />
-        ))}
-    </AnimatePresence>
-  )
+/* ───────── پنجرهٔ روی صفحه: قفل فوکوس، Escape و برگشت فوکوس ───────── */
+const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+/** فوکوس داخل پنجره می‌ماند، Escape می‌بندد و پس از بستن فوکوس به دکمهٔ بازکننده برمی‌گردد */
+export function useDialog(ref: React.RefObject<HTMLElement | null>, open: boolean, onClose: () => void) {
+  const close = useRef(onClose)
+  close.current = onClose
+  useEffect(() => {
+    if (!open) return
+    const opener = document.activeElement as HTMLElement | null
+    const el = ref.current
+    // فوکوس اول روی خود پنجره، تا صفحه‌خوان عنوانش را بخواند
+    requestAnimationFrame(() => {
+      if (el && !el.contains(document.activeElement)) el.focus({ preventScroll: true })
+    })
+    const onKey = (e: KeyboardEvent) => {
+      const box = ref.current
+      if (!box) return
+      // فقط بالاترین پنجره به کلیدها جواب می‌دهد
+      const all = [...document.querySelectorAll('[data-dialog]')]
+      if (all[all.length - 1] !== box) return
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        close.current()
+      } else if (e.key === 'Tab') {
+        const items = [...box.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((x) => x.offsetParent !== null)
+        if (!items.length) return
+        const first = items[0]
+        const last = items[items.length - 1]
+        if (e.shiftKey && (document.activeElement === first || document.activeElement === box)) (e.preventDefault(), last.focus())
+        else if (!e.shiftKey && document.activeElement === last) (e.preventDefault(), first.focus())
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      if (opener && document.contains(opener)) opener.focus({ preventScroll: true })
+    }
+  }, [open, ref])
 }
 
 /* ───────── ورقهٔ پایین ───────── */
-export function Sheet({ open, onClose, children }: { open: boolean; onClose: () => void; children: ReactNode }) {
+export function Sheet({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: ReactNode; label?: string }) {
+  const box = useRef<HTMLDivElement>(null)
+  useDialog(box, open, onClose)
   return (
     <AnimatePresence>
       {open && (
         <m.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <m.div
+            ref={box}
             className="sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={label}
+            data-dialog
+            tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
             initial={{ y: 60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -138,6 +130,9 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
             transition={{ type: 'spring', damping: 26, stiffness: 300 }}
           >
             <div className="grab" />
+            <button className="icon-btn sheet-close" onClick={onClose} aria-label="بستن">
+              {Icon.close}
+            </button>
             {children}
           </m.div>
         </m.div>

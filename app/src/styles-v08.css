@@ -252,3 +252,701 @@ mark {
   height: 20px;
   color: var(--gold);
 }
+
+/* ───────── نوار بالای خوانشگر ───────── */
+.study-bar-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  line-height: 1.5;
+}
+.study-bar-title > span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.study-bar-title small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.study-bar-title.as-btn {
+  position: relative;
+  min-height: 44px;
+  padding: 2px 30px;
+  border-radius: 12px;
+  color: inherit;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.study-bar-title.as-btn:hover {
+  background: var(--gold-soft);
+}
+.study-bar-title.as-btn i {
+  position: absolute;
+  inset-inline-end: 6px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 18px;
+  color: var(--gold);
+}
+.bar-nav {
+  display: flex;
+  gap: 4px;
+}
+.bar-nav .icon-btn:disabled {
+  opacity: 0.35;
+}
+.aa-btn {
+  display: flex !important;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+  white-space: nowrap;
+  font-weight: 800;
+  font-size: 18px;
+}
+.aa-btn small {
+  font-size: 12.5px;
+}
+@media (max-width: 520px) {
+  .study-bar {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+  .study-bar-title.as-btn {
+    padding: 2px 22px 2px 4px;
+  }
+  .study-bar-title.as-btn i {
+    inset-inline-end: 0;
+  }
+}
+
+/* دسکتاپ: فهرست باب‌ها در ستون کناری، ستون متن حدود ۷۲۰ پیکسل */
+.reader-cols {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.reader-cols > .reader-scroll {
+  flex: 1;
+}
+.reader-aside {
+  display: none;
+}
+.reader .reader-body {
+  max-width: 720px;
+}
+@media (min-width: 1100px) {
+  .reader.has-aside .reader-aside {
+    display: block;
+    width: 320px;
+    flex: none;
+    overflow-y: auto;
+    padding: 12px 16px 40px;
+    border-inline-end: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg1) 70%, transparent);
+  }
+  .reader-aside .toc-sec h2 {
+    font-size: 15px;
+    margin: 14px 0 6px;
+  }
+  .reader-aside .toc button {
+    padding: 8px 12px;
+  }
+  .reader-aside .toc-t {
+    font-size: 14px;
+  }
+}
+
+/* فهرست کتاب */
+.toc button.here {
+  background: var(--gold-soft);
+  box-shadow: inset -3px 0 0 var(--gold);
+}
+.toc .toc-n {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  background: none !important;
+  border: 0 !important;
+  color: var(--muted) !important;
+  font-size: 13px;
+}
+.toc-n em {
+  font-style: normal;
+  font-size: 12.5px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.toc-done {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.toc-done svg {
+  width: 15px;
+}
+.read-count {
+  margin-top: 10px !important;
+  font-weight: 700;
+}
+.sheet-toc {
+  max-height: 64vh;
+  overflow-y: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+/* سربرگ باب: گرد مثل بقیهٔ کارت‌ها */
+.chapter-head,
+.reader[data-shelf] .chapter-head {
+  border-radius: 20px;
+  padding: 18px 18px 16px;
+  margin-bottom: 14px;
+}
+.chapter-head small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12.5px;
+  opacity: 0.85;
+}
+.reader[data-shelf] .text-block {
+  border-inline-start: 0;
+}
+
+/* ───────── یک متن ───────── */
+.text-block {
+  padding: 20px 0 22px;
+}
+.text-block .tb-ar {
+  margin: 4px 0 12px;
+  font-size: calc(26px * var(--ts-ar, 1));
+  line-height: calc(var(--lh, 2) + 0.15);
+  color: var(--ink);
+}
+.ar-lead {
+  font-size: 0.72em;
+  color: var(--muted);
+  margin-inline-end: 6px;
+}
+.text-block .tb-fa {
+  margin: 0 0 14px;
+  font-size: calc(17.5px * var(--ts, 1));
+  line-height: var(--lh, 2);
+  font-weight: 500;
+  color: var(--ink);
+  text-align: start;
+}
+.tb-vocal {
+  display: block;
+  margin: -6px 0 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.text-block .tb-gist p {
+  font-size: calc(17px * var(--ts, 1));
+  line-height: var(--lh, 2);
+}
+.tb-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 2px 0 12px;
+}
+.tb-more button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--ink-2, var(--ink));
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tb-more button svg {
+  width: 18px;
+  color: var(--gold);
+}
+.tb-more button.on {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--ink);
+}
+.text-block .tb-deep {
+  padding: 14px 0 2px;
+}
+.text-block .tb-deep p {
+  font-size: calc(16px * var(--ts, 1));
+  line-height: var(--lh, 2);
+}
+.text-block .tb-mirror {
+  display: block;
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.text-block .tb-mirror p {
+  font-size: calc(16px * var(--ts, 1));
+}
+.text-block .tb-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding-bottom: 4px;
+}
+.tb-words .tb-word {
+  position: relative;
+  display: inline-block;
+}
+.tb-words .tb-word button {
+  min-height: 44px;
+}
+.word-pop {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 8px);
+  inset-inline-start: 0;
+  width: max-content;
+  max-width: min(280px, 78vw);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--card-solid);
+  border: 1px solid var(--gold);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.word-pop::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  inset-inline-start: 18px;
+  width: 10px;
+  height: 10px;
+  rotate: 45deg;
+  background: var(--card-solid);
+  border-top: 1px solid var(--gold);
+  border-left: 1px solid var(--gold);
+}
+.reader[data-mode='simple'] .tb-cross {
+  display: none;
+}
+.chunk-end {
+  height: 1px;
+}
+.autotext textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.9;
+  resize: vertical;
+}
+.autotext textarea:focus {
+  border-style: solid;
+  border-color: var(--gold);
+  background: var(--card);
+}
+.save-state {
+  display: block;
+  min-height: 20px;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--accent);
+}
+
+/* ───────── برگهٔ پایینی ───────── */
+.sheet {
+  position: relative;
+}
+.sheet-close {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+}
+.sheet-title {
+  margin: 4px 0 14px !important;
+  padding-inline-start: 52px;
+  font-size: 18px !important;
+}
+.action-list {
+  display: grid;
+  gap: 4px;
+}
+.action-list button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 12px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15.5px;
+  text-align: start;
+  cursor: pointer;
+}
+.action-list button:hover {
+  background: var(--gold-soft);
+}
+.action-list svg {
+  width: 22px;
+  color: var(--gold);
+}
+
+/* ───────── پیام کوتاه ───────── */
+.toast {
+  position: fixed;
+  z-index: 200;
+  inset-inline: 0;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.toast span {
+  padding: 10px 18px;
+  border-radius: 99px;
+  background: var(--card-solid);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 14.5px;
+  animation: toastIn 0.25s ease;
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+/* ───────── دسترس‌پذیری ───────── */
+.skip-link {
+  position: fixed;
+  z-index: 300;
+  top: 8px;
+  inset-inline-start: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--bg0);
+  font-weight: 800;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.main:focus,
+[data-dialog]:focus {
+  outline: none;
+}
+
+/* ───────── زبانه‌های بخش (کتابخانه، حالت خواندن) ───────── */
+.seg-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 0 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.seg-tabs button {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 10px;
+  color: var(--ink-2, var(--ink));
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.seg-tabs button.on {
+  background: var(--gold);
+  color: var(--bg0);
+}
+.seg-tabs.small button {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  line-height: 1.6;
+}
+.seg-tabs.small button small {
+  font-size: 12.5px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.search-btn {
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  color: var(--muted);
+  text-align: start;
+  margin-bottom: 14px;
+}
+.search-btn span {
+  flex: 1;
+}
+.search-btn kbd {
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  font-family: inherit;
+  font-size: 13px;
+}
+@media (max-width: 959px) {
+  .search-btn kbd {
+    display: none;
+  }
+}
+.arabic-shelf summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  cursor: pointer;
+}
+.arabic-shelf summary::-webkit-details-marker {
+  display: none;
+}
+.arabic-shelf summary > span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.arabic-shelf summary small {
+  color: var(--muted);
+}
+.arabic-shelf summary i {
+  display: grid;
+  width: 20px;
+  rotate: -90deg;
+  transition: rotate 0.2s;
+}
+.arabic-shelf[open] summary i {
+  rotate: 90deg;
+}
+.sub-shelf h3 {
+  margin: 20px 0 10px;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+/* ───────── دفتر و تنظیمات ───────── */
+.quiet-head.with-tool {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 32px 20px;
+  border-radius: 20px;
+  border: 1px dashed var(--line-strong);
+  text-align: center;
+}
+.empty-state .es-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+.empty-state .es-icon svg {
+  width: 26px;
+}
+.empty-state b {
+  font-size: 18px;
+}
+.empty-state p {
+  max-width: 440px;
+  margin: 0 0 6px;
+  line-height: 2;
+}
+article.mark-row {
+  display: block;
+  text-align: start;
+}
+.mr-open {
+  display: block;
+  width: 100%;
+  text-align: start;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.mr-tools {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+.mr-tools .link-btn {
+  min-height: 44px;
+}
+.link-btn.danger {
+  color: var(--rose);
+}
+.mn-edit em {
+  display: block;
+  margin-top: 10px;
+  font-style: normal;
+  color: var(--accent);
+}
+.set-h {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+@media (min-width: 640px) {
+  .theme-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.theme-grid .theme-swatch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px 8px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.theme-grid .theme-swatch .sw {
+  height: 54px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.theme-grid .theme-swatch b {
+  font-size: 14px;
+  text-align: center;
+}
+.theme-grid .theme-swatch.on {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+.theme-grid .theme-swatch i {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg0);
+}
+.theme-grid .theme-swatch i svg {
+  width: 16px;
+}
+.display-settings {
+  display: grid;
+  gap: 14px;
+}
+.display-settings .seg-tabs {
+  margin: 0;
+}
+.range-field,
+.switch-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.range-field span {
+  flex: none;
+  width: 110px;
+}
+.range-field input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--gold);
+}
+.range-field output {
+  width: 48px;
+  text-align: end;
+  color: var(--muted);
+}
+.switch-field {
+  justify-content: space-between;
+}
+.switch-field input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--gold);
+}
+.ds-sample {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.settings .about p {
+  line-height: 2;
+}
+.rail-foot span {
+  display: block;
+  margin-top: 4px;
+}
