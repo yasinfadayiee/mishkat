@@ -1026,3 +1026,16 @@ article.mark-row {
 .study-hero {
   overflow: hidden;
 }
+
+/* هدف لمسی دکمه‌های کوچک دست‌کم ۴۴ پیکسل */
+.mini-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+.mini-btn svg {
+  width: 19px;
+}
+.text-block .ayah-tools {
+  margin-bottom: 4px;
+}
