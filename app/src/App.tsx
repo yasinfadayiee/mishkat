@@ -126,6 +126,11 @@ function Shell() {
     restore()
   }, [tab])
 
+  // از مرورگر خواسته می‌شود یادداشت‌ها را هنگام کمبود جا پاک نکند
+  useEffect(() => {
+    import('./backup').then((b) => b.persistStorage())
+  }, [])
+
   // پس از نخستین نمایش، صفحه‌های دیگر آرام در پس‌زمینه گرفته می‌شوند تا جابه‌جایی بی‌مکث باشد
   useEffect(() => {
     const t = setTimeout(prefetch, 2500)
