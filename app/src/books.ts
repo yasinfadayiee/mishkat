@@ -127,7 +127,13 @@ export const loadIndex = () => load<{ shelves: Shelf[]; books: BookMeta[] }>('in
 export const loadToc = (id: string) => load<Toc>(`${id}/toc.json`)
 export const loadChapter = (id: string, sec: number, ch: number) => load<Chapter>(`${id}/${sec}-${ch}.json`)
 export const chapterFile = (id: string, sec: number, ch: number) => `books/${id}/${sec}-${ch}.json`
-export const loadDaily = () => load<{ sayings: DailySaying[]; ayahs: DailyAyah[] }>('daily.json')
+/** سخن و آیهٔ یک روز (روز شمارهٔ day از آغاز تقویم یونیکس)؛ فقط فایل ۳۰ روزهٔ همان روز گرفته می‌شود */
+export const DAILY_DAYS = 365
+export async function loadDay(day: number): Promise<{ saying: DailySaying; ayah: DailyAyah }> {
+  const d = ((day % DAILY_DAYS) + DAILY_DAYS) % DAILY_DAYS
+  const chunk = await load<{ saying: DailySaying; ayah: DailyAyah }[]>(`daily/${Math.floor(d / 30)}.json`)
+  return chunk[d % 30]
+}
 export const loadSurahs = () => load<SurahMeta[]>('quran/index.json')
 export const loadSurah = (n: number) => load<Surah>(`quran/${n}.json`)
 export const loadJuz = () => load<{ j: number; s: number; a: number }[]>('quran/juz.json')

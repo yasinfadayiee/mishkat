@@ -1,6 +1,5 @@
-import { m } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { lastPlace, loadDaily, loadIndex, type BookMeta, type DailyAyah, type DailySaying, type Place } from '../books'
+import { lastPlace, loadDay, loadIndex, type BookMeta, type DailyAyah, type DailySaying, type Place } from '../books'
 import { lessonCard } from '../data/lesson-index'
 import { situations } from '../data/paths'
 import { surahName } from '../data/surah-fa'
@@ -33,13 +32,13 @@ function dates() {
 
 const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000)
 
-/** سخن امروز (از daily.json، چند ده کیلوبایت) و آیهٔ امروز */
+/** سخن امروز و آیهٔ امروز (از فایل چندکیلوبایتی همان ماه) */
 function useDaily() {
   const [d, setD] = useState<{ saying: DailySaying; ayah: DailyAyah } | null>(null)
   const [failed, setFailed] = useState(false)
   useEffect(() => {
-    loadDaily()
-      .then(({ sayings, ayahs }) => setD({ saying: sayings[today % sayings.length], ayah: ayahs[(today * 5) % ayahs.length] }))
+    loadDay(today)
+      .then(setD)
       .catch(() => setFailed(true))
   }, [])
   return { d, failed }
@@ -104,7 +103,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
         {failed && <p className="muted">سخن و آیهٔ امروز بدون اینترنت باز نشد.</p>}
         <div className="daily-grid">
           {saying && (
-            <m.article className="daily-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <article className="daily-card fade-in">
               <div className="dc-kicker">سخن امروز، امام علی (ع)</div>
               <ArabicText kind="hadith" text={saying.ar.replace(/^\s*[0-9٠-٩۰-۹]+\s*[.\-–]\s*/, '')} className="dc-ar" />
               <p className="dc-fa">{saying.fa}</p>
@@ -123,10 +122,10 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
                   </button>
                 </span>
               </footer>
-            </m.article>
+            </article>
           )}
           {ayah && (
-            <m.article className="daily-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+            <article className="daily-card fade-in">
               <div className="dc-kicker">آیهٔ امروز</div>
               <ArabicText kind="quran" text={ayah.ar} className="dc-ar" />
               <p className="dc-fa">{ayah.fa}</p>
@@ -138,7 +137,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
                   در سوره ←
                 </button>
               </footer>
-            </m.article>
+            </article>
           )}
         </div>
 

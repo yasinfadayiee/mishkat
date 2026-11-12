@@ -141,8 +141,10 @@ function Shell() {
   }, [])
 
   // پس از نخستین نمایش، صفحه‌های دیگر آرام در پس‌زمینه گرفته می‌شوند تا جابه‌جایی بی‌مکث باشد
+  // (پس از آماده شدن قلم‌ها، تا با بارگذاری خود خانه رقابت نکند)
   useEffect(() => {
-    const t = setTimeout(prefetch, 2500)
+    let t: ReturnType<typeof setTimeout>
+    document.fonts.ready.then(() => (t = setTimeout(prefetch, 1500)))
     return () => clearTimeout(t)
   }, [])
 
@@ -219,7 +221,11 @@ function Shell() {
       <Girih />
       <aside className="rail" aria-label="بخش‌ها">
         <div className="brand">
-          <img src="icons/icon-192.png" alt="" />
+          {/* نوار کناری فقط در دسکتاپ دیده می‌شود؛ در گوشی تصویرش دانلود نمی‌شود */}
+          <picture>
+            <source media="(min-width: 960px)" srcSet="icons/icon-192.png" />
+            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" width="44" height="44" />
+          </picture>
           <div>
             <b>مِشکات</b>
             <span>کتابخانهٔ قرآن و حدیث</span>

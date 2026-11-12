@@ -1,6 +1,6 @@
 // یادآور روزانه (فقط در نسخهٔ اندروید/آیفون): هر روز در ساعت انتخاب‌شده، یک حکمت نهج‌البلاغه با «یعنی چه؟»
 import { Capacitor } from '@capacitor/core'
-import { loadDaily } from './books'
+import { loadDay } from './books'
 
 export const canRemind = () => Capacitor.isNativePlatform()
 
@@ -18,17 +18,18 @@ export async function scheduleReminders(hour: number | null): Promise<boolean> {
   const perm = await LocalNotifications.requestPermissions()
   if (perm.display !== 'granted') return false
 
-  const sayings = (await loadDaily()).sayings.filter((i) => i.fa.length < 160)
   const start = new Date()
   start.setHours(hour, 0, 0, 0)
   if (start.getTime() < Date.now()) start.setDate(start.getDate() + 1)
   // هر روز سخنی تازه، بسته به تاریخ (بدون تکرار در یک ماه)
-  const offset = Math.floor(start.getTime() / 864e5)
+  const offset = Math.floor((start.getTime() - start.getTimezoneOffset() * 60000) / 864e5)
+  // همان «سخن امروز» خانه برای هر روز
+  const days = await Promise.all(Array.from({ length: DAYS }, (_, k) => loadDay(offset + k)))
   await LocalNotifications.schedule({
     notifications: Array.from({ length: DAYS }, (_, k) => {
       const at = new Date(start)
       at.setDate(start.getDate() + k)
-      const s = sayings[(offset + k * 7) % sayings.length]
+      const s = days[k].saying
       return { id: BASE_ID + k, title: 'سخن امروز، امام علی (ع)', body: s.fa, largeBody: `${s.fa}\n\n${s.sm}`, schedule: { at, allowWhileIdle: true } }
     }),
   })

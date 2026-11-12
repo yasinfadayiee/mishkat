@@ -67,10 +67,14 @@ await call('Page.enable')
 await call('Network.enable')
 await call('Network.setCacheDisabled', { cacheDisabled: true })
 let bytes = 0
+let lastNet = Date.now()
+let inflight = 0
 const reqs = new Map()
+const sizes = new Map()
 listeners.push((m) => {
-  if (m.method === 'Network.requestWillBeSent') reqs.set(m.params.requestId, m.params.request.url)
-  if (m.method === 'Network.loadingFinished') bytes += m.params.encodedDataLength
+  if (m.method === 'Network.requestWillBeSent') (reqs.set(m.params.requestId, m.params.request.url), inflight++, (lastNet = Date.now()))
+  if (m.method === 'Network.loadingFinished') (bytes += m.params.encodedDataLength, sizes.set(reqs.get(m.params.requestId), m.params.encodedDataLength), inflight--, (lastNet = Date.now()))
+  if (m.method === 'Network.loadingFailed') (inflight--, (lastNet = Date.now()))
 })
 
 const progress = (theme) => ({
@@ -117,6 +121,8 @@ for (const sc of scenes) {
       if (process.env.SLOW) await call('Network.emulateNetworkConditions', { offline: false, latency: 562.5, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 })
       bytes = 0
       reqs.clear()
+      sizes.clear()
+      inflight = 0
       // بدون این، رفتن به نشانیِ هم‌سند (فقط hash متفاوت) صفحه را از نو بار نمی‌کند
       await call('Page.navigate', { url: 'about:blank' })
       await sleep(150)
@@ -144,6 +150,25 @@ for (const sc of scenes) {
           break
         }
       }
+      // زمانی که شرط sc.until (مثلاً «کارت‌های امروز دیده می‌شوند و قلم‌ها آماده‌اند») برقرار شد
+      let untilMs = 0
+      if (sc.until)
+        for (let i = 0; i < 300; i++) {
+          if (await ev(sc.until)) {
+            untilMs = Date.now() - t0
+            break
+          }
+          await sleep(50)
+        }
+      // تا شبکه آرام شود (بدون درخواست تازه به مدت ۱٫۵ ثانیه)؛ زمانِ «کامل شدن» صفحه
+      let idle = 0
+      if (sc.idle) {
+        for (let i = 0; i < 600; i++) {
+          await sleep(100)
+          if (inflight <= 0 && Date.now() - lastNet > 1500) break
+        }
+        idle = lastNet - t0
+      }
       await sleep(sc.wait ?? 1200)
       const dims = await ev(`(()=>{const r=document.querySelector('.reader-scroll, .study-scroll');return {doc: document.documentElement.scrollHeight, reader: r ? r.scrollHeight : 0}})()`)
       if (sc.probe) console.log('probe:', JSON.stringify(await ev(sc.probe)))
@@ -158,7 +183,7 @@ for (const sc of scenes) {
       } else shot = await call('Page.captureScreenshot', { format: 'jpeg', quality: 82 })
       if (shot.data) fs.writeFileSync(path.join(out, `${shotName}.jpg`), Buffer.from(shot.data, 'base64'))
       const big = [...reqs.values()].filter((u) => u.includes('/books/')).map((u) => u.replace(base, ''))
-      report.push({ shot: shotName, readyMs: ready, settledMs: settled, kb: Math.round(bytes / 1024), height: dims, books: big })
+      report.push({ shot: shotName, readyMs: ready, settledMs: settled, ...(sc.idle && { completeMs: idle }), ...(sc.until && { untilMs }), ...(sc.list && { all: [...sizes].map(([u, b]) => `${u.replace(base, '')} ${Math.round(b / 1024)}`) }), kb: Math.round(bytes / 1024), height: dims, books: big.map((u) => `${u} ${Math.round((sizes.get(base + u) ?? 0) / 1024)}KB`) })
       console.log(JSON.stringify(report.at(-1)))
     }
   }

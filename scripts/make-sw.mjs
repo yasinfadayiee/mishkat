@@ -31,7 +31,7 @@ const SHELL = 'mishkat-shell-${version}'
 const BOOKS = 'mishkat-books'
 const FILES = ${JSON.stringify(['./', ...files.map((f) => './' + f)])}
 // کتاب‌های کوچکی که خانه بدون آن‌ها کامل نمی‌شود
-const BOOK_FILES = ['./books/index.json', './books/daily.json', './books/quran/index.json']
+const BOOK_FILES = ['./books/index.json', './books/quran/index.json']
 
 self.addEventListener('install', (e) => {
   e.waitUntil(

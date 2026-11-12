@@ -140,7 +140,11 @@ for (const [id, rows] of Object.entries(search)) write(`search/${id}.json`, rows
     const [s, ay] = (a.ref.split('#')[1] ?? '1:1').split(':')
     return { ar: a.ar, fa: a.fa, s: Number(s), a: ay }
   })
-  write('daily.json', { sayings, ayahs })
+  // هر روز سال یک حکمت و یک آیه؛ هر ۳۰ روز در یک فایل چندکیلوبایتی (daily/<شماره>.json) تا خانه فقط همان را بگیرد
+  const days = sayings.map((saying, d) => ({ saying, ayah: ayahs[(d * 5) % ayahs.length] }))
+  fs.rmSync(path.join(dir, 'daily'), { recursive: true, force: true })
+  for (let k = 0; k * 30 < days.length; k++) write(`daily/${k}.json`, days.slice(k * 30, k * 30 + 30))
+  write('daily.json', { days: days.length, per: 30 })
 }
 
 delete index.search
