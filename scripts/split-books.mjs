@@ -125,7 +125,7 @@ for (const [id, rows] of Object.entries(search)) write(`search/${id}.json`, rows
   nahj.sections.forEach((s, si) =>
     s.chapters.forEach((c, ci) =>
       c.items.forEach((it) => {
-        if (si === 2 && it.fa && it.sm && it.n && !/الرضي|وروي|وقد روى/.test(it.ar) && it.ar.split(' ').length < 40) pool.push({ ar: it.ar, fa: it.fa, sm: it.sm, ...(it.mr && { mr: it.mr }), n: it.n, sec: si, ch: ci, i: it.i })
+        if (si === 2 && it.fa && it.sm && it.n && !/الرضي|وروي|وقد روى/.test(it.ar) && !/[:：]$/.test(it.ar.trim()) && !/:$/.test(it.fa.trim()) && it.ar.split(' ').length < 40) pool.push({ ar: it.ar, fa: it.fa, sm: it.sm, ...(it.mr && { mr: it.mr }), n: it.n, sec: si, ch: ci, i: it.i })
       }),
     ),
   )

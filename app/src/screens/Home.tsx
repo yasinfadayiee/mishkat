@@ -1,15 +1,16 @@
-import { PlanSection } from './Plans'
-import { surahName } from '../data/surah-fa'
-import { go, href } from '../router'
 import { m } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { lastPlace, loadDaily, loadIndex, loadSurahs, type BookMeta, type DailyAyah, type DailySaying, type Place, type SurahMeta } from '../books'
-import { LESSONS as lessons, lessonCard as lessonById } from '../data/lesson-index'
+import { lastPlace, loadDaily, loadIndex, type BookMeta, type DailyAyah, type DailySaying, type Place } from '../books'
+import { lessonCard } from '../data/lesson-index'
 import { situations } from '../data/paths'
+import { surahName } from '../data/surah-fa'
 import type { Situation } from '../data/types'
+import { go, href } from '../router'
+import { shareCard } from '../share'
 import { Sky } from '../sky'
 import { fa, PHASE_NAME, phaseOf, THEME_PHASE, useStore } from '../store'
 import { ArabicText, Icon, Medallion, Sheet } from '../ui'
+import { PlanSection } from './Plans'
 
 function greeting() {
   return { sahar: 'سحر بخیر', morning: 'صبح بخیر', noon: 'ظهر بخیر', asr: 'عصر بخیر', maghrib: 'عصر بخیر', night: 'شب بخیر' }[phaseOf()]
@@ -32,51 +33,42 @@ function dates() {
 
 const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000)
 
-/** درس‌نامهٔ امروز: اولین درسِ نخوانده؛ اگر همه خوانده شده، چرخشی بر اساس روز */
-export function todaysLesson(completed: Record<string, string>) {
-  return lessons.find((l) => !completed[l.id]) ?? lessons[today % lessons.length]
-}
-
-/** سخن امروز از حکمت‌های ترجمه‌شدهٔ نهج‌البلاغه */
+/** سخن امروز (از daily.json، چند ده کیلوبایت) و آیهٔ امروز */
 function useDaily() {
   const [d, setD] = useState<{ saying: DailySaying; ayah: DailyAyah } | null>(null)
+  const [failed, setFailed] = useState(false)
   useEffect(() => {
     loadDaily()
       .then(({ sayings, ayahs }) => setD({ saying: sayings[today % sayings.length], ayah: ayahs[(today * 5) % ayahs.length] }))
-      .catch(() => setD(null))
+      .catch(() => setFailed(true))
   }, [])
-  return d
+  return { d, failed }
 }
 
+const MAIN = ['Nahj-al-Balagha-Radi', 'ghurar']
+
 export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
-  const openLesson = (id: string) => go(href.lesson(id))
-  const openQuran = (n?: number, a?: number) => go(n ? href.surah(n, a) : '/quran')
-  const openBook = (b: BookMeta, sec?: number, ch?: number, i?: number) => go(sec === undefined ? href.toc(b.id) : href.chapter(b.id, sec, ch ?? 0, i))
-  const goTo = (t: 'library' | 'trust') => go(`/${t}`)
-  const { p } = useStore()
+  const { p, toggleMark } = useStore()
   const { shamsi, qamari } = dates()
   const [sit, setSit] = useState<Situation | null>(null)
+  const [allSits, setAllSits] = useState(false)
   const [books, setBooks] = useState<BookMeta[]>([])
   const place = lastPlace()
-  const lesson = todaysLesson(p.completed)
-  const daily = useDaily()
+  const { d: daily, failed } = useDaily()
   const saying = daily?.saying
-  const ayah = daily && { ...daily.ayah, n: daily.ayah.s, ayah: daily.ayah.a.replace(/\d/g, (d) => fa(Number(d))) }
-  const [surahs, setSurahs] = useState<SurahMeta[]>([])
+  const ayah = daily?.ayah
   useEffect(() => {
-    loadSurahs()
-      .then(setSurahs)
-      .catch(() => setSurahs([]))
     loadIndex()
       .then((x) => setBooks(x.books))
       .catch(() => setBooks([]))
   }, [])
-  const nahj = books.find((b) => b.id === 'Nahj-al-Balagha-Radi')
-  const featured = ['Nahj-al-Balagha-Radi', 'ghurar', 'sahifa', 'Risalat-al-Huquq-Abidin', 'Sifat-al-Shia-Saduq', 'Al-Kafi-Volume-2-Kulayni'].map((id) => books.find((b) => b.id === id)).filter((b): b is BookMeta => !!b)
+  const main = MAIN.map((id) => books.find((b) => b.id === id)).filter((b): b is BookMeta => !!b)
+  const sayKey = saying ? `b:Nahj-al-Balagha-Radi:${saying.i}` : ''
+  const ayahFirst = ayah ? Number(ayah.a.split('-')[0]) : 0
 
   return (
     <div className="home2">
-      <header className="masthead">
+      <header className="masthead short">
         <Sky phase={p.theme === 'auto' ? undefined : THEME_PHASE[p.theme]} />
         <div className="masthead-text">
           <div className="mast-date">
@@ -84,62 +76,67 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
             {qamari && <span>، {qamari}</span>}
             <span className="mast-phase">، هنگام {PHASE_NAME[phaseOf()]}</span>
           </div>
-          <div className="mast-hi">
+          <h1 className="mast-hi">
             {greeting()}
             {p.name ? `، ${p.name}` : ''}
-          </div>
-          <h1>
-            کتابخانهٔ <span className="gold-text">مشکات</span>
           </h1>
-          <p>قرآن، نهج‌البلاغه و کتاب‌های حدیث؛ کامل، مستند و به زبان امروز.</p>
+          <p>
+            کتابخانهٔ <span className="gold-text">مشکات</span>: قرآن، نهج‌البلاغه و غررالحکم، به زبان امروز.
+          </p>
         </div>
       </header>
 
       <div className="home2-body">
         {place && (
           <button className="continue-card" onClick={() => openPlace(place)}>
-            <span className="cc-icon">{Icon.book}</span>
+            <span className="cc-icon">{place.book === 'quran' ? Icon.rahl : Icon.book}</span>
             <span className="cc-text">
               <small>ادامهٔ مطالعه</small>
-              <b>{place.title}</b>
-              <span>{place.label}</span>
+              <b>{place.book === 'quran' ? surahName(place.sec) : place.title}</b>
+              <span>{place.book === 'quran' ? (place.i ? `از آیهٔ ${fa(place.i)}` : '') : place.label}</span>
             </span>
             <span className="cc-go">{Icon.next}</span>
           </button>
         )}
 
+        <PlanSection />
+
+        {failed && <p className="muted">سخن و آیهٔ امروز بدون اینترنت باز نشد.</p>}
         <div className="daily-grid">
+          {saying && (
+            <m.article className="daily-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="dc-kicker">سخن امروز، امام علی (ع)</div>
+              <ArabicText kind="hadith" text={saying.ar.replace(/^\s*[0-9٠-٩۰-۹]+\s*[.\-–]\s*/, '')} className="dc-ar" />
+              <p className="dc-fa">{saying.fa}</p>
+              <p className="dc-note">{saying.sm}</p>
+              <footer>
+                <span>نهج‌البلاغه، حکمت {fa(saying.n)}</span>
+                <span className="dc-tools">
+                  <button className={`mini-btn ${p.marks.some((x) => x.key === sayKey) ? 'on' : ''}`} aria-label="نشان کردن" aria-pressed={p.marks.some((x) => x.key === sayKey)} onClick={() => toggleMark({ key: sayKey, title: `نهج‌البلاغه، حکمت ${fa(saying.n)}`, text: saying.fa })}>
+                    {p.marks.some((x) => x.key === sayKey) ? Icon.bookmarked : Icon.bookmark}
+                  </button>
+                  <button className="mini-btn" aria-label="کارت تصویری برای فرستادن" onClick={() => shareCard({ ar: saying.ar, gist: saying.sm, fa: saying.fa, source: `نهج‌البلاغه، حکمت ${fa(saying.n)}`, shelf: 'nahj' })}>
+                    {Icon.card}
+                  </button>
+                  <button className="link-btn" onClick={() => go(href.chapter('Nahj-al-Balagha-Radi', saying.sec, saying.ch, saying.i))}>
+                    در کتاب ←
+                  </button>
+                </span>
+              </footer>
+            </m.article>
+          )}
           {ayah && (
-            <m.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
+            <m.article className="daily-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
               <div className="dc-kicker">آیهٔ امروز</div>
               <ArabicText kind="quran" text={ayah.ar} className="dc-ar" />
               <p className="dc-fa">{ayah.fa}</p>
               <footer>
-                <span>{surahs[ayah.n - 1] && `${surahName(ayah.n)}، آیهٔ ${ayah.ayah}`}</span>
-                <button className="link-btn" onClick={() => openQuran(ayah.n, Number(daily!.ayah.a.split('-')[0]) || undefined)}>
-                  خواندن سوره ←
+                <span>
+                  {surahName(ayah.s)}، آیهٔ {ayah.a.replace(/\d+/g, (x) => fa(Number(x)))}
+                </span>
+                <button className="link-btn" onClick={() => go(href.surah(ayah.s, ayahFirst || undefined))}>
+                  در سوره ←
                 </button>
-              </footer>
-            </m.article>
-          )}
-          {saying && (
-            <m.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-              <div className="dc-kicker">سخن امروز، امام علی (ع)</div>
-              <ArabicText kind="hadith" text={saying.ar} className="dc-ar" />
-              <p className="dc-fa">{saying.fa}</p>
-              {saying.sm && <p className="dc-note">{saying.sm}</p>}
-              {saying.mr && (
-                <p className="dc-mirror">
-                  {Icon.life} {saying.mr}
-                </p>
-              )}
-              <footer>
-                <span>نهج‌البلاغه، حکمت {fa(saying.n)}</span>
-                {nahj && (
-                  <button className="link-btn" onClick={() => openBook(nahj, saying.sec, saying.ch, saying.i)}>
-                    در کتاب ←
-                  </button>
-                )}
               </footer>
             </m.article>
           )}
@@ -147,94 +144,70 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
 
         <section className="home-sec">
           <div className="hs-head">
-            <h2>درس‌نامهٔ امروز</h2>
-            <button className="link-btn" onClick={() => goTo('library')}>
-              همهٔ درس‌نامه‌ها ←
+            <h2>وقتی…</h2>
+            <button className="link-btn" onClick={() => setAllSits(true)}>
+              همه ←
             </button>
           </div>
-          <button className="lesson-feature" onClick={() => openLesson(lesson.id)}>
-            <span className="lf-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
-            <span className="lf-text">
-              <small>
-                {lesson.topic}، {lesson.ref}
-              </small>
-              <b>{lesson.title}</b>
-              {lesson.essence && <span>{lesson.essence}</span>}
-              <em>
-                {lesson.subtitle}
-                {p.completed[lesson.id] && '، خوانده شده'}
-              </em>
-            </span>
-          </button>
-        </section>
-
-        <section className="home-sec">
-          <div className="hs-head">
-            <h2>وقتی…</h2>
-            <small className="muted">از موقعیت زندگی‌ات، به متنی که دربارهٔ آن است</small>
-          </div>
-          <div className="situations">
+          <div className="sit-row" role="list">
             {situations.map((s) => (
-              <button key={s.id} onClick={() => setSit(s)}>
+              <button key={s.id} role="listitem" onClick={() => setSit(s)}>
                 {s.label}
               </button>
             ))}
           </div>
         </section>
 
-        <PlanSection openAt={(meta, sec, ch) => openBook(meta, sec, ch)} />
-
         <section className="home-sec">
           <div className="hs-head">
-            <h2>کتاب‌های برگزیده</h2>
-            <button className="link-btn" onClick={() => goTo('library')}>
-              کتابخانه ←
+            <h2>کتاب‌ها</h2>
+            <button className="link-btn" onClick={() => go('/library')}>
+              همهٔ کتاب‌ها ←
             </button>
           </div>
-          <div className="featured">
-            <button className="feat-book quran-book" data-shelf="quran" onClick={() => openQuran()}>
+          <div className="featured three">
+            <button className="feat-book quran-book" data-shelf="quran" onClick={() => go('/quran')}>
               <Medallion />
               <b>قرآن کریم</b>
               <small>۱۱۴ سوره، ترجمهٔ کامل</small>
             </button>
-            {featured.map((b) => (
-              <button key={b.id} className="feat-book" data-shelf={b.shelf} onClick={() => openBook(b)}>
+            {main.map((b) => (
+              <button key={b.id} className="feat-book" data-shelf={b.shelf} onClick={() => go(href.toc(b.id))}>
                 <Medallion />
                 <b>{b.title}</b>
                 <small>
-                  {fa(b.count)} متن{b.translated ? `، ${fa(b.translated)} با ترجمه` : ''}
+                  {fa(b.count)} متن، {b.translated >= b.count ? 'ترجمهٔ کامل' : `${fa(b.translated)} با ترجمه`}
                 </small>
               </button>
             ))}
           </div>
         </section>
-
-        <section className="home-sec">
-          <button className="card trust-banner" onClick={() => goTo('trust')}>
-            <span className="shield">{Icon.shield}</span>
-            <span style={{ flex: 1 }}>
-              <b style={{ display: 'block' }}>هر متن، با سند</b>
-              <small className="muted">منبع هر آیه و حدیث، درجهٔ سند، و این‌که کدام بخش ترجمه یا توضیح است</small>
-            </span>
-            <span style={{ color: 'var(--gold)' }}>←</span>
-          </button>
-        </section>
       </div>
 
-      <Sheet open={!!sit} onClose={() => setSit(null)}>
+      <Sheet open={allSits} onClose={() => setAllSits(false)} label="وقتی…">
+        <h3 className="h2 sheet-title">وقتی…</h3>
+        <p className="muted">از موقعیت زندگی‌ات، به درس‌نامه‌ای که دربارهٔ آن است.</p>
+        <div className="situations">
+          {situations.map((s) => (
+            <button key={s.id} onClick={() => (setAllSits(false), setSit(s))}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </Sheet>
+
+      <Sheet open={!!sit} onClose={() => setSit(null)} label={sit?.label}>
         {sit && (
           <>
-            <h3 className="h2" style={{ marginTop: 4 }}>
-              {sit.label}
-            </h3>
+            <h3 className="h2 sheet-title">{sit.label}</h3>
             <p className="muted" style={{ marginTop: 0 }}>
               این درس‌نامه‌ها دربارهٔ همین موقعیت‌اند:
             </p>
             {sit.lessons
-              .map((id) => lessonById(id))
+              .map((id) => lessonCard(id))
               .filter((l) => !!l)
               .map((l) => (
-                <button key={l!.id} className="sheet-lesson" onClick={() => (setSit(null), openLesson(l!.id))}>
+                <button key={l!.id} className="sheet-lesson" onClick={() => (setSit(null), go(href.lesson(l!.id)))}>
                   <span className="sl-art" style={{ backgroundImage: `url(${l!.cover})` }} />
                   <span>
                     <b>{l!.title}</b>

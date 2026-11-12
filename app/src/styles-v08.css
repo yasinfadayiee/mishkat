@@ -1302,3 +1302,90 @@ article.mark-row {
 .text-block {
   scroll-margin-top: 12px;
 }
+
+/* ───────── خانه ───────── */
+.masthead.short {
+  min-height: 210px;
+}
+.masthead.short h1.mast-hi {
+  margin: 4px 0 0;
+  font-size: clamp(24px, 6vw, 34px);
+  font-weight: 900;
+  line-height: 1.5;
+}
+.masthead.short p {
+  margin: 4px 0 0;
+  font-size: 15.5px;
+}
+.masthead.short .gold-text {
+  font-weight: 900;
+}
+.sit-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 2px 16px 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.sit-row::-webkit-scrollbar {
+  display: none;
+}
+.sit-row button {
+  flex: none;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 99px;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14.5px;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+.featured.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 520px) {
+  .featured.three {
+    grid-template-columns: 1fr 1fr;
+  }
+  .featured.three .quran-book {
+    grid-column: 1 / -1;
+  }
+}
+.slim-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  color: var(--ink);
+  text-align: start;
+  cursor: pointer;
+}
+.slim-card > span:nth-child(2) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.slim-card small {
+  color: var(--muted);
+}
+.slim-card i {
+  display: grid;
+  width: 20px;
+  color: var(--gold);
+}
+.dc-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.daily-card footer {
+  flex-wrap: wrap;
+  gap: 8px;
+}

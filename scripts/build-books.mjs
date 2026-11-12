@@ -108,7 +108,7 @@ const surahs = qa.map((s, i) => {
 })
 write('quran/index.json', surahs)
 write('quran/juz.json', juz)
-index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', author: 'متن عثمانی تنزیل · ترجمهٔ آیت‌الله مکارم شیرازی', shelf: 'quran', desc: '۱۱۴ سوره و ۶٬۲۳۶ آیه، با ترجمهٔ کامل فارسی و تلاوت.', count: 6236, translated: 6236 })
+index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', author: 'متن عثمانی تنزیل، ترجمهٔ آیت‌الله مکارم شیرازی', shelf: 'quran', desc: '۱۱۴ سوره و ۶٬۲۳۶ آیه، با ترجمهٔ کامل فارسی و تلاوت.', count: 6236, translated: 6236 })
 
 /* ───────── صحیفهٔ سجادیه (ویکی‌نبشته) ───────── */
 {
