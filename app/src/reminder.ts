@@ -1,6 +1,6 @@
 // یادآور روزانه (فقط در نسخهٔ اندروید/آیفون): هر روز در ساعت انتخاب‌شده، یک حکمت نهج‌البلاغه با «یعنی چه؟»
 import { Capacitor } from '@capacitor/core'
-import { loadBook } from './books'
+import { loadDaily } from './books'
 
 export const canRemind = () => Capacitor.isNativePlatform()
 
@@ -18,8 +18,7 @@ export async function scheduleReminders(hour: number | null): Promise<boolean> {
   const perm = await LocalNotifications.requestPermissions()
   if (perm.display !== 'granted') return false
 
-  const nahj = await loadBook('Nahj-al-Balagha-Radi')
-  const sayings = nahj.sections[2].chapters.flatMap((c) => c.items).filter((i) => i.sm && i.fa && i.fa.length < 160)
+  const sayings = (await loadDaily()).sayings.filter((i) => i.fa.length < 160)
   const start = new Date()
   start.setHours(hour, 0, 0, 0)
   if (start.getTime() < Date.now()) start.setDate(start.getDate() + 1)
@@ -30,7 +29,7 @@ export async function scheduleReminders(hour: number | null): Promise<boolean> {
       const at = new Date(start)
       at.setDate(start.getDate() + k)
       const s = sayings[(offset + k * 7) % sayings.length]
-      return { id: BASE_ID + k, title: 'سخن امروز · امام علی (ع)', body: s.fa!, largeBody: `${s.fa}\n\n${s.sm}`, schedule: { at, allowWhileIdle: true } }
+      return { id: BASE_ID + k, title: 'سخن امروز، امام علی (ع)', body: s.fa, largeBody: `${s.fa}\n\n${s.sm}`, schedule: { at, allowWhileIdle: true } }
     }),
   })
   return true

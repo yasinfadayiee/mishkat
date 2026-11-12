@@ -1,20 +1,33 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useEffect, useState } from 'react'
-import { loadBook, loadIndex, type BookMeta, type Place } from './books'
-import { lessonById } from './data/lessons'
+import { AnimatePresence, LazyMotion, m } from 'framer-motion'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { findItem, loadIndex, type BookMeta, type Place } from './books'
+import { ErrorBoundary } from './load'
 import { Home } from './screens/Home'
-import { Intro } from './screens/Intro'
-import { LessonPlayer } from './screens/Lesson'
-import { BookToc, ChapterReader, Library } from './screens/Library'
-import { Me, Trust } from './screens/Me'
-import { Onboarding } from './screens/Onboarding'
-import { Quran, SurahReader } from './screens/Quran'
-import { TopicReader } from './screens/Topics'
+
+// فقط خانه همراه فایل اول می‌آید؛ بقیهٔ صفحه‌ها جدا بار می‌شوند (و پس از باز شدن خانه، در پس‌زمینه از پیش گرفته می‌شوند)
+const loadBook = () => import('./screens/Book')
+const loadQuran = () => import('./screens/Quran')
+const loadLibrary = () => import('./screens/Library')
+const loadMe = () => import('./screens/Me')
+const loadSearch = () => import('./screens/Search')
+const BookToc = lazy(() => loadBook().then((m) => ({ default: m.BookToc })))
+const ChapterReader = lazy(() => loadBook().then((m) => ({ default: m.ChapterReader })))
+const Quran = lazy(() => loadQuran().then((m) => ({ default: m.Quran })))
+const SurahReader = lazy(() => loadQuran().then((m) => ({ default: m.SurahReader })))
+const Library = lazy(() => loadLibrary().then((m) => ({ default: m.Library })))
+const Me = lazy(() => loadMe().then((m) => ({ default: m.Me })))
+const SearchPage = lazy(() => loadSearch().then((m) => ({ default: m.SearchPage })))
+const prefetch = () => [loadBook, loadQuran, loadLibrary, loadMe, loadSearch].forEach((f) => f().catch(() => {}))
+const LessonScreen = lazy(() => import('./screens/Lesson'))
+const TopicReader = lazy(() => import('./screens/Topics').then((m) => ({ default: m.TopicReader })))
+const Trust = lazy(() => import('./screens/Trust').then((m) => ({ default: m.Trust })))
+const Onboarding = lazy(() => import('./screens/Onboarding').then((m) => ({ default: m.Onboarding })))
+const Intro = lazy(() => import('./screens/Intro').then((m) => ({ default: m.Intro })))
 import { scheduleReminders } from './reminder'
 import { StoreProvider, useStore } from './store'
 import { Girih, Icon } from './ui'
 
-type Tab = 'home' | 'quran' | 'library' | 'me' | 'trust'
+type Tab = 'home' | 'quran' | 'library' | 'me' | 'trust' | 'search'
 
 const NAV: { id: Exclude<Tab, 'trust'>; label: string; icon: keyof typeof Icon }[] = [
   { id: 'home', label: 'خانه', icon: 'home' },
@@ -25,6 +38,8 @@ const NAV: { id: Exclude<Tab, 'trust'>; label: string; icon: keyof typeof Icon }
 
 /** آنچه روی صفحه باز است (درس‌نامه، سوره، فهرست کتاب یا یک باب) */
 type View = { kind: 'lesson'; id: string } | { kind: 'surah'; n: number } | { kind: 'toc'; book: BookMeta } | { kind: 'chapter'; book: BookMeta; sec: number; ch: number; focus?: number } | { kind: 'topic'; id: string } | null
+
+const loadMotion = () => import('./motion-features').then((x) => x.default)
 
 const introSeen = () => {
   try {
@@ -40,6 +55,7 @@ function Shell() {
   const [view, setView] = useState<View>(null)
   const [back, setBack] = useState<View>(null)
   const [intro, setIntro] = useState(!introSeen())
+  const [searchQ, setSearchQ] = useState('')
   const endIntro = useCallback(() => {
     setIntro(false)
     try {
@@ -52,6 +68,12 @@ function Shell() {
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [tab])
+
+  // پس از نخستین نمایش، صفحه‌های دیگر آرام در پس‌زمینه گرفته می‌شوند تا جابه‌جایی بی‌مکث باشد
+  useEffect(() => {
+    const t = setTimeout(prefetch, 2500)
+    return () => clearTimeout(t)
+  }, [])
 
   // یادآورهای روزانه با هر بار باز شدن برنامه برای ۳۰ روز آینده تازه می‌شوند
   const remindHour = p.remindHour
@@ -72,26 +94,30 @@ function Shell() {
     const [k, a, b] = key.split(':')
     if (k === 'q') return setView({ kind: 'surah', n: Number(a) })
     const meta = (await loadIndex()).books.find((x) => x.id === a)
-    if (!meta) return
-    const book = await loadBook(a)
-    book.sections.forEach((s, si) => s.chapters.forEach((c, ci) => c.items.some((i) => i.i === Number(b)) && openBook(meta, si, ci)))
+    const at = meta && (await findItem(a, Number(b)).catch(() => null))
+    if (meta && at) (setBack(null), setView({ kind: 'chapter', book: meta, sec: at[0], ch: at[1], focus: Number(b) }))
   }
   const close = () => {
     setView(back)
     setBack(null)
   }
 
-  if (intro) return <AnimatePresence>{intro && <Intro onDone={endIntro} />}</AnimatePresence>
+  if (intro)
+    return (
+      <Suspense fallback={<div className="intro" />}>
+        <AnimatePresence>{intro && <Intro onDone={endIntro} />}</AnimatePresence>
+      </Suspense>
+    )
 
   if (!p.onboarded)
     return (
       <div className="shell">
         <Girih id="g0" />
-        <Onboarding />
+        <Suspense fallback={null}>
+          <Onboarding />
+        </Suspense>
       </div>
     )
-
-  const lesson = view?.kind === 'lesson' ? lessonById(view.id) : undefined
 
   return (
     <div className="shell">
@@ -116,15 +142,22 @@ function Shell() {
       </aside>
 
       <main className="main">
+        <Suspense fallback={<div className="tab-wait" />}>
         <AnimatePresence mode="wait">
-          <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+          <m.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             {tab === 'home' && <Home openLesson={openLesson} openQuran={openQuran} openBook={openBook} openPlace={openPlace} goTo={setTab} />}
             {tab === 'quran' && <Quran open={(n) => setView({ kind: 'surah', n })} />}
-            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} openAt={(b, sec, ch) => openBook(b, sec, ch)} openSurah={(n) => setView({ kind: 'surah', n })} openTopic={(id) => setView({ kind: 'topic', id })} />}
+            {tab === 'library' && <Library openLesson={openLesson} openBook={(b) => openBook(b)} openQuran={() => setTab('quran')} openTopic={(id) => setView({ kind: 'topic', id })} openSearch={(q) => (setSearchQ(q), setTab('search'))} />}
+            {tab === 'search' && <SearchPage initial={searchQ} open={(h, meta) => (h.book === 'quran' ? setView({ kind: 'surah', n: h.sec }) : meta && setView({ kind: 'chapter', book: meta, sec: h.sec, ch: h.ch, focus: h.i }))} />}
             {tab === 'me' && <Me goTo={setTab} openLesson={openLesson} openMark={openMark} />}
-            {tab === 'trust' && <Trust back={() => setTab('home')} />}
-          </motion.div>
+            {tab === 'trust' && (
+              <Suspense fallback={null}>
+                <Trust back={() => setTab('home')} />
+              </Suspense>
+            )}
+          </m.div>
         </AnimatePresence>
+        </Suspense>
       </main>
 
       <nav className="tabbar">
@@ -136,11 +169,12 @@ function Shell() {
         ))}
       </nav>
 
+      <Suspense fallback={null}>
       <AnimatePresence>
-        {lesson && <LessonPlayer key={lesson.id} lesson={lesson} onClose={close} />}
+        {view?.kind === 'lesson' && <LessonScreen key={view.id} id={view.id} onClose={close} />}
         {view?.kind === 'surah' && <SurahReader key="surah" n={view.n} onClose={close} go={(n) => setView({ kind: 'surah', n })} />}
         {view?.kind === 'toc' && <BookToc key={`toc-${view.book.id}`} meta={view.book} onClose={close} open={(sec, ch) => (setBack(view), setView({ kind: 'chapter', book: view.book, sec, ch }))} />}
-        {view?.kind === 'topic' && <TopicReader key={`topic-${view.id}`} id={view.id} onClose={close} openAt={(b, sec, ch) => (setBack(view), setView({ kind: 'chapter', book: b, sec, ch }))} openSurah={(n) => (setBack(view), setView({ kind: 'surah', n }))} />}
+        {view?.kind === 'topic' && <TopicReader key={`topic-${view.id}`} id={view.id} onClose={close} openAt={(b, sec, ch, focus) => (setBack(view), setView({ kind: 'chapter', book: b, sec, ch, focus }))} openSurah={(n) => (setBack(view), setView({ kind: 'surah', n }))} />}
         {view?.kind === 'chapter' && (
           <ChapterReader
             key={`ch-${view.book.id}`}
@@ -157,14 +191,19 @@ function Shell() {
           />
         )}
       </AnimatePresence>
+      </Suspense>
     </div>
   )
 }
 
 export default function App() {
   return (
-    <StoreProvider>
-      <Shell />
-    </StoreProvider>
+    <ErrorBoundary>
+      <LazyMotion features={loadMotion} strict>
+        <StoreProvider>
+          <Shell />
+        </StoreProvider>
+      </LazyMotion>
+    </ErrorBoundary>
   )
 }

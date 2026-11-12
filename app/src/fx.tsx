@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { m, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useRef, type ReactNode } from 'react'
 
 const reduced = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -169,7 +169,7 @@ export function Tilt({ children, className = '', max = 9 }: { children: ReactNod
   const ry = useSpring(useTransform(x, [0, 1], [-max, max]), { stiffness: 180, damping: 18 })
   const shine = useTransform(x, [0, 1], ['-20%', '120%'])
   return (
-    <motion.div
+    <m.div
       className={`tilt ${className}`}
       style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
       onPointerMove={(e) => {
@@ -183,8 +183,8 @@ export function Tilt({ children, className = '', max = 9 }: { children: ReactNod
       }}
     >
       {children}
-      <motion.span className="tilt-shine" style={{ left: shine }} aria-hidden />
-    </motion.div>
+      <m.span className="tilt-shine" style={{ left: shine }} aria-hidden />
+    </m.div>
   )
 }
 
@@ -197,16 +197,16 @@ export function Rays({ className = '' }: { className?: string }) {
 export function PageHero({ art, eyebrow, title, children }: { art: string; eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
     <section className="page-hero">
-      <motion.div className="page-hero-art" style={{ backgroundImage: `url(${art})` }} initial={{ scale: 1.12, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1] }} />
+      <m.div className="page-hero-art" style={{ backgroundImage: `url(${art})` }} initial={{ scale: 1.12, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1] }} />
       <LightDust density={22} />
       <div className="page-hero-fade" />
-      <motion.div className="page-hero-body" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15 }}>
+      <m.div className="page-hero-body" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.15 }}>
         <div className="eyebrow" style={{ color: '#f1d699' }}>
           {eyebrow}
         </div>
         <h1>{title}</h1>
         {children}
-      </motion.div>
+      </m.div>
     </section>
   )
 }

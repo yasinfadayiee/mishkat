@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { chapterOf, lessons } from '../data/lessons'
+import { chapterOf, lessonById, lessons } from '../data/lessons'
 import type { Lesson, Word } from '../data/types'
 import { fa, useStore } from '../store'
 import { LightDust, Ornament } from '../fx'
@@ -54,6 +54,11 @@ function Section({ id, icon, kicker, title, children }: { id: string; icon: keyo
       {children}
     </section>
   )
+}
+
+export default function LessonScreen({ id, onClose }: { id: string; onClose: () => void }) {
+  const lesson = lessonById(id)
+  return lesson ? <LessonPlayer key={id} lesson={lesson} onClose={onClose} /> : null
 }
 
 export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) {
@@ -143,7 +148,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
   }
 
   return (
-    <motion.div className="study" style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
+    <m.div className="study" style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
       <div className="study-progress">
         <b style={{ transform: `scaleX(${progress})` }} />
       </div>
@@ -216,7 +221,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
               <div className="speaker">{s.speaker ? `${s.speaker} فرمود:` : 'خداوند می‌فرماید:'}</div>
               <div className={`${s.kind === 'quran' ? 'quran' : 'arabic'} verse-text`} lang="ar">
                 {(s.kind === 'quran' ? `﴿ ${s.arabic} ﴾` : s.arabic).split(' ').map((w, k) => (
-                  <motion.span
+                  <m.span
                     key={k}
                     className="reveal-word"
                     initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
@@ -225,7 +230,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
                     transition={{ delay: 0.15 + k * 0.08, duration: 0.5 }}
                   >
                     {w}&nbsp;
-                  </motion.span>
+                  </m.span>
                 ))}
               </div>
               <p className="translation">{s.translation}</p>
@@ -242,10 +247,10 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
             </div>
             <p className="muted tiny center">ترجمه: {s.translator}</p>
             {sh && (
-              <motion.blockquote className="essence" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <m.blockquote className="essence" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <span>پیام اصلی</span>
                 {sh.essence}
-              </motion.blockquote>
+              </m.blockquote>
             )}
           </Section>
 
@@ -256,7 +261,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
                 {sh.parts.map((part, k) => {
                   const ws = wordsIn(part.ar)
                   return (
-                    <motion.article key={k} className="sharh-part" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5 }}>
+                    <m.article key={k} className="sharh-part" initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5 }}>
                       <Medallion n={k + 1} />
                       <div className="sp-card">
                         <ArabicText kind={s.kind} text={part.ar} className="sp-ar" />
@@ -284,7 +289,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
                           <p>{part.life}</p>
                         </div>
                       </div>
-                    </motion.article>
+                    </m.article>
                   )
                 })}
               </div>
@@ -421,6 +426,6 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
         </div>
       </div>
 
-    </motion.div>
+    </m.div>
   )
 }

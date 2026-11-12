@@ -1,5 +1,5 @@
 // برنامه‌های مطالعه: یک بخش از کتاب، تقسیم‌شده به روزها. بدون امتیاز و رقابت؛ فقط جای مطالعه را نگه می‌دارد.
-import type { Book } from '../books'
+import type { Toc } from '../books'
 
 export interface Plan {
   id: string
@@ -21,7 +21,7 @@ export const PLANS: Plan[] = [
 ]
 
 /** روزهای یک برنامه: فهرست باب‌ها ([بخش، باب]) برای هر روز */
-export const planDays = (plan: Plan, book: Book): [number, number][][] => {
+export const planDays = (plan: Plan, book: Toc): [number, number][][] => {
   const chs = book.sections[plan.sec]?.chapters.map((_, ci) => [plan.sec, ci] as [number, number]) ?? []
   const days: [number, number][][] = []
   for (let i = 0; i < chs.length; i += plan.per) days.push(chs.slice(i, i + plan.per))

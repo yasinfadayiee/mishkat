@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { Icon } from './ui'
 
@@ -61,7 +61,7 @@ export function ReaderShell({
   }, [onClose])
 
   return (
-    <motion.div className="study reader" data-shelf={tone} style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
+    <m.div className="study reader" data-shelf={tone} style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
       <div className="study-progress">
         <b style={{ transform: `scaleX(${progress})` }} />
       </div>
@@ -83,7 +83,7 @@ export function ReaderShell({
       <div className="study-scroll reader-scroll" ref={scroller}>
         {children}
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 

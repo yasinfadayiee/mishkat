@@ -1,68 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
-import { loadIndex, loadSearch, loadTopics, norm, type BookMeta, type TopicHit } from '../books'
-import { TOPICS, type Topic } from '../data/topics'
+import { loadIndex, loadTopic, type BookMeta } from '../books'
+import { LoadFail, Skeleton, useLoad } from '../load'
+import { TOPICS } from '../data/topics'
 import { ReaderShell } from '../reader'
 import { fa } from '../store'
 import { Medallion } from '../ui'
 
-/** فهرست موضوع‌ها، گروه‌گروه (در کتابخانه) */
-export function TopicGrid({ open }: { open: (id: string) => void }) {
-  const groups = [...new Set(TOPICS.map((t) => t.group))]
-  return (
-    <section className="shelf topic-shelf">
-      <div className="shelf-head">
-        <h2>یک موضوع، از همهٔ کتاب‌ها</h2>
-        <small>قرآن، نهج‌البلاغه، غرر و کتاب‌های حدیث، کنار هم</small>
-      </div>
-      {groups.map((g) => (
-        <div key={g} className="topic-group">
-          <b>{g}</b>
-          <div className="topic-chips">
-            {TOPICS.filter((t) => t.group === g).map((t) => (
-              <button key={t.id} onClick={() => open(t.id)}>
-                {t.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-    </section>
-  )
-}
-
-type Row = { book: string; sec: number; ch: number; n: number; fa: string; sm: string; score: number }
-
-// جست‌وجوی کلیدواژه فقط در آغاز واژه، تا «مال» در «کمال» پیدا نشود
-const keyRe = (t: Topic) => new RegExp(`(^|[\\s«(،؛:.])(${t.keys.map((k) => norm(k).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g')
+type Row = { book: string; sec: number; ch: number; i: number; n: number; fa: string; sm: string }
 
 /** صفحهٔ یک موضوع: همهٔ متن‌های مرتبط، به ترتیبِ قرآن، نهج‌البلاغه، غرر و بقیه */
-export function TopicReader({ id, onClose, openAt, openSurah }: { id: string; onClose: () => void; openAt: (b: BookMeta, sec: number, ch: number) => void; openSurah: (n: number) => void }) {
+export function TopicReader({ id, onClose, openAt, openSurah }: { id: string; onClose: () => void; openAt: (b: BookMeta, sec: number, ch: number, focus?: number) => void; openSurah: (n: number, ayah?: number) => void }) {
   const topic = TOPICS.find((t) => t.id === id)!
   const [books, setBooks] = useState<BookMeta[]>([])
-  const [rows, setRows] = useState<Row[] | null>(null)
+  const r = useLoad(() => loadTopic(id), [id])
   const [more, setMore] = useState<Record<string, boolean>>({})
-
   useEffect(() => {
-    loadIndex().then((x) => setBooks(x.books))
-    Promise.all([loadSearch(), loadTopics().catch(() => ({}) as Record<string, TopicHit[]>)]).then(([search, tags]) => {
-      const re = keyRe(topic)
-      const seen = new Set<string>()
-      const out: Row[] = []
-      // اول متن‌هایی که برچسب همین موضوع را دارند، بعد هر متنی که کلیدواژه‌اش در ترجمه آمده
-      for (const [book, sec, ch, n, f, sm] of tags[id] ?? []) {
-        seen.add(`${book}:${sec}:${ch}:${n}`)
-        out.push({ book, sec, ch, n, fa: f, sm, score: 100 })
-      }
-      for (const [book, sec, ch, n, f] of search) {
-        const key = `${book}:${sec}:${ch}:${n}`
-        if (seen.has(key)) continue
-        const hits = norm(f).match(re)?.length ?? 0
-        // متن کوتاه که موضوعش همین است بر متن بلندی که گذرا اشاره کرده برتری دارد
-        if (hits) out.push({ book, sec, ch, n, fa: f, sm: '', score: hits * 10 - Math.min(9.5, f.length / 50) })
-      }
-      setRows(out.sort((a, b) => b.score - a.score))
-    })
-  }, [id, topic])
+    loadIndex()
+      .then((x) => setBooks(x.books))
+      .catch(() => {})
+  }, [])
+  const rows: Row[] | null = useMemo(() => r.data?.rows.map(([book, sec, ch, i, n, f, sm]) => ({ book, sec, ch, i, n, fa: f, sm })) ?? null, [r.data])
+  const total = (b: string) => r.data?.count[b] ?? 0
 
   const groups = useMemo(() => {
     const order = ['quran', 'Nahj-al-Balagha-Radi', 'ghurar', 'sahifa', 'tuhaf']
@@ -83,36 +41,37 @@ export function TopicReader({ id, onClose, openAt, openSurah }: { id: string; on
           <p>{topic.line}</p>
           {rows && (
             <div className="topic-map">
-              {groups.map(([b, list]) => (
-                <a key={b} href={`#t-${b}`} data-shelf={shelf(b)}>
-                  {title(b)} <em>{fa(list.length)}</em>
-                </a>
+              {groups.map(([b]) => (
+                <button key={b} data-shelf={shelf(b)} onClick={() => document.getElementById(`t-${b}`)?.scrollIntoView({ behavior: 'smooth' })}>
+                  {title(b)} <em>{fa(total(b))}</em>
+                </button>
               ))}
             </div>
           )}
         </header>
-        {!rows && <p className="muted center">در حال گشتن در همهٔ کتاب‌ها…</p>}
+        {r.error ? <LoadFail error={r.error} retry={r.retry} what="این موضوع" /> : null}
+        {!rows && !r.error && <Skeleton kind="list" rows={6} />}
         {rows && !rows.length && <p className="muted center">هنوز متن ترجمه‌شده‌ای دربارهٔ این موضوع پیدا نشد.</p>}
         {groups.map(([b, list]) => {
           const shown = more[b] ? list.slice(0, 60) : list.slice(0, 6)
           return (
             <section key={b} id={`t-${b}`} className="topic-sec" data-shelf={shelf(b)}>
               <h2>
-                {title(b)} <small>{fa(list.length)} متن</small>
+                {title(b)} <small>{fa(total(b))} متن</small>
               </h2>
               {shown.map((r) => (
                 <button
-                  key={`${r.sec}:${r.ch}:${r.n}`}
+                  key={`${r.sec}:${r.ch}:${r.i}`}
                   className="topic-item"
                   onClick={() => {
-                    if (b === 'quran') return openSurah(r.sec)
+                    if (b === 'quran') return openSurah(r.sec, r.i)
                     const m = books.find((x) => x.id === b)
-                    if (m) openAt(m, r.sec, r.ch)
+                    if (m) openAt(m, r.sec, r.ch, r.i)
                   }}
                 >
                   {r.sm && <b>{r.sm}</b>}
                   <p>{r.fa.length > 260 ? `${r.fa.slice(0, 260)}…` : r.fa}</p>
-                  <small>{b === 'quran' ? `سورهٔ ${fa(r.sec)}، آیهٔ ${fa(r.n)}` : `متن ${fa(r.n)}`} ←</small>
+                  <small>{b === 'quran' ? `آیهٔ ${fa(r.n)}` : r.n ? `شمارهٔ ${fa(r.n)}` : 'در کتاب'} ←</small>
                 </button>
               ))}
               {list.length > 6 && !more[b] && (

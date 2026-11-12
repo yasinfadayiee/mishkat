@@ -1,12 +1,11 @@
-import { motion } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { loadBook, loadIndex, loadSearch, norm, savePlace, type Book, type BookMeta, type Chapter, type Hit, type Item, type Shelf } from '../books'
-import { CHAPTERS, lessonById, lessons } from '../data/lessons'
-import { MarkButton, ReaderShell } from '../reader'
-import { shareCard } from '../share'
-import { TopicGrid } from './Topics'
+import { m } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { loadIndex, norm, type BookMeta, type Shelf } from '../books'
+import { CHAPTERS, LESSONS as lessons, lessonCard as lessonById } from '../data/lesson-index'
+import { Skeleton } from '../load'
+import { TopicGrid } from './TopicGrid'
 import { fa, useStore } from '../store'
-import { ArabicText, Icon, Medallion } from '../ui'
+import { Icon, Medallion } from '../ui'
 
 const SPINE: Record<string, string> = {
   quran: 'spine-emerald',
@@ -20,7 +19,7 @@ const SPINE: Record<string, string> = {
 export type Open = { book: BookMeta; sec: number; ch: number } | null
 
 /** کتابخانه: قفسه‌ها، درس‌نامه‌ها و جست‌وجو در عنوان کتاب‌ها */
-export function Library({ openLesson, openBook, openQuran, openAt, openSurah, openTopic }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openAt: (b: BookMeta, sec: number, ch: number) => void; openSurah: (n: number) => void; openTopic: (id: string) => void }) {
+export function Library({ openLesson, openBook, openQuran, openTopic, openSearch }: { openLesson: (id: string) => void; openBook: (b: BookMeta) => void; openQuran: () => void; openTopic: (id: string) => void; openSearch: (q: string) => void }) {
   const [idx, setIdx] = useState<{ shelves: Shelf[]; books: BookMeta[] } | null>(null)
   const [q, setQ] = useState('')
   const { p } = useStore()
@@ -30,23 +29,6 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah, op
   const k = norm(q.trim())
   const books = (idx?.books ?? []).filter((b) => !k || norm(`${b.title} ${b.author} ${b.desc}`).includes(k))
   const saved = p.saved.map(lessonById).filter((l) => !!l)
-  const [rows, setRows] = useState<Hit[] | null>(null)
-  useEffect(() => {
-    if (q.trim().length >= 2 && !rows) loadSearch().then(setRows).catch(() => setRows([]))
-  }, [q, rows])
-  // جست‌وجو در ترجمهٔ قرآن و متن‌های ترجمه‌شده؛ نمایه فقط با نخستین جست‌وجو بار می‌شود
-  const hits = useMemo(() => {
-    const words = k.split(' ').filter((w) => w.length > 1)
-    if (!rows || !words.length) return []
-    const found: Hit[] = []
-    for (const r of rows) {
-      const t = norm(r[4])
-      if (words.every((w) => t.includes(w)) && found.push(r) >= 80) break
-    }
-    return found
-  }, [rows, k])
-  const titleOf = (id: string) => (id === 'quran' ? 'قرآن کریم' : (idx?.books.find((b) => b.id === id)?.title ?? id))
-
   return (
     <div className="fade-up">
       <header className="quiet-head">
@@ -58,34 +40,13 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah, op
       </header>
       <label className="lib-search">
         {Icon.search}
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجو در کتاب‌ها و متن‌ها؛ مثلاً «صبر» یا «همسایه»" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجو در نام کتاب‌ها؛ یا در متن‌ها" />
       </label>
 
       {k.length >= 2 && (
-        <section className="shelf">
-          <div className="shelf-head">
-            <h2>در متن‌ها</h2>
-            <small>{!rows ? 'در حال جست‌وجو…' : hits.length >= 80 ? 'بیش از ۸۰ نتیجه؛ واژهٔ دقیق‌تری بنویس' : `${fa(hits.length)} نتیجه در ترجمهٔ قرآن و متن‌های ترجمه‌شده`}</small>
-          </div>
-          <div className="marks">
-            {hits.map((h) => (
-              <button
-                key={h.slice(0, 4).join(':')}
-                className="mark-row"
-                onClick={() => {
-                  if (h[0] === 'quran') return openSurah(h[1])
-                  const b = idx?.books.find((x) => x.id === h[0])
-                  if (b) openAt(b, h[1], h[2])
-                }}
-              >
-                <small>
-                  {titleOf(h[0])} · {h[0] === 'quran' ? `سورهٔ ${fa(h[1])}، آیهٔ ${fa(h[3])}` : `متن ${fa(h[3])}`}
-                </small>
-                <p>{h[4].length > 240 ? `${h[4].slice(0, 240)}…` : h[4]}</p>
-              </button>
-            ))}
-          </div>
-        </section>
+        <button className="card search-jump" onClick={() => openSearch(q)}>
+          {Icon.search} جست‌وجوی «{q.trim()}» در متن همهٔ کتاب‌ها ←
+        </button>
       )}
 
       {!k && <TopicGrid open={openTopic} />}
@@ -132,7 +93,7 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah, op
               <button key={l!.id} className="saved-card" onClick={() => openLesson(l!.id)}>
                 <span className="saved-art" style={{ backgroundImage: `url(${l!.cover})` }} />
                 <b>{l!.title}</b>
-                <small>{l!.source.ref}</small>
+                <small>{l!.ref}</small>
               </button>
             ))}
           </div>
@@ -150,7 +111,7 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah, op
             </div>
             <div className="book-grid">
               {list.map((b) => (
-                <motion.button key={b.id} className="book-tile" data-shelf={b.shelf} onClick={() => (b.kind === 'quran' ? openQuran() : openBook(b))} whileHover={{ y: -3 }}>
+                <m.button key={b.id} className="book-tile" data-shelf={b.shelf} onClick={() => (b.kind === 'quran' ? openQuran() : openBook(b))} whileHover={{ y: -3 }}>
                   <span className={`book-spine ${SPINE[b.shelf]}`}>
                     <Medallion />
                     <span>{b.title}</span>
@@ -163,260 +124,14 @@ export function Library({ openLesson, openBook, openQuran, openAt, openSurah, op
                       {b.translated > 0 && <em>{b.translated >= b.count ? 'ترجمهٔ کامل' : `${fa(b.translated)} با ترجمه`}</em>}
                     </span>
                   </span>
-                </motion.button>
+                </m.button>
               ))}
             </div>
           </section>
         )
       })}
-      {!idx && <p className="muted">در حال باز کردن کتابخانه…</p>}
+      {!idx && <Skeleton kind="list" rows={6} />}
     </div>
   )
 }
 
-/** فهرست یک کتاب */
-export function BookToc({ meta, onClose, open }: { meta: BookMeta; onClose: () => void; open: (sec: number, ch: number) => void }) {
-  const [book, setBook] = useState<Book | null>(null)
-  const [q, setQ] = useState('')
-  useEffect(() => {
-    loadBook(meta.id).then(setBook)
-  }, [meta.id])
-  const k = norm(q.trim())
-
-  return (
-    <ReaderShell title={meta.title} onClose={onClose} tone={meta.shelf}>
-      <div className="reader-body">
-        <header className="book-cover">
-          <Medallion className="cover-medallion" />
-          <div className="eyebrow">{meta.author}</div>
-          <h1>{meta.title}</h1>
-          <p>{meta.desc}</p>
-          <div className="book-facts">
-            <span>{fa(meta.count)} متن</span>
-            <span>{meta.translated ? `${fa(meta.translated)} متن با ترجمهٔ فارسی` : 'ترجمهٔ فارسی در دست تهیه'}</span>
-            {meta.source && (
-              <a href={meta.source} target="_blank" rel="noreferrer">
-                منبع متن ↗
-              </a>
-            )}
-          </div>
-        </header>
-        <label className="lib-search">
-          {Icon.search}
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="جست‌وجو در عنوان بخش‌ها" />
-        </label>
-        {!book && <p className="muted center">در حال باز کردن کتاب…</p>}
-        {book?.sections.map((s, si) => {
-          const chs = s.chapters.map((c, ci) => [c, ci] as const).filter(([c]) => !k || norm(`${c.t} ${c.ta ?? ''}`).includes(k))
-          if (!chs.length) return null
-          return (
-            <section key={si} className="toc-sec">
-              {s.t && <h2>{s.t}</h2>}
-              <ol className="toc">
-                {chs.map(([c, ci]) => (
-                  <li key={ci}>
-                    <button onClick={() => open(si, ci)}>
-                      <span className="toc-t">
-                        {c.t || `بخش ${fa(ci + 1)}`}
-                        {c.ta && c.ta !== c.t && <small lang={/[ً-ْ]/.test(c.ta) ? 'ar' : undefined}>{c.ta}</small>}
-                      </span>
-                      <span className="toc-n">
-                        {fa(c.items.length)}
-                        {c.items.some((i) => i.fa) && <i>ترجمه</i>}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )
-        })}
-      </div>
-    </ReaderShell>
-  )
-}
-
-/** خواندن یک باب */
-export function ChapterReader({ meta, sec, ch, focus, onClose, go, openOther }: { meta: BookMeta; sec: number; ch: number; focus?: number; onClose: () => void; go: (sec: number, ch: number) => void; openOther?: (book: string, sec: number, ch: number, focus: number) => void }) {
-  const [book, setBook] = useState<Book | null>(null)
-  const [showAr, setShowAr] = useState(true)
-  const scroller = useRef<HTMLDivElement>(null)
-  const { p, toggleMark } = useStore()
-  useEffect(() => {
-    loadBook(meta.id).then(setBook)
-  }, [meta.id])
-  const chapter: Chapter | undefined = book?.sections[sec]?.chapters[ch]
-  const flat = useMemo(() => book?.sections.flatMap((s, si) => s.chapters.map((_, ci) => [si, ci] as const)) ?? [], [book])
-  const pos = flat.findIndex(([a, b]) => a === sec && b === ch)
-
-  useEffect(() => {
-    // از پیوند «همین سخن در…» آمده‌ایم: همان متن را نشان بده
-    const target = focus !== undefined ? scroller.current?.querySelector<HTMLElement>(`[data-i="${focus}"]`) : null
-    if (target) (target.scrollIntoView({ block: 'start' }), target.classList.add('flash'))
-    else scroller.current?.scrollTo({ top: 0 })
-    if (chapter) savePlace({ book: meta.id, title: meta.title, sec, ch, label: chapter.t })
-  }, [chapter, meta, sec, ch, focus])
-
-  const title = chapter ? `${meta.title} · ${chapter.t}` : meta.title
-  const anyFa = chapter?.items.some((i) => i.fa)
-
-  return (
-    <ReaderShell
-      title={title}
-      onClose={onClose}
-      tone={meta.shelf}
-      scrollRef={scroller}
-      actions={
-        anyFa ? (
-          <button className={`mini-btn wide ${showAr ? 'on' : ''}`} onClick={() => setShowAr((x) => !x)}>
-            عربی
-          </button>
-        ) : undefined
-      }
-    >
-      <div className="reader-body">
-        {chapter && (
-          <header className="chapter-head">
-            <div className="eyebrow">{book?.sections[sec].t || meta.title}</div>
-            <h1>{chapter.t}</h1>
-            {chapter.ta && chapter.ta !== chapter.t && <p className={/[ً-ْ]/.test(chapter.ta) ? 'arabic' : ''}>{chapter.ta}</p>}
-          </header>
-        )}
-        {chapter?.items.map((it, k) => (
-          <TextBlock key={it.i} it={it} n={k + 1} openOther={openOther} ctx={{ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, source: `${meta.title}، ${chapter.t}`, shelf: meta.shelf }} showAr={showAr || !it.fa} marked={p.marks.some((m) => m.key === `b:${meta.id}:${it.i}`)} onMark={() => toggleMark({ key: `b:${meta.id}:${it.i}`, title: `${meta.title}، ${chapter.t}`, text: it.fa ?? it.ar })} />
-        ))}
-        {book && (
-          <nav className="reader-nav">
-            <button className="btn btn-ghost" disabled={pos <= 0} onClick={() => go(...flat[pos - 1])}>
-              {Icon.back} قبلی
-            </button>
-            <button className="btn btn-ghost" disabled={pos >= flat.length - 1} onClick={() => go(...flat[pos + 1])}>
-              بعدی {Icon.next}
-            </button>
-          </nav>
-        )}
-      </div>
-    </ReaderShell>
-  )
-}
-
-type TextCtx = { key: string; title: string; source: string; shelf?: string }
-
-function TextBlock({ it, n, showAr, marked, onMark, ctx, openOther }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void; ctx: TextCtx; openOther?: (book: string, sec: number, ch: number, focus: number) => void }) {
-  const { p, setNote } = useStore()
-  const note = p.notes[ctx.key]
-  const [writing, setWriting] = useState(false)
-  const [answering, setAnswering] = useState(false)
-  const [word, setWord] = useState<number | null>(null)
-  const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
-  return (
-    <article className="text-block" data-i={it.i}>
-      <div className="ayah-tools">
-        <span className="ayah-badge">{fa(it.n ?? n)}</span>
-        {it.g?.map(([by, v]) => (
-          <span key={by} className={`chip ${/صحيح|حسن|موثق|معتبر/.test(v) ? 'ok' : 'warn'}`} title={`درجهٔ سند به نظر ${by}`}>
-            {by}: {v}
-          </span>
-        ))}
-        <span style={{ flex: 1 }} />
-        {it.u && (
-          <a className="mini-btn" href={it.u} target="_blank" rel="noreferrer" aria-label="تطبیق با منبع">
-            {Icon.shield}
-          </a>
-        )}
-        {it.fa && (
-          <button className="mini-btn" aria-label="کارت تصویری برای فرستادن" onClick={() => shareCard({ ar: it.ar, gist: it.sm, fa: it.fa!, source: ctx.source, shelf: ctx.shelf })}>
-            {Icon.share}
-          </button>
-        )}
-        <button className={`mini-btn ${note?.note ? 'on' : ''}`} aria-label="یادداشت من" onClick={() => setWriting((x) => !x)}>
-          {Icon.pen}
-        </button>
-        <MarkButton on={marked} onClick={onMark} />
-      </div>
-      {it.fa ? (
-        <>
-          {it.sm && (
-            <div className="tb-gist">
-              <small>یعنی چه؟</small>
-              <p>{it.sm}</p>
-            </div>
-          )}
-          {it.w && (
-            <div className="tb-words">
-              <small>واژه‌های کلیدی</small>
-              <div>
-                {it.w.map(([w], k) => (
-                  <button key={k} className={word === k ? 'on' : ''} onClick={() => setWord(word === k ? null : k)}>
-                    {w}
-                  </button>
-                ))}
-              </div>
-              {word !== null && it.w[word] && <p>{it.w[word][1]}</p>}
-            </div>
-          )}
-          {it.dp ? (
-            <details className="tb-deep" open={!it.sm}>
-              <summary>
-                <span>عمیق‌تر</span>
-                <i>{Icon.next}</i>
-              </summary>
-              {it.dp.split(/\n+/).map((t, k) => (
-                <p key={k}>{t}</p>
-              ))}
-            </details>
-          ) : (
-            it.nt && (
-              <div className="tb-note">
-                <b>توضیح</b>
-                <p>{it.nt}</p>
-              </div>
-            )
-          )}
-          {it.mr && (
-            <div className="tb-mirror">
-              {Icon.life}
-              <div>
-                <p>{it.mr}</p>
-                {/* جعبهٔ پاسخ فقط با لمس باز می‌شود تا صفحهٔ ۹۰ متنی شلوغ نشود */}
-                {answering || note?.answer ? (
-                  <textarea className="tb-answer" rows={3} autoFocus={answering && !note?.answer} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" defaultValue={note?.answer ?? ''} onBlur={(e) => e.target.value !== (note?.answer ?? '') && save({ answer: e.target.value })} />
-                ) : (
-                  <button className="link-btn tb-answer-open" onClick={() => setAnswering(true)}>
-                    پاسخ من ←
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          {(writing || note?.note) && (
-            <div className="tb-mynote">
-              <small>یادداشت من</small>
-              <textarea rows={3} autoFocus={writing} placeholder="هرچه از این متن فهمیدی یا می‌خواهی به یاد بماند…" defaultValue={note?.note ?? ''} onBlur={(e) => e.target.value !== (note?.note ?? '') && save({ note: e.target.value })} />
-            </div>
-          )}
-          <div className={`tb-source ${it.sm ? 'quiet' : ''}`}>
-            {it.sm && <small>متن و ترجمهٔ دقیق</small>}
-            {showAr && <ArabicText kind="hadith" text={it.v ?? it.ar} className="tb-ar" />}
-            {showAr && it.v && <small className="tb-vocal">اعراب از متن نهج‌البلاغه</small>}
-            <p className="tb-fa">{it.fa}</p>
-          </div>
-          {openOther && it.x?.length ? (
-            <div className="tb-cross">
-              {it.x.map(([b, s, c, i, label]) => (
-                <button key={`${b}-${i}`} className="link-btn" onClick={() => openOther(b, s, c, i)}>
-                  همین سخن در {b === 'ghurar' ? 'غررالحکم' : 'نهج‌البلاغه'}، {label} ←
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <>
-          {showAr && <ArabicText kind="hadith" text={it.ar} className="tb-ar" />}
-          <p className="tb-pending">ترجمهٔ فارسی این متن هنوز آماده نیست.</p>
-        </>
-      )}
-    </article>
-  )
-}

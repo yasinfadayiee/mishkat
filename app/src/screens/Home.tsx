@@ -1,8 +1,8 @@
 import { PlanSection } from './Plans'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { lastPlace, loadBook, loadIndex, loadSurahs, type BookMeta, type Item, type Place, type SurahMeta } from '../books'
-import { lessonById, lessons } from '../data/lessons'
+import { lastPlace, loadDaily, loadIndex, loadSurahs, type BookMeta, type DailyAyah, type DailySaying, type Place, type SurahMeta } from '../books'
+import { LESSONS as lessons, lessonCard as lessonById } from '../data/lesson-index'
 import { situations } from '../data/paths'
 import type { Situation } from '../data/types'
 import { Sky } from '../sky'
@@ -36,28 +36,14 @@ export function todaysLesson(completed: Record<string, string>) {
 }
 
 /** سخن امروز از حکمت‌های ترجمه‌شدهٔ نهج‌البلاغه */
-function useSaying() {
-  const [s, setS] = useState<{ item: Item; label: string; sec: number; ch: number } | null>(null)
+function useDaily() {
+  const [d, setD] = useState<{ saying: DailySaying; ayah: DailyAyah } | null>(null)
   useEffect(() => {
-    loadBook('Nahj-al-Balagha-Radi')
-      .then((b) => {
-        const pool = b.sections.flatMap((sec, si) => sec.chapters.flatMap((c, ci) => c.items.filter((i) => i.fa && i.n && !/الرضي|وروي|وقد روى/.test(i.ar) && i.ar.split(' ').length < 40).map((item) => ({ item, label: `نهج‌البلاغه، ${item.n ? `حکمت ${fa(item.n)}` : c.t}`, sec: si, ch: ci }))))
-        if (pool.length) setS(pool[(today * 7) % pool.length])
-      })
-      .catch(() => setS(null))
+    loadDaily()
+      .then(({ sayings, ayahs }) => setD({ saying: sayings[today % sayings.length], ayah: ayahs[(today * 5) % ayahs.length] }))
+      .catch(() => setD(null))
   }, [])
-  return s
-}
-
-/** آیهٔ امروز: از آیه‌های برگزیدهٔ درس‌نامه‌ها، تا آیه بیرون از سیاقش نیاید */
-function useAyah() {
-  const pool = lessons.flatMap((l) => [
-    ...(l.source.kind === 'quran' ? [{ ar: l.source.arabic, fa: l.source.translation, ref: l.source.verifyUrl }] : []),
-    ...l.parallels.filter((x) => x.school === 'quran').map((x) => ({ ar: x.arabic, fa: x.translation, ref: x.verifyUrl })),
-  ])
-  const a = pool[(today * 5) % pool.length]
-  const [n, ayah] = (a.ref.split('#')[1] ?? '1:1').split(':')
-  return { ar: a.ar, fa: a.fa, n: Number(n), ayah: ayah.replace(/\d/g, (d) => fa(Number(d))) }
+  return d
 }
 
 export function Home({
@@ -79,8 +65,9 @@ export function Home({
   const [books, setBooks] = useState<BookMeta[]>([])
   const place = lastPlace()
   const lesson = todaysLesson(p.completed)
-  const saying = useSaying()
-  const ayah = useAyah()
+  const daily = useDaily()
+  const saying = daily?.saying
+  const ayah = daily && { ...daily.ayah, n: daily.ayah.s, ayah: daily.ayah.a.replace(/\d/g, (d) => fa(Number(d))) }
   const [surahs, setSurahs] = useState<SurahMeta[]>([])
   useEffect(() => {
     loadSurahs()
@@ -129,7 +116,7 @@ export function Home({
 
         <div className="daily-grid">
           {ayah && (
-            <motion.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
+            <m.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
               <div className="dc-kicker">آیهٔ امروز</div>
               <ArabicText kind="quran" text={ayah.ar} className="dc-ar" />
               <p className="dc-fa">{ayah.fa}</p>
@@ -139,28 +126,28 @@ export function Home({
                   خواندن سوره ←
                 </button>
               </footer>
-            </motion.article>
+            </m.article>
           )}
           {saying && (
-            <motion.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+            <m.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
               <div className="dc-kicker">سخن امروز · امام علی (ع)</div>
-              <ArabicText kind="hadith" text={saying.item.ar} className="dc-ar" />
-              <p className="dc-fa">{saying.item.fa}</p>
-              {(saying.item.sm ?? saying.item.nt) && <p className="dc-note">{saying.item.sm ?? saying.item.nt}</p>}
-              {saying.item.mr && (
+              <ArabicText kind="hadith" text={saying.ar} className="dc-ar" />
+              <p className="dc-fa">{saying.fa}</p>
+              {saying.sm && <p className="dc-note">{saying.sm}</p>}
+              {saying.mr && (
                 <p className="dc-mirror">
-                  {Icon.life} {saying.item.mr}
+                  {Icon.life} {saying.mr}
                 </p>
               )}
               <footer>
-                <span>{saying.label}</span>
+                <span>نهج‌البلاغه، حکمت {fa(saying.n)}</span>
                 {nahj && (
                   <button className="link-btn" onClick={() => openBook(nahj, saying.sec, saying.ch)}>
                     در کتاب ←
                   </button>
                 )}
               </footer>
-            </motion.article>
+            </m.article>
           )}
         </div>
 
@@ -175,12 +162,12 @@ export function Home({
             <span className="lf-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
             <span className="lf-text">
               <small>
-                {lesson.topic} · {lesson.source.ref}
+                {lesson.topic} · {lesson.ref}
               </small>
               <b>{lesson.title}</b>
-              {lesson.sharh && <span>{lesson.sharh.essence}</span>}
+              {lesson.essence && <span>{lesson.essence}</span>}
               <em>
-                {lesson.sharh ? `شرح ${fa(lesson.sharh.parts.length)} جمله، یکی‌یکی` : lesson.subtitle}
+                {lesson.subtitle}
                 {p.completed[lesson.id] && ' · خوانده شده'}
               </em>
             </span>
@@ -257,7 +244,7 @@ export function Home({
                   <span className="sl-art" style={{ backgroundImage: `url(${l!.cover})` }} />
                   <span>
                     <b>{l!.title}</b>
-                    <small>{l!.source.ref}</small>
+                    <small>{l!.ref}</small>
                   </span>
                 </button>
               ))}

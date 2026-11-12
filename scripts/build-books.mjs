@@ -338,29 +338,7 @@ for (const [col, title] of [
   index.books.push({ id: col, kind: 'book', title, author: col === 'bukhari' ? 'محمد بن اسماعیل بخاری (د. ۲۵۶ ق)' : 'مسلم بن حجاج نیشابوری (د. ۲۶۱ ق)', shelf: 'sunni', desc: 'از مهم‌ترین منابع حدیثی اهل سنت؛ فقط متن عربی.', count: d.hadiths.length, translated: 0, source: 'https://sunnah.com' })
 }
 
-// نمایهٔ جست‌وجو: ترجمهٔ فارسی قرآن و همهٔ متن‌های ترجمه‌شده — [کتاب، بخش، باب، شمارهٔ متن، متن فارسی]
-{
-  const rows = []
-  for (const s of surahs) {
-    const d = read(path.join(out, 'quran', `${s.n}.json`))
-    d.ayahs.forEach(([, f], k) => rows.push(['quran', s.n, 0, k + 1, f]))
-  }
-  for (const b of index.books.filter((x) => x.kind === 'book' && x.translated)) {
-    const d = read(path.join(out, `${b.id}.json`))
-    d.sections.forEach((sec, si) => sec.chapters.forEach((c, ci) => c.items.forEach((it) => it.fa && rows.push([b.id, si, ci, it.n ?? it.i, it.fa]))))
-  }
-  write('search.json', rows)
-
-  // موضوع‌ها از برچسب‌های متن‌ها: { موضوع: [کتاب، بخش، باب، شمارهٔ متن، ترجمه، یعنی چه؟] }
-  const topics = {}
-  for (const b of index.books.filter((x) => x.kind === 'book' && x.translated)) {
-    const d = read(path.join(out, `${b.id}.json`))
-    d.sections.forEach((sec, si) =>
-      sec.chapters.forEach((c, ci) => c.items.forEach((it) => it.tg?.forEach((t) => (topics[t] ??= []).push([b.id, si, ci, it.n ?? it.i, it.fa, it.sm ?? ''])))),
-    )
-  }
-  write('topics.json', topics)
-}
+// نمایهٔ جست‌وجو، موضوع‌ها و سخن امروز در scripts/split-books.mjs ساخته می‌شوند
 
 index.books.sort((a, b) => SHELVES.findIndex((s) => s.id === a.shelf) - SHELVES.findIndex((s) => s.id === b.shelf) || (a.order ?? 0) - (b.order ?? 0))
 write('index.json', index)
@@ -373,3 +351,5 @@ console.log(`${index.books.length} کتاب، ${index.books.reduce((s, b) => s +
 
 // پیوند سخن‌های یکسان غرر و نهج‌البلاغه
 await import('./link-books.mjs')
+// هر کتاب به فهرست و باب‌ها تکه می‌شود تا برنامه فقط همان باب را بگیرد
+await import('./split-books.mjs')

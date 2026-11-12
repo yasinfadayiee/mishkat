@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { loadSurah, loadSurahs, norm, savePlace, type Surah, type SurahMeta } from '../books'
 import { MarkButton, ReaderShell } from '../reader'
@@ -209,7 +209,7 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
       </div>
       <AnimatePresence>
         {playing && (
-          <motion.div className="now-playing" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
+          <m.div className="now-playing" initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}>
             {Icon.sound} آیهٔ {fa(playing)}
             <select value={reciter} onChange={(e) => pickReciter(e.target.value)} aria-label="قاری">
               {RECITERS.map((r) => (
@@ -224,7 +224,7 @@ export function SurahReader({ n, onClose, go }: { n: number; onClose: () => void
             <button onClick={() => play(playing)} aria-label="توقف">
               {Icon.pause}
             </button>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </ReaderShell>

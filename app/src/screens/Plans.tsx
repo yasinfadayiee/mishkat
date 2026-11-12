@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { loadBook, loadIndex, type Book, type BookMeta } from '../books'
+import { loadIndex, loadToc, type BookMeta, type Toc } from '../books'
 import { PLANS, planDays, type Plan } from '../data/plans'
 import { fa, useStore } from '../store'
 
-type Loaded = { plan: Plan; meta: BookMeta; book: Book; days: [number, number][][] }
+type Loaded = { plan: Plan; meta: BookMeta; book: Toc; days: [number, number][][] }
 
 /** بخش «برنامهٔ مطالعه» در خانه: برنامهٔ در جریان، یا فهرست برنامه‌ها برای شروع */
 export function PlanSection({ openAt }: { openAt: (meta: BookMeta, sec: number, ch: number) => void }) {
@@ -24,7 +24,8 @@ export function PlanSection({ openAt }: { openAt: (meta: BookMeta, sec: number, 
       for (const plan of need) {
         const meta = ix.books.find((b) => b.id === plan.book)
         if (!meta) continue
-        const book = await loadBook(plan.book)
+        const book = await loadToc(plan.book).catch(() => null)
+        if (!book) continue
         next[plan.id] = { plan, meta, book, days: planDays(plan, book) }
       }
       if (live) setLoaded((l) => ({ ...l, ...next }))

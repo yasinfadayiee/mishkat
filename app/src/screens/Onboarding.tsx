@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useState } from 'react'
 import { NUR } from '../data/verses'
 import { LightDust } from '../fx'
@@ -40,7 +40,7 @@ export function Onboarding() {
   return (
     <div className="onboard-full">
       <AnimatePresence mode="popLayout">
-        <motion.div
+        <m.div
           key={art}
           className="onboard-art"
           style={{ backgroundImage: `url(${art})` }}
@@ -53,7 +53,7 @@ export function Onboarding() {
       <LightDust density={40} />
       <div className="onboard-panel">
         <AnimatePresence mode="wait">
-          <motion.div key={i} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.45 }}>
+          <m.div key={i} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.45 }}>
             {!last ? (
               <>
                 {slide.verse && (
@@ -74,7 +74,7 @@ export function Onboarding() {
                 <input className="text-input" placeholder="نام تو (اختیاری)" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && finish()} autoFocus />
               </>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
         <div className="dots-nav">
           {[...SLIDES, 0].map((_, k) => (

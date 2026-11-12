@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Grading, SourceText } from './data/types'
 
@@ -35,6 +35,7 @@ export const Icon = {
   bookmark: S(<path d="M7 4h10v16l-5-3.5L7 20z" />),
   bookmarked: S(<path d="M7 4h10v16l-5-3.5L7 20z" fill="currentColor" />),
   search: S(<><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></>),
+  download: S(<><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" /><path d="M5 19h14" /></>),
   sound: S(<><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></>),
 }
 
@@ -109,7 +110,7 @@ export function Sparks({ show }: { show: boolean }) {
     <AnimatePresence>
       {show &&
         parts.current.map((p, i) => (
-          <motion.i
+          <m.i
             key={i}
             className="spark"
             style={{ left: '50%', top: '55%', scale: p.s }}
@@ -127,8 +128,8 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <motion.div
+        <m.div className="sheet-backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <m.div
             className="sheet"
             onClick={(e) => e.stopPropagation()}
             initial={{ y: 60, opacity: 0 }}
@@ -138,8 +139,8 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
           >
             <div className="grab" />
             {children}
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   )
