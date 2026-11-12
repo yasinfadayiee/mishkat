@@ -111,7 +111,7 @@ for (const sc of scenes) {
       const extra = sc.storage ? Object.entries(sc.storage).map(([k, v]) => `localStorage.setItem(${JSON.stringify(k)}, ${JSON.stringify(typeof v === 'string' ? v : JSON.stringify(v))});`).join('') : ''
       script = (
         await call('Page.addScriptToEvaluateOnNewDocument', {
-          source: `try{if(!sessionStorage.getItem('shot.init')){localStorage.clear();sessionStorage.setItem('shot.init','1')};localStorage.setItem('mishkat.progress.v1', ${JSON.stringify(JSON.stringify(progress(theme)))});${extra}sessionStorage.setItem('mishkat.intro','1');localStorage.setItem('mishkat.introSeen','1')}catch(e){}`,
+          source: `try{if(!sessionStorage.getItem('shot.init')){localStorage.clear();sessionStorage.setItem('shot.init','1')};localStorage.setItem('mishkat.progress.v1', ${JSON.stringify(JSON.stringify({ ...progress(theme), ...sc.patch }))});${extra}sessionStorage.setItem('mishkat.intro','1');localStorage.setItem('mishkat.introSeen','1')}catch(e){}`,
         })
       ).identifier
       if (process.env.SLOW) await call('Network.emulateNetworkConditions', { offline: false, latency: 562.5, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 })

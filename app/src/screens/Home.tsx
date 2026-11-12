@@ -7,7 +7,7 @@ import { LESSONS as lessons, lessonCard as lessonById } from '../data/lesson-ind
 import { situations } from '../data/paths'
 import type { Situation } from '../data/types'
 import { Sky } from '../sky'
-import { fa, PHASE_NAME, phaseOf, useStore } from '../store'
+import { fa, PHASE_NAME, phaseOf, THEME_PHASE, useStore } from '../store'
 import { ArabicText, Icon, Medallion, Sheet } from '../ui'
 
 function greeting() {
@@ -76,7 +76,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
   return (
     <div className="home2">
       <header className="masthead">
-        <Sky />
+        <Sky phase={p.theme === 'auto' ? undefined : THEME_PHASE[p.theme]} />
         <div className="masthead-text">
           <div className="mast-date">
             {shamsi}
@@ -123,7 +123,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
           )}
           {saying && (
             <m.article className="daily-card" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-              <div className="dc-kicker">سخن امروز · امام علی (ع)</div>
+              <div className="dc-kicker">سخن امروز، امام علی (ع)</div>
               <ArabicText kind="hadith" text={saying.ar} className="dc-ar" />
               <p className="dc-fa">{saying.fa}</p>
               {saying.sm && <p className="dc-note">{saying.sm}</p>}
@@ -155,13 +155,13 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
             <span className="lf-art" style={{ backgroundImage: `url(${lesson.cover})` }} />
             <span className="lf-text">
               <small>
-                {lesson.topic} · {lesson.ref}
+                {lesson.topic}، {lesson.ref}
               </small>
               <b>{lesson.title}</b>
               {lesson.essence && <span>{lesson.essence}</span>}
               <em>
                 {lesson.subtitle}
-                {p.completed[lesson.id] && ' · خوانده شده'}
+                {p.completed[lesson.id] && '، خوانده شده'}
               </em>
             </span>
           </button>
@@ -194,14 +194,14 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
             <button className="feat-book quran-book" data-shelf="quran" onClick={() => openQuran()}>
               <Medallion />
               <b>قرآن کریم</b>
-              <small>۱۱۴ سوره · ترجمهٔ کامل</small>
+              <small>۱۱۴ سوره، ترجمهٔ کامل</small>
             </button>
             {featured.map((b) => (
               <button key={b.id} className="feat-book" data-shelf={b.shelf} onClick={() => openBook(b)}>
                 <Medallion />
                 <b>{b.title}</b>
                 <small>
-                  {fa(b.count)} متن{b.translated ? ` · ${fa(b.translated)} با ترجمه` : ''}
+                  {fa(b.count)} متن{b.translated ? `، ${fa(b.translated)} با ترجمه` : ''}
                 </small>
               </button>
             ))}

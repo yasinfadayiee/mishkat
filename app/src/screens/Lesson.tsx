@@ -1,6 +1,6 @@
 import { m } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { chapterOf, lessonById, lessons } from '../data/lessons'
+import { chapterOf, lessonById } from '../data/lessons'
 import type { Lesson, Word } from '../data/types'
 import { fa, useStore } from '../store'
 import { LightDust, Ornament } from '../fx'
@@ -75,7 +75,6 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
   const sh = lesson.sharh
   const adopted = (p.habits ?? []).some((h) => h.lessonId === lesson.id)
   const chapter = chapterOf(lesson.id)
-  const station = lessons.findIndex((l) => l.id === lesson.id) + 1
 
   const toc = useMemo(
     () =>
@@ -177,7 +176,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
           <div className="study-hero-fade" />
           <div className="study-hero-text">
             <div className="study-kicker">
-              {chapter ? `منزل ${chapter.title}` : lesson.topic} · ایستگاه {fa(station)}
+              {chapter ? `${chapter.title}، درس ${fa(chapter.lessons.indexOf(lesson.id) + 1)} از ${fa(chapter.lessons.length)}` : lesson.topic}
             </div>
             <h1>{lesson.title}</h1>
             <p>{lesson.subtitle}</p>

@@ -16,6 +16,9 @@ export function phaseOf(d = new Date()): Phase {
   return 'night'
 }
 export const PHASE_THEME: Record<Phase, Exclude<ThemeId, 'auto'>> = { sahar: 'dawn', morning: 'parchment', noon: 'noon', asr: 'dusk', maghrib: 'dusk', night: 'isfahan' }
+/** وقتی کاربر پوسته را خودش انتخاب کرده، آسمان خانه هم با همان پوسته هماهنگ می‌شود */
+export const THEME_PHASE: Record<Exclude<ThemeId, 'auto'>, Phase> = { dawn: 'sahar', parchment: 'morning', noon: 'noon', dusk: 'maghrib', isfahan: 'night', emerald: 'night' }
+export const LIGHT_THEMES: ThemeId[] = ['parchment', 'noon']
 export const PHASE_NAME: Record<Phase, string> = { sahar: 'سحر', morning: 'صبح', noon: 'ظهر', asr: 'عصر', maghrib: 'مغرب', night: 'شب' }
 
 export interface Habit {

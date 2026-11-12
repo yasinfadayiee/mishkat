@@ -16,9 +16,9 @@ small{color:#8a7a5c}.q{color:#6b5a35}.a{background:#f6efe0;border-radius:8px;pad
 @media print{body{margin:0}.it{border-color:#ccc}}
 </style></head><body>
 <h1>دفتر ${esc(p.name || 'من')}</h1>
-<small>مشکات · ${day(new Date().toISOString())}</small>
-${notes.length ? `<h2>آنچه نوشته‌ام</h2>${notes.map((n) => `<div class="it"><small>${esc(n.title)} · ${day(n.at)}</small><p>${esc(n.text)}</p>${n.question ? `<p class="q">${esc(n.question)}</p>` : ''}${n.answer ? `<p class="a">${esc(n.answer)}</p>` : ''}${n.note ? `<p class="a">${esc(n.note)}</p>` : ''}</div>`).join('')}` : ''}
-${p.marks.length ? `<h2>متن‌های نشان‌شده</h2>${p.marks.map((m) => `<div class="it"><small>${esc(m.title)} · ${day(m.at)}</small><p>${esc(m.text)}</p></div>`).join('')}` : ''}
+<small>مشکات، ${day(new Date().toISOString())}</small>
+${notes.length ? `<h2>آنچه نوشته‌ام</h2>${notes.map((n) => `<div class="it"><small>${esc(n.title)}، ${day(n.at)}</small><p>${esc(n.text)}</p>${n.question ? `<p class="q">${esc(n.question)}</p>` : ''}${n.answer ? `<p class="a">${esc(n.answer)}</p>` : ''}${n.note ? `<p class="a">${esc(n.note)}</p>` : ''}</div>`).join('')}` : ''}
+${p.marks.length ? `<h2>متن‌های نشان‌شده</h2>${p.marks.map((m) => `<div class="it"><small>${esc(m.title)}، ${day(m.at)}</small><p>${esc(m.text)}</p></div>`).join('')}` : ''}
 ${p.journal.length ? `<h2>یادداشت درس‌نامه‌ها</h2>${p.journal.map((j) => `<div class="it"><small>${day(j.date)}</small><p>${esc(j.text)}</p></div>`).join('')}` : ''}
 </body></html>`
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }))

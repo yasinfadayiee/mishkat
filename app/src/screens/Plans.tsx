@@ -106,7 +106,7 @@ export function PlanSection({ openAt }: { openAt: (meta: BookMeta, sec: number, 
               <button key={plan.id} className="card plan-pick" onClick={() => (startPlan(plan.id), setBrowsing(false))}>
                 <b>{plan.title}</b>
                 <small>{plan.desc}</small>
-                <span>{l ? `${fa(l.days.length)} روز · شروع ←` : 'شروع ←'}</span>
+                <span>{l ? `${fa(l.days.length)} روز، شروع ←` : 'شروع ←'}</span>
               </button>
             )
           })}

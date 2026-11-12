@@ -950,3 +950,79 @@ article.mark-row {
   display: block;
   margin-top: 4px;
 }
+
+/* ───────── معرفی برنامه ───────── */
+.onboard-full::after {
+  background: linear-gradient(180deg, rgba(2, 12, 10, 0.15) 0%, rgba(2, 12, 10, 0.55) 34%, rgba(2, 12, 10, 0.92) 58%, rgba(2, 12, 10, 0.98)) !important;
+}
+.onboard-panel .body {
+  line-height: 2;
+  color: #e8e0cc;
+}
+.onboard-panel .lead {
+  color: #f3d999;
+}
+.onboard-verse {
+  margin: 0 auto 10px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: rgba(2, 12, 10, 0.6);
+  color: #ffe9b0 !important;
+  font-size: 22px !important;
+  line-height: 2.1;
+  text-shadow: none !important;
+}
+.onboard-panel h1.big {
+  font-size: 50px;
+}
+.dots-nav {
+  direction: rtl;
+}
+.dots-nav button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 10px;
+  background: rgba(255, 246, 226, 0.35);
+  transition: width 0.3s;
+  cursor: pointer;
+}
+.dots-nav button.on {
+  width: 28px;
+  background: #f1d699;
+}
+.onboard-skip {
+  margin-top: 4px;
+  color: #e8dfc6 !important;
+}
+
+/* ───────── عنوان درس‌نامه: لایهٔ تیرهٔ ثابت زیر متن، در هر پوسته خوانا ───────── */
+.study-hero-text {
+  position: relative;
+}
+.study-hero-text::before {
+  content: '';
+  position: absolute;
+  inset: -40px -400px 0;
+  z-index: -1;
+  background: linear-gradient(180deg, transparent, rgba(4, 10, 9, 0.72) 34%, rgba(4, 10, 9, 0.88));
+}
+.study-hero-text h1,
+:root[data-theme] .study-hero h1 {
+  color: #f6dd9e !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+.study-hero-text p {
+  color: #f4ecda !important;
+}
+.study-hero-text .study-meta,
+.study-hero-text .study-meta span {
+  color: #e6dcc4 !important;
+}
+.study-hero-text .study-kicker {
+  color: #f1d699;
+  background: rgba(0, 0, 0, 0.4);
+}
+.study-hero {
+  overflow: hidden;
+}

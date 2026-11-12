@@ -46,7 +46,7 @@ export function Quran() {
       <header className="quiet-head">
         <div className="eyebrow">قرآن کریم</div>
         <h1 className="h1">۱۱۴ سوره، با ترجمهٔ کامل</h1>
-        <p className="muted">متن عثمانی «تنزیل» · ترجمهٔ آیت‌الله مکارم شیرازی · تلاوت با پنج قاری</p>
+        <p className="muted">متن عثمانی «تنزیل»، ترجمهٔ آیت‌الله مکارم شیرازی، تلاوت با پنج قاری</p>
       </header>
       <label className="lib-search">
         {Icon.search}
@@ -58,7 +58,7 @@ export function Quran() {
             <span className="sr-n">{fa(s.n)}</span>
             <span className="sr-name quran">{s.name}</span>
             <small>
-              {s.type} · {fa(s.count)} آیه
+              {s.type}، {fa(s.count)} آیه
             </small>
           </button>
         ))}

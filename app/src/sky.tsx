@@ -13,21 +13,31 @@ function bodyPos(d: Date, phase: Phase) {
   return { x, y, day }
 }
 
+// جای ثابت خورشید یا ماه وقتی آسمان از پوستهٔ انتخابی پیروی می‌کند
+const FIXED: Record<Phase, { x: number; y: number; day: boolean }> = {
+  sahar: { x: 78, y: 30, day: false },
+  morning: { x: 78, y: 26, day: true },
+  noon: { x: 50, y: 14, day: true },
+  asr: { x: 26, y: 26, day: true },
+  maghrib: { x: 16, y: 38, day: true },
+  night: { x: 70, y: 22, day: false },
+}
+
 // ستاره‌های ثابت (هر بار همان جا، تا آسمان آرام بماند)
 const STARS = Array.from({ length: 46 }, (_, i) => {
   const r = (n: number) => ((Math.sin(i * 97.13 + n * 13.7) + 1) / 2) % 1
   return { x: r(1) * 100, y: r(2) * 62, s: 0.6 + r(3) * 1.6, d: r(4) * 6 }
 })
 
-/** آسمانِ زنده: رنگ، خورشید یا ماه، ستاره‌ها و نیم‌رخ گنبد و مناره بر اساس هنگامِ روز */
-export function Sky({ children }: { children?: React.ReactNode }) {
+/** آسمانِ زنده: رنگ، خورشید یا ماه و ستاره‌ها بر اساس هنگامِ روز (یا پوسته‌ای که کاربر خودش انتخاب کرده) */
+export function Sky({ children, phase: forced }: { children?: React.ReactNode; phase?: Phase }) {
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60000)
     return () => clearInterval(t)
   }, [])
-  const phase = phaseOf(now)
-  const pos = useMemo(() => bodyPos(now, phase), [now, phase])
+  const phase = forced ?? phaseOf(now)
+  const pos = useMemo(() => (forced ? FIXED[forced] : bodyPos(now, phase)), [now, phase, forced])
   const starry = phase === 'night' || phase === 'sahar' || phase === 'maghrib'
 
   return (
@@ -50,37 +60,6 @@ export function Sky({ children }: { children?: React.ReactNode }) {
         </div>
       )}
       <div className={`sky-body ${pos.day ? 'sun' : 'moon'}`} style={{ left: `${pos.x}%`, top: `${pos.y}%` }} />
-      <svg className="sky-city" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-        <g className="far">
-          <ellipse cx="150" cy="200" rx="14" ry="46" />
-          <ellipse cx="185" cy="205" rx="11" ry="34" />
-          <path d="M250 200 V150 H330 V200 Z M262 152 Q262 112 290 98 Q318 112 318 152 Z" />
-          <path d="M860 200 V156 H950 V200 Z M872 158 Q872 118 905 102 Q938 118 938 158 Z" />
-          <ellipse cx="1030" cy="200" rx="13" ry="44" />
-          <ellipse cx="1062" cy="206" rx="10" ry="30" />
-        </g>
-        <g className="near">
-          <rect x="0" y="196" width="1200" height="24" />
-          <rect x="462" y="122" width="276" height="80" />
-          <rect x="528" y="96" width="144" height="30" />
-          <path d="M516 100 Q516 46 600 22 Q684 46 684 100 Z" />
-          <rect x="598" y="2" width="4" height="24" />
-          <circle cx="600" cy="6" r="5" />
-          <rect x="424" y="34" width="18" height="168" />
-          <rect x="418" y="74" width="30" height="7" />
-          <path d="M424 36 L433 10 L442 36 Z" />
-          <rect x="758" y="34" width="18" height="168" />
-          <rect x="752" y="74" width="30" height="7" />
-          <path d="M758 36 L767 10 L776 36 Z" />
-          <ellipse cx="380" cy="198" rx="12" ry="40" />
-          <ellipse cx="820" cy="198" rx="12" ry="40" />
-        </g>
-        <g className="lights">
-          <path d="M582 202 V160 Q600 138 618 160 V202 Z" />
-          <path d="M494 196 V166 Q506 152 518 166 V196 Z" />
-          <path d="M682 196 V166 Q694 152 706 166 V196 Z" />
-        </g>
-      </svg>
       <div className="sky-fade" />
       {children}
     </div>
