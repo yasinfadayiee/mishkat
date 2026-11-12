@@ -1419,3 +1419,40 @@ article.mark-row {
     scroll-behavior: auto !important;
   }
 }
+
+/* ───────── دسترس‌پذیری: حلقهٔ فوکوس روشن برای صفحه‌کلید ───────── */
+:focus-visible {
+  outline: 3px solid var(--gold) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--bg0) 70%, transparent);
+}
+[data-dialog]:focus-visible,
+.main:focus-visible {
+  outline: none !important;
+  box-shadow: none;
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-offset: 0;
+}
+
+/* هدف لمسی دست‌کم ۴۴ پیکسل */
+.icon-btn,
+.reader .study-bar .icon-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+.text-size button {
+  width: 44px;
+  height: 44px;
+}
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+}
+.tabbar button {
+  min-height: 48px;
+}

@@ -4,7 +4,8 @@ import { chapterOf, lessonById } from '../data/lessons'
 import type { Lesson, Word } from '../data/types'
 import { fa, useStore } from '../store'
 import { LightDust, Ornament } from '../fx'
-import { ArabicText, GradingChip, Icon, Recitation } from '../ui'
+import { useDisplay } from '../prefs'
+import { ArabicText, GradingChip, Icon, Recitation, useDialog } from '../ui'
 
 const CARTOUCHE = 'M50,0 C58,5 70,7 84,7 C93,7 100,13 100,22 L100,78 C100,87 93,93 84,93 C70,93 58,95 50,100 C42,95 30,93 16,93 C7,93 0,87 0,78 L0,22 C0,13 7,7 16,7 C30,7 42,5 50,0 Z'
 const kindLabel = { quran: 'قرآن کریم', nahj: 'نهج‌البلاغه', hadith: 'حدیث' }
@@ -18,15 +19,6 @@ const bare = (t: string) =>
     .replace(/[،؛.:!؟«»()﴿﴾]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
-
-const SCALE_KEY = 'mishkat.textScale'
-const readScale = () => {
-  try {
-    return Number(localStorage.getItem(SCALE_KEY)) || 1
-  } catch {
-    return 1
-  }
-}
 
 /* ستارهٔ هشت‌پر با شماره، برای هر تکهٔ شرح */
 function Medallion({ n }: { n: number }) {
@@ -70,7 +62,10 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
   const [note, setNote] = useState('')
   const [saved, setSaved] = useState(false)
   const [done, setDone] = useState(false)
-  const [scale, setScale] = useState(readScale)
+  // اندازهٔ متن درس‌نامه همان تنظیم «نمایش» خوانشگر است
+  const [display, setDisplay] = useDisplay()
+  const scale = display.fa
+  const setScale = (f: (x: number) => number) => setDisplay({ fa: f(display.fa), ar: f(display.ar) })
   const s = lesson.source
   const sh = lesson.sharh
   const adopted = (p.habits ?? []).some((h) => h.lessonId === lesson.id)
@@ -108,21 +103,9 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
     return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(SCALE_KEY, String(scale))
-    } catch {
-      /* حافظهٔ مرورگر در دسترس نیست */
-    }
-  }, [scale])
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  const box = useRef<HTMLDivElement>(null)
+  useDialog(box, true, onClose)
 
   // چیپ فعال فهرست همیشه در دید بماند
   // (scrollIntoView صفحه را هم جابه‌جا می‌کند، پس فقط نوار افقی اسکرول می‌شود)
@@ -147,7 +130,7 @@ export function LessonPlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
   }
 
   return (
-    <m.div className="study" style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
+    <m.div ref={box} className="study" role="dialog" aria-modal="true" aria-label={lesson.title} data-dialog tabIndex={-1} style={{ ['--ts' as string]: scale }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}>
       <div className="study-progress">
         <b style={{ transform: `scaleX(${progress})` }} />
       </div>
