@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { loadIndex, type BookMeta } from '../books'
 import { useSearch, type SearchHit } from '../search'
+import { surahName } from '../data/surah-fa'
 import { go, href } from '../router'
 import { fa } from '../store'
 import { Icon } from '../ui'
@@ -99,7 +100,7 @@ export function SearchPage({ initial = '' }: { initial?: string }) {
     return () => clearTimeout(t)
   }, [res?.done, total, q])
 
-  const place = (h: SearchHit) => (h.book === 'quran' ? `سورهٔ ${h.place}، آیهٔ ${fa(h.i)}` : `${h.place}${h.n ? `، شمارهٔ ${fa(h.n)}` : ''}`)
+  const place = (h: SearchHit) => (h.book === 'quran' ? `${surahName(h.sec)}، آیهٔ ${fa(h.i)}` : `${h.place}${h.n ? `، شمارهٔ ${fa(h.n)}` : ''}`)
 
   return (
     <div className="search-page fade-up">

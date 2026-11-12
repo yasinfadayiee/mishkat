@@ -3,6 +3,7 @@ import { loadIndex, loadTopic, type BookMeta } from '../books'
 import { LoadFail, Skeleton, useLoad } from '../load'
 import { TOPICS } from '../data/topics'
 import { ReaderShell } from '../reader'
+import { surahName } from '../data/surah-fa'
 import { go, href } from '../router'
 import { fa } from '../store'
 import { Medallion } from '../ui'
@@ -70,7 +71,7 @@ export function TopicReader({ id, onClose }: { id: string; onClose: () => void }
                 >
                   {r.sm && <b>{r.sm}</b>}
                   <p>{r.fa.length > 260 ? `${r.fa.slice(0, 260)}…` : r.fa}</p>
-                  <small>{b === 'quran' ? `آیهٔ ${fa(r.n)}` : r.n ? `شمارهٔ ${fa(r.n)}` : 'در کتاب'} ←</small>
+                  <small>{b === 'quran' ? `${surahName(r.sec)}، آیهٔ ${fa(r.n)}` : r.n ? `شمارهٔ ${fa(r.n)}` : 'در کتاب'} ←</small>
                 </button>
               ))}
               {list.length > 6 && !more[b] && (

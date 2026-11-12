@@ -58,7 +58,10 @@ export interface SurahMeta {
 export interface Surah {
   n: number
   name: string
+  type: string
   ayahs: [string, string][]
+  /** نشانه‌های تنزیل: آغاز جزء (j)، آغاز حزب (h)، آیهٔ سجده (sj) */
+  m?: Record<string, { j?: number; h?: number; sj?: 1 }>
 }
 
 /** فهرست یک کتاب (books/<id>/toc.json) */
@@ -127,6 +130,7 @@ export const chapterFile = (id: string, sec: number, ch: number) => `books/${id}
 export const loadDaily = () => load<{ sayings: DailySaying[]; ayahs: DailyAyah[] }>('daily.json')
 export const loadSurahs = () => load<SurahMeta[]>('quran/index.json')
 export const loadSurah = (n: number) => load<Surah>(`quran/${n}.json`)
+export const loadJuz = () => load<{ j: number; s: number; a: number }[]>('quran/juz.json')
 /** موضوع ← [کتاب، بخش یا سوره، باب، شناسهٔ متن یا آیه، شمارهٔ متن، ترجمه، یعنی چه؟] */
 export type TopicHit = [string, number, number, number, number, string, string]
 export const loadTopic = (id: string) => load<{ rows: TopicHit[]; count: Record<string, number> }>(`topics/${id}.json`)

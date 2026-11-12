@@ -86,12 +86,28 @@ const index = { shelves: SHELVES, books: [] }
 /* ───────── قرآن ───────── */
 const qa = read(path.join(raw, 'quran-quran-uthmani.json')).data.surahs
 const qf = read(path.join(raw, 'quran-fa.makarem.json')).data.surahs
+// نشانه‌های تنزیل: آغاز جزء و حزب، و آیه‌های سجده ({ آیه: { j, h, sj } })
+const juz = []
+let lastJuz = 0
+let lastHq = 0
 const surahs = qa.map((s, i) => {
   const ayahs = s.ayahs.map((a, k) => [a.text.replace(/^﻿/, ''), qf[i].ayahs[k].text])
-  write(`quran/${s.number}.json`, { n: s.number, name: s.name, type: s.revelationType, ayahs })
+  const m = {}
+  for (const a of s.ayahs) {
+    const x = {}
+    if (a.juz !== lastJuz) (x.j = a.juz), juz.push({ j: a.juz, s: s.number, a: a.numberInSurah }), (lastJuz = a.juz)
+    if (a.hizbQuarter !== lastHq) {
+      if (a.hizbQuarter % 4 === 1) x.h = (a.hizbQuarter + 3) / 4
+      lastHq = a.hizbQuarter
+    }
+    if (a.sajda) x.sj = 1
+    if (Object.keys(x).length) m[a.numberInSurah] = x
+  }
+  write(`quran/${s.number}.json`, { n: s.number, name: s.name, type: s.revelationType, ayahs, m })
   return { n: s.number, name: s.name.replace(/^سُورَةُ\s*/, ''), type: s.revelationType === 'Meccan' ? 'مکی' : 'مدنی', count: s.ayahs.length }
 })
 write('quran/index.json', surahs)
+write('quran/juz.json', juz)
 index.books.push({ id: 'quran', kind: 'quran', title: 'قرآن کریم', author: 'متن عثمانی تنزیل · ترجمهٔ آیت‌الله مکارم شیرازی', shelf: 'quran', desc: '۱۱۴ سوره و ۶٬۲۳۶ آیه، با ترجمهٔ کامل فارسی و تلاوت.', count: 6236, translated: 6236 })
 
 /* ───────── صحیفهٔ سجادیه (ویکی‌نبشته) ───────── */

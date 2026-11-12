@@ -1039,3 +1039,266 @@ article.mark-row {
 .text-block .ayah-tools {
   margin-bottom: 4px;
 }
+
+/* ───────── قرآن ───────── */
+.sr-names {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sr-names b {
+  font-size: 16px;
+}
+.sr-names .sr-name {
+  font-size: 19px;
+  color: var(--ink-2, var(--ink));
+}
+.goto-ayah {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.goto-ayah b {
+  width: 100%;
+  font-size: 14.5px;
+}
+.goto-ayah select,
+.goto-ayah input {
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--card-solid);
+  color: var(--ink);
+  font: inherit;
+}
+.goto-ayah select {
+  flex: 1 1 140px;
+}
+.goto-ayah input {
+  flex: 1 1 110px;
+  min-width: 0;
+}
+.goto-ayah .btn {
+  min-height: 44px;
+  padding: 0 20px;
+}
+.q-marker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.q-marker::before,
+.q-marker::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line-strong);
+}
+.chip.sajda {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.juz-inline {
+  display: inline-block;
+  margin: 0 6px;
+  padding: 0 8px;
+  border-radius: 99px;
+  font-family: Vazirmatn, sans-serif;
+  font-style: normal;
+  font-size: 12.5px;
+  color: var(--gold);
+  border: 1px solid var(--line-strong);
+  vertical-align: middle;
+}
+.hold-hint {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+.mushaf span {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.quran-body {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important;
+}
+.ayah-fa {
+  font-size: calc(17px * var(--ts, 1)) !important;
+  line-height: var(--lh, 2.1) !important;
+}
+.ayah-ar {
+  font-size: calc(28px * var(--ts-ar, 1)) !important;
+}
+.mushaf {
+  font-size: calc(28px * var(--ts-ar, 1)) !important;
+}
+.player-bar {
+  position: absolute;
+  z-index: 4;
+  inset-inline: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--card-solid) 94%, transparent);
+  backdrop-filter: blur(14px);
+}
+@media (min-width: 760px) {
+  .player-bar {
+    bottom: 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+  }
+}
+.pb-main {
+  display: grid;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg0);
+  cursor: pointer;
+}
+.pb-main svg {
+  width: 22px;
+}
+.player-bar .icon-btn:disabled {
+  opacity: 0.35;
+}
+.pb-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+.pb-label b,
+.pb-label small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pb-label small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.player-set {
+  display: grid;
+  gap: 16px;
+}
+.player-set label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.player-set label > span,
+.opt-row > span {
+  flex: none;
+  width: 92px;
+}
+.player-set select,
+.range-set input {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+}
+.opt-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.opt-row button {
+  min-height: 44px;
+  min-width: 52px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.opt-row button.on {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg0);
+  font-weight: 700;
+}
+.range-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+.range-set legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.range-set label {
+  flex: 1 1 120px;
+}
+.range-set input {
+  width: 70px;
+}
+.range-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.continue-card .cc-icon svg {
+  width: 26px;
+}
+
+/* گوشی: انتخاب «هر دو / عربی / فارسی» در ردیف دوم نوار بالا */
+@media (max-width: 560px) {
+  .reader .study-bar.solid:has(.seg) {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .reader .study-bar .seg {
+    order: 10;
+    width: 100%;
+    display: flex;
+  }
+  .reader .study-bar .seg button {
+    flex: 1;
+    min-height: 40px;
+  }
+}
+
+.ayah,
+.text-block {
+  scroll-margin-top: 12px;
+}

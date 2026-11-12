@@ -1,4 +1,5 @@
 import { PlanSection } from './Plans'
+import { surahName } from '../data/surah-fa'
 import { go, href } from '../router'
 import { m } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -114,7 +115,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
               <ArabicText kind="quran" text={ayah.ar} className="dc-ar" />
               <p className="dc-fa">{ayah.fa}</p>
               <footer>
-                <span>{surahs[ayah.n - 1] && `سورهٔ ${surahs[ayah.n - 1].name}، آیهٔ ${ayah.ayah}`}</span>
+                <span>{surahs[ayah.n - 1] && `${surahName(ayah.n)}، آیهٔ ${ayah.ayah}`}</span>
                 <button className="link-btn" onClick={() => openQuran(ayah.n, Number(daily!.ayah.a.split('-')[0]) || undefined)}>
                   خواندن سوره ←
                 </button>
