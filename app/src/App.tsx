@@ -1,4 +1,4 @@
-import { AnimatePresence, LazyMotion, m } from 'framer-motion'
+import { AnimatePresence, LazyMotion, m, MotionConfig } from 'framer-motion'
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { findItem, loadIndex, type BookMeta, type Place } from './books'
 import { ErrorBoundary, LoadFail, Skeleton, useLoad } from './load'
@@ -44,6 +44,14 @@ const tabPath = (t: Tab) => (t === 'home' ? '/' : `/${t}`)
 const introSeen = () => {
   try {
     return sessionStorage.getItem('mishkat.intro') === '1'
+  } catch {
+    return false
+  }
+}
+// انیمیشن آغازین فقط بار اول کامل پخش می‌شود؛ بعد از آن کوتاه (کمتر از یک ثانیه)
+const introShort = () => {
+  try {
+    return localStorage.getItem('mishkat.introSeen') === '1'
   } catch {
     return false
   }
@@ -105,6 +113,7 @@ function Shell() {
     setIntro(false)
     try {
       sessionStorage.setItem('mishkat.intro', '1')
+      localStorage.setItem('mishkat.introSeen', '1')
     } catch {
       /* بدون ذخیره هم ادامه می‌دهیم */
     }
@@ -186,7 +195,7 @@ function Shell() {
   if (intro)
     return (
       <Suspense fallback={<div className="intro" />}>
-        <AnimatePresence>{intro && <Intro onDone={endIntro} />}</AnimatePresence>
+        <AnimatePresence>{intro && <Intro onDone={endIntro} short={introShort() || matchMedia('(prefers-reduced-motion: reduce)').matches} />}</AnimatePresence>
       </Suspense>
     )
 
@@ -280,9 +289,12 @@ export default function App() {
   return (
     <ErrorBoundary>
       <LazyMotion features={loadMotion} strict>
-        <StoreProvider>
-          <Shell />
-        </StoreProvider>
+        {/* با «کاهش حرکت» در تنظیمات دستگاه، همهٔ حرکت‌ها خاموش می‌شوند */}
+        <MotionConfig reducedMotion="user">
+          <StoreProvider>
+            <Shell />
+          </StoreProvider>
+        </MotionConfig>
       </LazyMotion>
     </ErrorBoundary>
   )

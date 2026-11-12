@@ -4,15 +4,26 @@ import { NUR } from '../data/verses'
 import { LightDust, Rays } from '../fx'
 
 /** صحنهٔ آغاز: محراب و چراغ روشن می‌شوند، پرتوها پخش می‌شوند و آیهٔ نور کلمه‌به‌کلمه ظاهر می‌شود */
-export function Intro({ onDone }: { onDone: () => void }) {
+export function Intro({ onDone, short }: { onDone: () => void; short?: boolean }) {
   const words = NUR.arabic.split(' ')
   const verseStart = 1.3
-  const total = verseStart + words.length * 0.17 + 2.2
+  const total = short ? 0.9 : verseStart + words.length * 0.17 + 2.2
 
   useEffect(() => {
     const t = setTimeout(onDone, total * 1000)
     return () => clearTimeout(t)
   }, [onDone, total])
+
+  if (short)
+    return (
+      <m.div className="intro" onClick={onDone} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+        <div className="intro-bg" style={{ backgroundImage: 'url(art/splash.webp)' }} />
+        <div className="intro-shade" />
+        <m.div className="intro-title short" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
+          <span className="gold-text">مِشکات</span>
+        </m.div>
+      </m.div>
+    )
 
   return (
     <m.div className="intro" onClick={onDone} exit={{ opacity: 0, scale: 1.05, filter: 'blur(8px)' }} transition={{ duration: 0.8 }}>

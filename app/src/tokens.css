@@ -1,0 +1,173 @@
+/* نشانه‌های طراحی مشکات: رنگ هر پوسته، فاصله، گردی، سایه و اندازهٔ قلم.
+   همهٔ سبک‌ها رنگ و اندازه را از همین‌جا می‌گیرند. */
+:root {
+  /* فاصله */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  /* گردی: کارت و دکمه */
+  --r-card: 18px;
+  --r-btn: 12px;
+  /* قلم: کوچک‌ترین متن ۱۲٫۵ و متن اصلی دست‌کم ۱۵ پیکسل */
+  --fs-min: 12.5px;
+  --fs-sm: 14px;
+  --fs-body: 16px;
+  --fs-lg: 18px;
+}
+
+:root,
+:root[data-theme='emerald'] {
+  --bg0: #03100d;
+  --bg1: #06201a;
+  --bg2: #0a2c24;
+  --card: rgba(14, 48, 40, 0.62);
+  --card-solid: #0d3128;
+  --card-hi: rgba(26, 78, 64, 0.55);
+  --line: rgba(226, 191, 122, 0.16);
+  --line-strong: rgba(226, 191, 122, 0.38);
+  --ink: #f5edda;
+  --ink-2: #cdd8cf;
+  --muted: #8ea59b;
+  --gold: #e6c27d;
+  --gold-2: #b98b3f;
+  --gold-soft: rgba(230, 194, 125, 0.12);
+  --accent: #3fcf9f;
+  --accent-soft: rgba(63, 207, 159, 0.14);
+  --pattern: rgba(230, 194, 125, 0.07);
+  --glow: rgba(255, 196, 92, 0.55);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --emerald-glow: #3fcf9f;
+  --rose: #f08a7a;
+  --azure: #6fb6ff;
+  --violet: #b59cff;
+  --sky-a: #0b3a2f;
+  --sky-b: #03100d;
+  color-scheme: dark;
+}
+
+:root[data-theme='isfahan'] {
+  --bg0: #040b1c;
+  --bg1: #08172f;
+  --bg2: #0d2347;
+  --card: rgba(18, 42, 84, 0.6);
+  --card-solid: #102852;
+  --card-hi: rgba(30, 70, 130, 0.5);
+  --line: rgba(232, 196, 124, 0.17);
+  --line-strong: rgba(232, 196, 124, 0.4);
+  --ink: #f3ecdc;
+  --ink-2: #ccd6e6;
+  --muted: #8b9cbb;
+  --gold: #ecc77f;
+  --gold-2: #c0913f;
+  --gold-soft: rgba(236, 199, 127, 0.12);
+  --accent: #3fd3d8;
+  --accent-soft: rgba(63, 211, 216, 0.14);
+  --pattern: rgba(63, 211, 216, 0.07);
+  --glow: rgba(255, 200, 110, 0.5);
+  --sky-a: #0e2c5c;
+  --sky-b: #040b1c;
+  color-scheme: dark;
+}
+
+:root[data-theme='parchment'] {
+  --bg0: #efe4cd;
+  --bg1: #f7efdf;
+  --bg2: #ecdfc4;
+  --card: rgba(255, 252, 244, 0.78);
+  --card-solid: #fffaf0;
+  --card-hi: rgba(255, 255, 255, 0.9);
+  --line: rgba(125, 90, 34, 0.18);
+  --line-strong: rgba(125, 90, 34, 0.38);
+  --ink: #1b2a25;
+  --ink-2: #3a4943;
+  --muted: #716a58;
+  --gold: #886223;
+  --gold-2: #7a5419;
+  --gold-soft: rgba(154, 111, 39, 0.1);
+  --accent: #0e7a5c;
+  --accent-soft: rgba(14, 122, 92, 0.1);
+  --pattern: rgba(125, 90, 34, 0.07);
+  --glow: rgba(255, 180, 70, 0.45);
+  --shadow: 0 14px 40px rgba(90, 64, 20, 0.16);
+  --sky-a: #f7efdf;
+  --sky-b: #e9dbbd;
+  color-scheme: light;
+}
+
+:root[data-theme='dawn'] {
+  --bg0: #120d24;
+  --bg1: #1d1638;
+  --bg2: #2a1f4d;
+  --card: rgba(46, 34, 84, 0.58);
+  --card-solid: #261c47;
+  --card-hi: rgba(74, 56, 128, 0.5);
+  --line: rgba(240, 163, 168, 0.18);
+  --line-strong: rgba(243, 207, 138, 0.42);
+  --ink: #f7eee6;
+  --ink-2: #ddd2e6;
+  --muted: #a99bbf;
+  --gold: #f3cf8a;
+  --gold-2: #d49a5c;
+  --gold-soft: rgba(243, 207, 138, 0.13);
+  --accent: #f0a3a8;
+  --accent-soft: rgba(240, 163, 168, 0.15);
+  --pattern: rgba(240, 163, 168, 0.07);
+  --glow: rgba(255, 170, 150, 0.5);
+  --shadow: 0 18px 50px rgba(5, 0, 20, 0.5);
+  --sky-a: #3a2a5c;
+  --sky-b: #120d24;
+  color-scheme: dark;
+}
+
+:root[data-theme='noon'] {
+  --bg0: #e3efed;
+  --bg1: #eef6f4;
+  --bg2: #dbe9e6;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-solid: #ffffff;
+  --card-hi: rgba(255, 255, 255, 0.95);
+  --line: rgba(15, 127, 134, 0.16);
+  --line-strong: rgba(179, 131, 47, 0.42);
+  --ink: #12302f;
+  --ink-2: #2f4c4a;
+  --muted: #5a716e;
+  --gold: #8c631a;
+  --gold-2: #85590f;
+  --gold-soft: rgba(179, 131, 47, 0.11);
+  --accent: #0e7a81;
+  --accent-soft: rgba(15, 127, 134, 0.1);
+  --pattern: rgba(15, 127, 134, 0.07);
+  --glow: rgba(255, 200, 90, 0.45);
+  --shadow: 0 14px 40px rgba(10, 70, 72, 0.13);
+  --sky-a: #eef6f4;
+  --sky-b: #cfe5e1;
+  color-scheme: light;
+}
+
+:root[data-theme='dusk'] {
+  --bg0: #1a0c0f;
+  --bg1: #2a1418;
+  --bg2: #3a1c1f;
+  --card: rgba(70, 32, 34, 0.55);
+  --card-solid: #3b1d20;
+  --card-hi: rgba(110, 50, 44, 0.48);
+  --line: rgba(240, 194, 122, 0.17);
+  --line-strong: rgba(240, 194, 122, 0.42);
+  --ink: #f8ecdf;
+  --ink-2: #e6d2c4;
+  --muted: #b79a8b;
+  --gold: #f0c27a;
+  --gold-2: #cf8f45;
+  --gold-soft: rgba(240, 194, 122, 0.13);
+  --accent: #e8875a;
+  --accent-soft: rgba(232, 135, 90, 0.15);
+  --pattern: rgba(232, 135, 90, 0.07);
+  --glow: rgba(255, 160, 90, 0.55);
+  --shadow: 0 18px 50px rgba(20, 0, 0, 0.5);
+  --sky-a: #5a2a26;
+  --sky-b: #1a0c0f;
+  color-scheme: dark;
+}

@@ -75,24 +75,10 @@
 .intro .fx-dust {
   z-index: 1;
 }
-.intro-lamp,
 .intro-verse,
 .intro-title {
   position: relative;
   z-index: 2;
-}
-.intro-lamp {
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  margin-top: -6vh;
-  overflow: hidden;
-  mask-image: radial-gradient(circle, black 52%, transparent 71%);
-}
-.intro-lamp img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 .intro-verse {
   max-width: 560px;
@@ -131,150 +117,6 @@
 }
 
 /* ───────── خانه: صحنه ───────── */
-.home .scene {
-  position: relative;
-  height: 76vh;
-  min-height: 540px;
-  margin: -18px -16px 0;
-  overflow: hidden;
-  isolation: isolate;
-}
-@media (min-width: 960px) {
-  .home .scene {
-    margin: -34px -40px 0;
-    height: 600px;
-  }
-}
-.scene-sky {
-  position: absolute;
-  inset: -80px 0 0;
-  z-index: -3;
-}
-.phase-night .scene-sky {
-  background: radial-gradient(120% 70% at 70% 0%, #173e63 0%, #0a1f3a 40%, #04101c 75%);
-}
-.phase-dawn .scene-sky {
-  background: linear-gradient(180deg, #1b2c55 0%, #6b4a7a 38%, #e59a7c 62%, #f6cf95 80%);
-}
-.phase-day .scene-sky {
-  background: linear-gradient(180deg, #3d8fc4 0%, #8cc6df 45%, #e8f0dc 80%);
-}
-.phase-dusk .scene-sky {
-  background: linear-gradient(180deg, #1b2448 0%, #6d3f6b 35%, #d8735a 62%, #f3b76f 82%);
-}
-.scene .fx-stars {
-  z-index: -2;
-  height: 70%;
-}
-.scene-moon {
-  position: absolute;
-  top: 13%;
-  left: 14%;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  box-shadow: 10px -6px 0 0 #ffe2a0;
-  filter: drop-shadow(0 0 14px rgba(255, 220, 150, 0.8));
-  z-index: -2;
-  rotate: -20deg;
-}
-.scene-art {
-  position: absolute;
-  inset: 0 0 -140px;
-  z-index: -1;
-  background-position: center 28%;
-  background-size: cover;
-}
-.scene.has-art .scene-art {
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 18%);
-  mask-image: linear-gradient(180deg, transparent 0%, black 18%);
-}
-.scene.has-art.phase-night .scene-moon {
-  display: none;
-}
-.phase-day .scene-art {
-  filter: brightness(1.25) saturate(1.05);
-}
-.phase-dawn .scene-art,
-.phase-dusk .scene-art {
-  filter: brightness(1.1) sepia(0.15);
-}
-.scene .fx-dust {
-  z-index: 0;
-}
-.scene-fade {
-  position: absolute;
-  inset: auto 0 0;
-  height: 52%;
-  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--bg0) 50%, transparent) 45%, var(--bg0) 97%);
-  z-index: 0;
-}
-.scene-content {
-  position: relative;
-  z-index: 1;
-  padding: calc(22px + env(safe-area-inset-top)) 20px 0;
-  color: #fff6e2;
-}
-@media (min-width: 960px) {
-  .scene-content {
-    padding: 40px 44px 0;
-  }
-}
-.scene-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-.scene-date {
-  font-size: 12.5px;
-  color: rgba(255, 240, 210, 0.78);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
-}
-.scene-hello {
-  font-size: 17px;
-  font-weight: 700;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-}
-.scene-title {
-  margin: 16px 0 0;
-  font-size: clamp(30px, 8.5vw, 50px);
-  font-weight: 900;
-  line-height: 1.35;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-}
-.streak-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px 5px 6px;
-  border-radius: 999px;
-  background: rgba(4, 18, 16, 0.45);
-  border: 1px solid rgba(241, 214, 153, 0.35);
-  backdrop-filter: blur(12px);
-  color: #f6dca0;
-  box-shadow: 0 0 30px rgba(255, 190, 90, 0.25);
-}
-.streak-badge b {
-  font-size: 18px;
-}
-.streak-badge small {
-  font-size: 12px;
-  opacity: 0.8;
-}
-.streak-lamp {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 0 16px rgba(255, 196, 92, 0.7);
-}
-.streak-lamp img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.5);
-}
 
 /* ───────── قاب محراب ───────── */
 .arch {
@@ -316,10 +158,6 @@
 }
 
 /* ───────── کارت درس امروز ───────── */
-.home-body {
-  position: relative;
-  z-index: 2;
-}
 .today {
   margin: -42vh auto 0;
   width: min(390px, 82vw);
@@ -329,66 +167,6 @@
     margin-top: -360px;
     width: 370px;
   }
-}
-.today-card {
-  display: block;
-  width: 100%;
-  aspect-ratio: 3 / 4.15;
-  text-align: center;
-  padding: 0;
-}
-.today-art {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center 30%;
-  transition: transform 0.8s;
-}
-.today-card:hover .today-art {
-  transform: scale(1.05);
-}
-.today-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 30%, rgba(2, 12, 10, 0.7) 58%, rgba(2, 12, 10, 0.95) 100%);
-}
-.today-body {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 0 22px 26px;
-  color: #fff6e2;
-}
-.today-body h2 {
-  margin: 10px 0 2px;
-  font-size: 27px;
-  font-weight: 900;
-  line-height: 1.45;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
-}
-.today-body p {
-  margin: 0 0 16px;
-  color: #ddd3bb;
-  font-size: 14.5px;
-}
-.chip-glass {
-  background: rgba(0, 0, 0, 0.35);
-  color: #f6dca0;
-  border-color: rgba(241, 214, 153, 0.3);
-  backdrop-filter: blur(8px);
-}
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-}
-.btn-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
-  left: -60%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65), transparent);
-  animation: sweep 3.4s ease-in-out infinite;
 }
 @keyframes sweep {
   0%,
@@ -401,339 +179,29 @@
 }
 
 /* ───────── کارت‌های درس محرابی ───────── */
-.lesson-arch {
-  width: 158px;
-  padding: 0;
-  text-align: center;
-}
-.lesson-arch .arch {
-  height: 215px;
-  transition: transform 0.3s;
-}
-.lesson-arch:hover .arch {
-  transform: translateY(-4px);
-}
-.lesson-arch-art {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center 30%;
-}
-.lesson-arch-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(2, 12, 10, 0.92));
-}
-.lesson-arch-body {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 0 10px 14px;
-  color: #fff6e2;
-}
-.lesson-arch-body small {
-  display: block;
-  font-size: 11px;
-  color: #e9cf91;
-}
-.lesson-arch-body b {
-  font-size: 14px;
-  line-height: 1.6;
-  display: block;
-}
-.lesson-arch-meta {
-  display: block;
-  margin-top: 6px;
-  font-size: 11.5px;
-  color: var(--muted);
-}
-.lesson-arch .done-badge {
-  position: absolute;
-  top: 58px;
-  left: 50%;
-  translate: -50% 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #04140f;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 0 16px var(--accent);
-}
-.lesson-arch .done-badge svg {
-  width: 17px;
-}
 
 /* ───────── حال‌ها ───────── */
-.mood-row {
-  gap: 10px;
-}
-.mood {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 104px;
-  padding: 14px 8px 12px;
-  border-radius: 22px;
-  background: linear-gradient(180deg, var(--card-hi), var(--card));
-  border: 1px solid var(--line);
-  font-size: 12.5px;
-  line-height: 1.55;
-  text-align: center;
-  transition: 0.25s;
-}
-.mood:hover {
-  border-color: var(--line-strong);
-  transform: translateY(-3px);
-}
-.mood-emoji {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  background: radial-gradient(circle at 50% 35%, var(--gold-soft), transparent 70%);
-  border: 1px solid var(--line);
-}
 
 /* ───────── کلام روز ───────── */
-.word-card {
-  padding: 26px 22px 22px;
-  text-align: center;
-  overflow: hidden;
-  border-radius: 30px;
-}
-.word-card-bg {
-  position: absolute;
-  inset: 0;
-  background: center / cover no-repeat;
-  opacity: 0.25;
-}
-.word-card > *:not(.word-card-bg) {
-  position: relative;
-}
-.word-card-text {
-  font-size: clamp(22px, 5.5vw, 30px);
-  color: var(--ink);
-  text-shadow: 0 0 30px var(--gold-soft);
-}
-.word-card-fa {
-  color: var(--ink-2);
-  margin: 6px 0 8px;
-}
-.word-card-ref {
-  font-size: 12.5px;
-  color: var(--gold);
-}
 
 /* ───────── مسیر نور ───────── */
-.journey {
-  position: relative;
-  margin: 8px auto 0;
-  max-width: 520px;
-  border-radius: 34px;
-  background:
-    radial-gradient(80% 50% at 50% 0%, rgba(63, 207, 159, 0.1), transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--card) 70%, transparent), transparent);
-  border: 1px solid var(--line);
-  overflow: hidden;
-}
-.journey-bg {
-  position: absolute;
-  inset: 0;
-  background: center top / cover no-repeat;
-  opacity: 0.32;
-  -webkit-mask-image: linear-gradient(180deg, black, transparent 85%);
-  mask-image: linear-gradient(180deg, black, transparent 85%);
-}
-.journey-line {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.node {
-  position: absolute;
-  translate: -50% -50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 140px;
-  padding: 0;
-}
-.node-ring {
-  position: relative;
-  width: 78px;
-  height: 92px;
-  padding: 3px;
-  background: linear-gradient(160deg, #fff0c2, #b98b3f 60%, #f3d999);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,48 C0,24 26,10 50,0 C74,10 100,24 100,48 L100,120 Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,48 C0,24 26,10 50,0 C74,10 100,24 100,48 L100,120 Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
-  transition: transform 0.25s;
-}
-.node:hover .node-ring {
-  transform: scale(1.06);
-}
-.node-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center 30%;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,48 C0,24 26,10 50,0 C74,10 100,24 100,48 L100,120 Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,48 C0,24 26,10 50,0 C74,10 100,24 100,48 L100,120 Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
-}
-.node-next .node-art {
-  filter: saturate(0.55) brightness(0.7);
-}
-.node-current {
-  filter: drop-shadow(0 0 18px rgba(255, 200, 110, 0.75));
-}
-.node-current .node-ring {
-  animation: nodePulse 2.2s ease-in-out infinite;
-}
 @keyframes nodePulse {
   50% {
     transform: scale(1.08);
   }
 }
-.node-check {
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  translate: -50% 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #04140f;
-  display: grid;
-  place-items: center;
-}
-.node-check svg {
-  width: 15px;
-}
-.node-flag {
-  position: absolute;
-  top: -26px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #f6dc9f, var(--gold));
-  color: #1d1406;
-  font-size: 11px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-.node-label {
-  margin-top: 6px;
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--ink);
-  text-shadow: 0 1px 8px var(--bg0);
-}
-.node-label small {
-  display: block;
-  font-weight: 400;
-  font-size: 10.5px;
-  color: var(--gold);
-}
 
 /* ───────── چله‌ها ───────── */
-.chelle-card {
-  position: relative;
-  width: 230px;
-  min-height: 150px;
-  padding: 18px;
-  border-radius: 26px;
-  overflow: hidden;
-  text-align: right;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--hue) 22%, var(--card-solid)), var(--card-solid) 70%);
-  border: 1px solid color-mix(in srgb, var(--hue) 40%, transparent);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.chelle-card b {
-  font-size: 18px;
-  position: relative;
-}
-.chelle-card small {
-  color: var(--ink-2);
-  position: relative;
-  font-size: 12.5px;
-  line-height: 1.7;
-}
-.chelle-num {
-  position: absolute;
-  top: -14px;
-  left: 10px;
-  font-size: 86px;
-  font-weight: 900;
-  color: color-mix(in srgb, var(--hue) 55%, transparent);
-  opacity: 0.35;
-  line-height: 1;
-}
-.chelle-glow {
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  left: -40px;
-  top: -60px;
-  background: var(--hue);
-  filter: blur(50px);
-  opacity: 0.3;
-}
 
 /* ───────── نوار پایین با دکمهٔ چراغ ───────── */
-.tabbar .fab {
-  flex: none;
-  width: 62px;
-  height: 62px;
-  margin: -26px 2px 0;
-  border-radius: 22px;
-  padding: 0;
-  overflow: hidden;
-  border: 2px solid #f1d699;
-  box-shadow:
-    0 0 26px rgba(255, 196, 92, 0.6),
-    0 10px 24px rgba(0, 0, 0, 0.5);
-}
-.tabbar .fab img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 /* ───────── درس تمام‌صفحه ───────── */
-.player-bg {
-  position: absolute;
-  inset: -30px;
-  background-size: cover;
-  background-position: center;
-  filter: blur(16px) saturate(1.25) brightness(0.42);
-  transform: scale(1.1);
-  z-index: 0;
-}
-:root[data-theme='parchment'] .player-bg {
-  filter: blur(22px) saturate(0.9) brightness(1.25) opacity(0.35);
-}
 .player > .fx-dust {
   z-index: 0;
 }
-.player-top,
-.player-stage,
-.player-foot {
-  position: relative;
-  z-index: 1;
-}
 .cartouche {
   position: relative;
-  padding: 44px 26px 38px;
+  padding: 44px 24px 32px;
   text-align: center;
 }
 .cartouche-glass {
@@ -770,7 +238,7 @@
 .page-hero {
   position: relative;
   height: 330px;
-  margin: -18px -16px 8px;
+  margin: -16px -16px 8px;
   overflow: hidden;
   isolation: isolate;
   display: flex;
@@ -778,7 +246,7 @@
 }
 @media (min-width: 960px) {
   .page-hero {
-    margin: -34px -40px 12px;
+    margin: -32px -32px 12px;
     height: 360px;
   }
 }
@@ -799,17 +267,17 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 30%, color-mix(in srgb, var(--bg0) 70%, transparent) 72%, var(--bg0));
 }
 .page-hero-body {
-  padding: 0 20px 18px;
+  padding: 0 16px 16px;
   color: #fff6e2;
   max-width: 720px;
 }
 @media (min-width: 960px) {
   .page-hero-body {
-    padding: 0 44px 22px;
+    padding: 0 44px 24px;
   }
 }
 .page-hero-body h1 {
-  margin: 4px 0 6px;
+  margin: 4px 0 4px;
   font-size: clamp(28px, 7vw, 42px);
   font-weight: 900;
   line-height: 1.4;
@@ -866,12 +334,12 @@
 .onboard-panel .lead {
   font-size: 17px;
   color: #f1d699;
-  margin: 4px 0 10px;
+  margin: 4px 0 8px;
 }
 .onboard-panel .body {
   color: #d9d1bd;
   font-size: 15.5px;
-  margin: 0 0 6px;
+  margin: 0 0 4px;
 }
 .onboard-panel .quran {
   color: #ffe9b0;
@@ -885,93 +353,4 @@
   backdrop-filter: blur(10px);
 }
 
-.program-art {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 46%;
-  background-size: cover;
-  background-position: center;
-  -webkit-mask-image: linear-gradient(270deg, transparent, black 70%);
-  mask-image: linear-gradient(270deg, transparent, black 70%);
-  opacity: 0.55;
-}
-.program-card .ring {
-  z-index: 1;
-}
-.program-card > *:not(.program-art):not(.glowdot) {
-  position: relative;
-}
-.program-card .ring {
-  position: absolute;
-}
-.book-art {
-  width: 74px;
-  height: 96px;
-  flex: none;
-  border-radius: 12px 16px 16px 12px;
-  background-size: cover;
-  background-position: center;
-  border: 1.5px solid #e6c27d;
-  box-shadow:
-    inset -6px 0 0 rgba(0, 0, 0, 0.25),
-    0 10px 24px -8px var(--glow);
-}
-
 /* ───────── منزل‌های مسیر نور ───────── */
-.chapter-row {
-  gap: 10px;
-  padding-bottom: 12px;
-}
-.chapter-chip {
-  width: 132px;
-  padding: 10px 14px 12px;
-  border-radius: 18px;
-  text-align: right;
-  background: var(--card);
-  border: 1px solid var(--line);
-  transition: 0.25s;
-}
-.chapter-chip small {
-  display: block;
-  font-size: 11px;
-  color: var(--muted);
-}
-.chapter-chip b {
-  display: block;
-  font-size: 15px;
-}
-.chapter-chip.on {
-  border-color: var(--gold);
-  background: linear-gradient(160deg, var(--gold-soft), var(--card));
-  box-shadow: 0 0 22px -6px var(--glow);
-}
-.chapter-bar {
-  display: block;
-  height: 4px;
-  border-radius: 4px;
-  background: var(--line);
-  margin-top: 8px;
-  overflow: hidden;
-}
-.chapter-bar i {
-  display: block;
-  height: 100%;
-  background: linear-gradient(270deg, var(--gold), #fff1c8);
-}
-.journey-title {
-  position: absolute;
-  top: 16px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 1;
-}
-.journey-title .gold-text {
-  font-size: 19px;
-  font-weight: 900;
-  display: block;
-}
-.journey-title small {
-  color: var(--muted);
-  font-size: 12.5px;
-}

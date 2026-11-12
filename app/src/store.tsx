@@ -150,7 +150,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const apply = () => {
       const phase = phaseOf()
       document.documentElement.dataset.phase = phase
-      document.documentElement.dataset.theme = p.theme === 'auto' ? PHASE_THEME[phase] : p.theme
+      const theme = p.theme === 'auto' ? PHASE_THEME[phase] : p.theme
+      document.documentElement.dataset.theme = theme
+      // نوار وضعیت مرورگر و اندروید به رنگ پوسته
+      requestAnimationFrame(() => {
+        const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg1').trim()
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
+        const light = LIGHT_THEMES.includes(theme)
+        import('@capacitor/core').then(({ Capacitor, SystemBars, SystemBarsStyle }) => {
+          if (Capacitor.isNativePlatform()) SystemBars.setStyle({ style: light ? SystemBarsStyle.Light : SystemBarsStyle.Dark }).catch(() => {})
+        })
+      })
     }
     apply()
     const t = setInterval(apply, 5 * 60000)
