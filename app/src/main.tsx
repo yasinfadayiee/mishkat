@@ -24,4 +24,13 @@ createRoot(document.getElementById('root')!).render(
 // فقط روی نسخهٔ وب (https)؛ ویندوز و اندروید فایل‌ها را از خود بسته می‌خوانند
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}))
+  // وقتی نسخهٔ تازه جای نسخهٔ قبلی را گرفت، صفحه یک بار تازه می‌شود تا برنامهٔ تازه بیاید (نوشته‌ها در حافظه می‌مانند)
+  const had = !!navigator.serviceWorker.controller
+  let reloaded = false
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (had && !reloaded) {
+      reloaded = true
+      location.reload()
+    }
+  })
 }

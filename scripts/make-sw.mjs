@@ -35,7 +35,8 @@ const BOOK_FILES = ['./books/index.json', './books/quran/index.json']
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    Promise.all([caches.open(SHELL).then((c) => c.addAll(FILES)), caches.open(BOOKS).then((c) => Promise.all(BOOK_FILES.map((f) => c.match(f).then((hit) => hit || c.add(f)))))]).then(() => self.skipWaiting()),
+    // cache: 'reload' تا نسخهٔ قدیمی از حافظهٔ HTTP مرورگر برداشته نشود
+    Promise.all([caches.open(SHELL).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))), caches.open(BOOKS).then((c) => Promise.all(BOOK_FILES.map((f) => c.match(f).then((hit) => hit || c.add(new Request(f, { cache: 'reload' }))))))]).then(() => self.skipWaiting()),
   )
 })
 
@@ -57,7 +58,7 @@ async function refreshBooks() {
     for (const f of BOOK_FILES) await c.delete(f)
   }
   await c.put('./books/manifest.json', res)
-  await Promise.all(BOOK_FILES.map((f) => c.match(f).then((hit) => hit || c.add(f).catch(() => {}))))
+  await Promise.all(BOOK_FILES.map((f) => c.match(f).then((hit) => hit || c.add(new Request(f, { cache: 'reload' })).catch(() => {}))))
 }
 
 self.addEventListener('activate', (e) => {
