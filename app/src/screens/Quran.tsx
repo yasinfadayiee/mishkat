@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { askAbout } from '../chat'
 import { AutoText } from '../autotext'
 import { lastPlace, loadJuz, loadSurah, loadSurahs, norm, savePlace, type Surah } from '../books'
 import { SURAH_FA, surahName } from '../data/surah-fa'
@@ -345,6 +346,7 @@ export function SurahReader({ n, ayah, onClose }: { n: number; ayah?: number; on
     const c = ctxOf(k)
     return [
       ['sound', 'شنیدن از این آیه', () => player.start(k)],
+      ['chat', 'بپرس از هوش مصنوعی', () => askAbout({ title: c.title, ar: c.ar, fa: c.f, source: `${c.title}؛ متن تنزیل، ترجمهٔ آیت‌الله مکارم شیرازی`, path: c.url.replace(/^.*#/, '') })],
       ['pen', p.notes[c.key]?.note ? 'ویرایش یادداشت من' : 'یادداشت من', () => setWriting(k)],
       ['card', 'کارت تصویری برای فرستادن', () => shareCard({ ar: c.ar, fa: c.f, source: c.title, shelf: 'quran' })],
       ['copy', 'رونوشت آیه و ترجمه', () => copyText(`${c.ar}\n\n${c.f}\n\n${c.title}`, 'آیه رونوشت شد')],

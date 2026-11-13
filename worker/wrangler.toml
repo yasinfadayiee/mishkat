@@ -1,0 +1,15 @@
+# واسط گفت‌وگوی مشکات. استقرار: راهنمای worker/README.md
+name = "mishkat-chat"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# فقط همین دامنه‌ها می‌توانند درخواست بفرستند (وب، حالت توسعه، ویندوز و اندروید/آیفون)
+ALLOWED_ORIGINS = "https://yasinfadayiee.github.io,http://localhost:5173,app://mishkat,https://localhost,capacitor://localhost"
+DAILY_PER_USER = "20"
+DAILY_TOTAL = "400"
+
+# شمارندهٔ روزانه. شناسه را با «npx wrangler kv namespace create LIMITS» بساز و این‌جا بگذار
+[[kv_namespaces]]
+binding = "LIMITS"
+id = "REPLACE_WITH_KV_ID"

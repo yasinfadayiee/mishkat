@@ -24,6 +24,9 @@ jobs:
       # پوشهٔ books از متن‌های منبع (corpus) و ترجمه‌ها و شرح‌ها (content) ساخته می‌شود
       - run: node scripts/build-books.mjs
       - run: npm run build --prefix app
+        env:
+          # نشانی واسط گفت‌وگو (Cloudflare Worker)؛ اگر خالی باشد صفحهٔ گفت‌وگو می‌گوید هنوز راه‌اندازی نشده
+          VITE_CHAT_URL: ${{ vars.VITE_CHAT_URL }}
       - name: Publish dist to gh-pages
         run: |
           cd app/dist

@@ -26,17 +26,19 @@ const Settings = lazy(() => loadMe().then((x) => ({ default: x.Settings })))
 const SearchPage = lazy(() => loadSearch().then((x) => ({ default: x.SearchPage })))
 const LessonScreen = lazy(() => import('./screens/Lesson'))
 const TopicReader = lazy(() => import('./screens/Topics').then((x) => ({ default: x.TopicReader })))
+const ChatScreen = lazy(() => import('./screens/Chat'))
 const Trust = lazy(() => import('./screens/Trust').then((x) => ({ default: x.Trust })))
 const Onboarding = lazy(() => import('./screens/Onboarding').then((x) => ({ default: x.Onboarding })))
 const Intro = lazy(() => import('./screens/Intro').then((x) => ({ default: x.Intro })))
 const prefetch = () => [loadBookScreens, loadQuran, loadLibrary, loadMe, loadSearch].forEach((f) => f().catch(() => {}))
 const loadMotion = () => import('./motion-features').then((x) => x.default)
 
-type NavTab = 'home' | 'quran' | 'library' | 'notes'
+type NavTab = 'home' | 'quran' | 'library' | 'chat' | 'notes'
 const NAV: { id: NavTab; label: string; icon: keyof typeof Icon }[] = [
   { id: 'home', label: 'خانه', icon: 'home' },
   { id: 'quran', label: 'قرآن', icon: 'rahl' },
   { id: 'library', label: 'کتابخانه', icon: 'book' },
+  { id: 'chat', label: 'گفت‌وگو', icon: 'chat' },
   { id: 'notes', label: 'دفتر من', icon: 'pen' },
 ]
 const tabPath = (t: Tab) => (t === 'home' ? '/' : `/${t}`)
@@ -256,6 +258,7 @@ function Shell() {
             {tab === 'home' && <Home openPlace={openPlace} />}
             {tab === 'quran' && <Quran />}
             {tab === 'library' && <Library sub={route.tab === 'library' ? route.sub : undefined} />}
+            {tab === 'chat' && <ChatScreen sub={route.tab === 'chat' ? route.sub : undefined} />}
             {tab === 'notes' && <Me openMark={openMark} />}
             {tab === 'settings' && <Settings />}
             {tab === 'search' && <SearchPage initial={route.q.get('q') ?? ''} />}

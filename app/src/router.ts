@@ -4,11 +4,12 @@
 //   #/library  #/library/topics  #/library/lessons
 //   #/search?q=صبر
 //   #/notes  #/settings  #/trust
+//   #/chat  #/chat/new  #/chat/<id>
 //   #/book/ghurar  #/book/ghurar/9/3?i=1519
 //   #/topic/sabr  #/lesson/<id>
 import { useEffect, useState } from 'react'
 
-export type Tab = 'home' | 'quran' | 'library' | 'notes' | 'search' | 'trust' | 'settings'
+export type Tab = 'home' | 'quran' | 'library' | 'chat' | 'notes' | 'search' | 'trust' | 'settings'
 export type View =
   | { kind: 'surah'; n: number; ayah?: number }
   | { kind: 'toc'; book: string }
@@ -25,7 +26,7 @@ export interface Route {
   path: string
 }
 
-const TABS: Tab[] = ['home', 'quran', 'library', 'notes', 'search', 'trust', 'settings']
+const TABS: Tab[] = ['home', 'quran', 'library', 'chat', 'notes', 'search', 'trust', 'settings']
 const num = (s?: string) => (s && /^\d+$/.test(s) ? Number(s) : undefined)
 
 export function parse(hash = location.hash): Route {

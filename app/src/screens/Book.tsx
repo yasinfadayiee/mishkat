@@ -3,6 +3,7 @@ import { AutoText } from '../autotext'
 import { loadChapter, loadToc, norm, savePlace, type BookMeta, type Item, type Toc } from '../books'
 import { Load, LoadFail, Skeleton, useLoad } from '../load'
 import { canOffline, downloadBook, mb, offlineCount, removeBook } from '../offline'
+import { askAbout } from '../chat'
 import { useDisplay } from '../prefs'
 import { MarkButton, ReaderShell } from '../reader'
 import { go, href, shareUrl } from '../router'
@@ -449,6 +450,9 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
                 <AutoText label="پاسخ من" className="tb-answer" value={note?.answer ?? ''} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" onSave={(v) => save({ answer: v })} autoFocus={!note?.answer} />
               </Fold>
             )}
+            <button className="ask-btn" onClick={() => askAbout({ title: `${ctx.title}، شمارهٔ ${fa(it.n ?? n)}`, ar: (it.v ?? it.ar).replace(NUM, ''), fa: it.fa, plain: it.sm ?? it.nt, deep: it.dp, words: it.w, source: ctx.source, url: it.u, path: ctx.path })}>
+              {Icon.chat} بپرس از هوش مصنوعی
+            </button>
           </div>
           {it.x?.length ? (
             <div className="tb-cross">

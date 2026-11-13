@@ -41,6 +41,7 @@ export const Icon = {
   more: S(<><circle cx="5.5" cy="12" r="1.4" fill="currentColor" /><circle cx="12" cy="12" r="1.4" fill="currentColor" /><circle cx="18.5" cy="12" r="1.4" fill="currentColor" /></>),
   copy: S(<><rect x="8" y="8" width="11" height="12" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h8" /></>),
   card: S(<><rect x="4" y="4" width="16" height="16" rx="2.5" /><path d="m4 16 4.5-4.5 3.5 3.5 2.5-2.5L20 18" /><circle cx="15.5" cy="8.5" r="1.5" /></>),
+  chat: S(<><path d="M5 6h14v10H10l-4 3.5V16H5z" /><path d="M9 10h6M9 13h3.5" /></>),
   flag: S(<><path d="M6 21V4" /><path d="M6 4h11l-2 4 2 4H6" /></>),
   list: S(<><path d="M9 6h11M9 12h11M9 18h11" /><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" strokeWidth={2.6} /></>),
   download: S(<><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" /><path d="M5 19h14" /></>),
