@@ -1,0 +1,101 @@
+<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><title>سپید امروزی</title><style>
+@font-face{font-family:Vazirmatn;font-weight:400;src:url(../../assets/vazirmatn-arabic-400-normal-DMZFCm7K.woff2)}
+@font-face{font-family:Vazirmatn;font-weight:700;src:url(../../assets/vazirmatn-arabic-700-normal-Dge_DOjm.woff2)}
+@font-face{font-family:Vazirmatn;font-weight:900;src:url(../../assets/vazirmatn-arabic-900-normal-BVDx3pOU.woff2)}
+@font-face{font-family:Amiri;src:url(../../assets/amiri-arabic-400-normal-D0NIBXga.woff2)}
+*{box-sizing:border-box;margin:0}
+:root{--bg:#FFFFFF;--surface:#F5F6F4;--ink:#17191C;--ink2:#555B63;--accent:#0B6468;--gold:#7A5A12;--line:#E2E4E0;--soft:#EEF1EF}
+body{font-family:Vazirmatn,sans-serif;background:#d9d6cf;padding:28px;display:flex;gap:28px;direction:rtl;width:max-content}
+.phone{width:390px;height:844px;background:var(--bg);color:var(--ink);border-radius:38px;overflow:hidden;position:relative;box-shadow:0 20px 50px #0003;display:flex;flex-direction:column}
+.screen{flex:1;overflow:hidden;padding:54px 20px 0}
+svg{width:22px;height:22px;flex:none}
+.ar{font-family:Amiri,serif;font-size:25px;line-height:2.05;text-align:justify;text-align-last:right}
+.fa{font-size:16.5px;line-height:2;color:var(--ink)}
+small{color:var(--ink2);font-size:12.5px}
+h1{font-size:25px;font-weight:900;letter-spacing:-.3px}
+h2{font-size:16px;font-weight:700;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+h2 a{font-size:13px;color:var(--accent);font-weight:400}
+.shamsa{fill:none;stroke:var(--gold);stroke-width:1.6;width:40px;height:40px}.shamsa .dot,.cn .dot{fill:var(--gold);stroke:none}
+.cn{position:absolute;width:26px;height:26px;display:none}.cn svg{width:26px;height:26px;fill:none;stroke:var(--gold);stroke-width:1.4}
+.cn.tl{top:6px;left:6px}.cn.tr{top:6px;right:6px;transform:scaleX(-1)}.cn.bl{bottom:6px;left:6px;transform:scaleY(-1)}.cn.br{bottom:6px;right:6px;transform:scale(-1)}
+.mast{display:flex;flex-direction:column;gap:4px;margin-bottom:16px;position:relative}.mast .shamsa{position:absolute;left:0;top:0}
+.search{display:flex;gap:10px;align-items:center;color:var(--ink2);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 14px;font-size:14px}
+.continue{display:flex;gap:12px;align-items:center;margin-top:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.continue>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:3px}.continue b{font-size:15px}.continue>svg{color:var(--ink2)}
+.ci{width:40px;height:40px;border-radius:12px;background:var(--soft);color:var(--accent);display:grid;place-items:center}
+.bar{display:block;height:3px;background:var(--line);border-radius:3px;margin-top:4px}.bar u{display:block;height:100%;background:var(--accent);border-radius:3px}
+.daily{position:relative;margin-top:14px;padding:18px 18px 12px;background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.kick{font-size:12.5px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.daily .ar{font-size:22px}.daily .fa{font-size:14.5px;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.daily footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink2)}
+.acts{display:flex;gap:10px;align-items:center}.acts em{font-style:normal;font-weight:700;color:var(--accent);background:var(--soft);padding:4px 12px;border-radius:99px}
+.books{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bk{aspect-ratio:3/4;border-radius:14px;padding:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;background:var(--surface);border:1px solid var(--line);position:relative}
+.bk .shamsa{position:absolute;top:12px;right:50%;transform:translateX(50%);width:44px;height:44px}.bk b{font-size:14px}.bk small{font-size:11px}
+.nav{display:flex;justify-content:space-around;padding:8px 8px 22px;background:var(--surface);border-top:1px solid var(--line)}
+.nav span{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink2);padding:5px 10px;border-radius:12px}.nav b{font-size:11px;font-weight:400}
+.nav .on{color:var(--accent)}.nav .on b{font-weight:700}
+.reader{padding:50px 0 0}
+.reader .bar{display:flex;align-items:center;gap:10px;padding:0 16px 10px;height:auto;background:none;margin:0}
+.reader .bar div{flex:1;text-align:center;display:flex;flex-direction:column}.reader .bar b{font-size:15px}
+.ib{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--ink2);border:1px solid var(--line);background:var(--surface)}.ib.sm{width:32px;height:32px;border:0;background:none}.ib.sm svg{width:19px;height:19px}
+.aa{font-weight:900;font-size:17px;color:var(--ink)}
+.prog{height:2px;background:var(--line)}.prog u{display:block;width:8%;height:100%;background:var(--accent)}
+.item{padding:14px 20px}
+.tools{display:flex;align-items:center;gap:4px;margin-bottom:8px}.tools i{flex:1}
+.no{min-width:28px;height:28px;padding:0 8px;border-radius:99px;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--accent);background:var(--soft)}
+.arbox{position:relative;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin:16px 0 12px}
+.tabs span{flex:1;text-align:center;font-size:13.5px;padding:8px 0;border-radius:10px;color:var(--ink2);background:var(--soft)}
+.tabs .on{background:var(--accent);color:var(--surface);font-weight:700}
+.panel h4{font-size:12.5px;color:var(--gold);font-weight:700;margin:10px 0 2px}
+.panel p{font-size:15px;line-height:1.95}
+.words{display:flex;flex-direction:column;gap:2px}.words span{font-size:14px;color:var(--ink2)}.words b{font-family:Amiri;font-size:19px;color:var(--ink);margin-left:8px;font-weight:400}
+.ph{color:var(--ink2);font-size:13.5px!important}
+.ask{display:flex;align-items:center;gap:10px;margin:0 14px 22px;padding:10px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--ink2);font-size:14px;box-shadow:0 6px 20px #0001}
+.ask span{flex:1}.ask em{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--surface);display:grid;place-items:center}.ask em svg{width:17px;height:17px;transform:scaleX(-1)}
+
+.screen{padding-inline:22px}.shamsa{display:none}.bk .shamsa{display:block;stroke:var(--accent);opacity:.9}.bk .shamsa .dot{fill:var(--accent)}
+h1{font-size:30px}.mast{margin-bottom:20px}
+.search{border:0;background:var(--surface);border-radius:99px}
+.continue{border:0;background:var(--surface)}
+.daily{border:0;background:none;padding:6px 0 0;border-radius:0}.daily .ar{font-size:26px}.kick{color:var(--accent)}
+.daily::before{content:"";display:block;width:36px;height:3px;background:var(--accent);border-radius:3px;margin-bottom:12px}
+.bk{border:0}
+.nav{border:0;background:var(--bg);box-shadow:0 -1px 0 var(--line)}.nav .on{background:var(--soft)}
+.arbox{padding-right:16px;border-right:3px solid var(--accent)}.arbox .ar{font-size:27px}
+.tabs span{background:none;border:1px solid var(--line);border-radius:99px}.tabs .on{border-color:var(--accent)}
+.panel{background:var(--surface);border-radius:16px;padding:6px 16px 14px}.panel h4{color:var(--accent)}
+.ib{border:0;border-radius:50%}.no{background:var(--ink);color:var(--bg)}</style><body>
+<section class="phone"><div class="screen home">
+  <header class="mast"><svg class="shamsa" viewBox="-50 -50 100 100"><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(0)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(30)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(60)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(90)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(120)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(150)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(180)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(210)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(240)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(270)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(300)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(330)"/><circle r="14"/><circle r="4" class="dot"/></svg>
+    <small>جمعه ۲۲ آبان ۱۴۰۵ · ۳ جمادی‌الثانی ۱۴۴۸</small>
+    <h1>صبح بخیر، یاسین</h1>
+  </header>
+  <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><span>جست‌وجو در همهٔ کتاب‌ها</span></div>
+  <div class="continue"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg></span><span><small>ادامهٔ مطالعه</small><b>نهج‌البلاغه · خطبهٔ ۱</b><i class="bar"><u style="width:38%"></u></i></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+  <article class="daily"><span class="cn tl"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn tr"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn bl"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn br"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span>
+    <div class="kick">سخن امروز · امام علی (ع)</div>
+    <p class="ar" lang="ar">أَزْرَى بِنَفْسِهِ مَنِ اسْتَشْعَرَ الطَّمَعَ وَرَضِيَ بِالذُّلِّ مَنْ كَشَفَ عَنْ ضُرِّهِ وَهَانَتْ عَلَيْهِ نَفْسُهُ مَنْ أَمَّرَ عَلَيْهَا لِسَانَهُ.</p>
+    <p class="fa">امام فرمود: کسی که طمع را در دل جا دهد خود را خوار کرده است؛ کسی که گرفتاری‌اش را آشکار کند، به خواری تن داده؛ و کسی که زبانش را بر خود فرمانروا کند، خود را بی‌ارزش شمرده است.</p>
+    <footer><span>نهج‌البلاغه، حکمت ۲</span><span class="acts"><em>بپرس</em><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></span></footer>
+  </article>
+  <h2>کتاب‌ها <a>همه</a></h2>
+  <div class="books"><div class="bk q"><svg class="shamsa" viewBox="-50 -50 100 100"><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(0)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(30)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(60)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(90)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(120)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(150)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(180)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(210)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(240)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(270)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(300)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(330)"/><circle r="14"/><circle r="4" class="dot"/></svg><b>قرآن کریم</b><small>۱۱۴ سوره</small></div><div class="bk n"><svg class="shamsa" viewBox="-50 -50 100 100"><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(0)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(30)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(60)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(90)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(120)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(150)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(180)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(210)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(240)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(270)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(300)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(330)"/><circle r="14"/><circle r="4" class="dot"/></svg><b>نهج‌البلاغه</b><small>۲٬۲۶۰ متن</small></div><div class="bk g"><svg class="shamsa" viewBox="-50 -50 100 100"><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(0)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(30)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(60)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(90)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(120)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(150)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(180)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(210)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(240)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(270)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(300)"/><path d="M0 -46C8 -34 8 -24 0 -16C-8 -24 -8 -34 0 -46Z" transform="rotate(330)"/><circle r="14"/><circle r="4" class="dot"/></svg><b>غررالحکم</b><small>۱۱٬۱۹۲ سخن</small></div></div>
+</div><nav class="nav"><span class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9h12v-9"/></svg><b>خانه</b></span><span class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.2c3-1.2 6-.9 9 1.1 3-2 6-2.3 9-1.1l-1.6 4.6c-2.5-.9-5-.5-7.4 1.2-2.4-1.7-4.9-2.1-7.4-1.2z"/><path d="M12 9.3v5.6M7.5 15l9 5.5M16.5 15l-9 5.5"/></svg><b>قرآن</b></span><span class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><b>کتابخانه</b></span><span class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14v10H10l-4 3.5V16H5z"/><path d="M9 10h6M9 13h3"/></svg><b>گفت‌وگو</b></span><span class=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><b>من</b></span></nav></section>
+<section class="phone"><div class="screen reader">
+  <div class="bar"><span class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg></span><div><b>حکمت‌های ۱ تا ۲۰</b><small>نهج‌البلاغه · ۱ از ۲۴</small></div><span class="ib aa">آ</span></div>
+  <div class="prog"><u></u></div>
+  <article class="item">
+    <div class="tools"><span class="no">۱</span><i></i><span class="ib sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></span><span class="ib sm"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg></span></div>
+    <div class="arbox"><span class="cn tl"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn tr"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn bl"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span><span class="cn br"><svg viewBox="0 0 40 40"><path d="M2 38V14C2 7 7 2 14 2h24"/><path d="M8 38V16c0-4.5 3.5-8 8-8h22" opacity=".55"/><circle cx="14" cy="14" r="2.2" class="dot"/></svg></span>
+      <p class="ar" lang="ar">كُنْ فِي الْفِتْنَةِ كَابْنِ اللَّبُونِ، لاَ ظَهْرٌ فَيُرْكَبَ، وَلاَ ضَرْعٌ فَيُحْلَبَ.</p></div>
+    <p class="fa">امام فرمود: در آشوب، مانند شتربچه‌ای باش که نه پشتش برای سواری‌دادن آماده است و نه پستانی دارد که شیرش را بدوشند.</p>
+    <div class="tabs"><span class="on">شرح ساده</span><span>عالمان</span><span>مثال‌ها</span><span>بپرس</span></div>
+    <div class="panel">
+      <h4>چه می‌گوید</h4><p>وقتی دعوا و آشوب بالا می‌گیرد، طوری باش که هیچ طرفی نتواند از تو سوءاستفاده کند.</p>
+      <h4>واژه‌ها</h4><p class="words"><span><b lang="ar">الفتنة</b>آشوبی که در آن حق و باطل به هم آمیخته و تشخیص راه سخت است</span><span><b lang="ar">ابن اللبون</b>شتر نر دوساله؛ نه قوی برای سواری و نه شیرده</span></p>
+      <h4>چرا گفت · امروز</h4><p class="ph">دو بخش دیگرِ شرح تازه (موقعیت تاریخی و معنای امروز) در مرحلهٔ محتوا نوشته می‌شود.</p>
+    </div>
+  </article>
+</div><div class="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14v10H10l-4 3.5V16H5z"/><path d="M9 10h6M9 13h3"/></svg><span>دربارهٔ این جمله بپرس…</span><em><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4 4 11l6 2 2 6z"/></svg></em></div></section></body></html>
