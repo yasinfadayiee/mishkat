@@ -13,6 +13,7 @@ import './styles-study.css'
 import './styles-library.css'
 import './styles-v3.css'
 import './styles-v08.css'
+import './styles-ms.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
