@@ -1,167 +1,73 @@
-/* سبک «نسخهٔ خطی» (۰٫۹): کاغذ روشن، جوهر تیره، لاجورد و طلا، جدول دوخطه.
-   این فایل آخر از همه بار می‌شود و ظاهر تیرهٔ نسخه‌های قبل را در معرفی، خانه و سربرگ کتاب‌ها روشن می‌کند. */
+/* سبک «نسخهٔ خطی» (۰٫۹): متنِ خواندنی روی کاغذ روشن می‌ماند، ولی تصویرها و رنگ‌های نگارگری سر جایشان هستند.
+   این فایل آخر از همه بار می‌شود. */
 
-/* جدول دوخطهٔ نسخه‌های خطی؛ برای سربرگ‌ها و متن عربی */
-.ms-rule,
-.reader[data-shelf] .book-cover,
-.reader[data-shelf] .chapter-head {
-  background: var(--card-solid) !important;
-  border: 1px solid var(--line-strong) !important;
-  outline: 1px solid var(--line-strong);
-  outline-offset: 3px;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  color: var(--ink);
-  overflow: visible;
-}
-.reader[data-shelf] .book-cover,
-.reader[data-shelf] .chapter-head {
-  margin: 6px 4px 18px;
-  text-align: center;
-}
-.reader[data-shelf] .book-cover h1,
-.reader[data-shelf] .chapter-head h1 {
-  color: var(--accent) !important;
-}
-.reader[data-shelf] .book-cover .eyebrow,
-.reader[data-shelf] .chapter-head .eyebrow {
-  color: var(--gold) !important;
-  justify-content: center;
-}
-.reader[data-shelf] .book-cover p,
-.reader[data-shelf] .chapter-head p,
-.reader[data-shelf] .chapter-head small,
-.reader[data-shelf] .book-facts {
-  color: var(--muted) !important;
-  opacity: 1;
-}
-.reader[data-shelf] .book-cover a,
-.reader[data-shelf] .book-cover button.link-btn {
-  color: var(--accent) !important;
-}
-.cover-medallion {
-  filter: none;
-  color: var(--gold);
-}
-/* نوار بالای خوانشگر و شمارهٔ هر متن: کاغذی، نه رنگ قفسه */
-.reader[data-shelf] .study-bar {
-  background: var(--bg1) !important;
-  border-bottom: 1px solid var(--line-strong);
-}
-.reader[data-shelf] .study-progress b {
-  background: var(--gold) !important;
-}
-:root .reader[data-shelf] .ayah-badge {
-  background: none !important;
-  color: var(--gold) !important;
-  border: 1px solid var(--line-strong) !important;
-  font-weight: 700;
+:root {
+  /* شمسهٔ هشت‌پر برای گوشهٔ قاب‌ها */
+  --shamsa: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='20' width='60' height='60'/%3E%3Crect x='20' y='20' width='60' height='60' transform='rotate(45 50 50)'/%3E%3C/svg%3E");
 }
 
-/* ───── خانه: سرصفحهٔ آرام به‌جای آسمان و خورشید ───── */
+/* ───── خانه: تصویر نگارگری بالای صفحه، به‌جای آسمان ساده ───── */
+.masthead.short {
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.sky {
+  background: #0b1a3a url('/art/home-night.webp') center 38% / cover no-repeat;
+}
 .sky-grad,
 .sky-body,
 .sky-stars,
-.sky-fade {
+.sky-girih {
   display: none;
 }
-.sky {
-  background: var(--bg1);
-  border-bottom: 1px solid var(--line-strong);
-  box-shadow: 0 3px 0 var(--bg1), 0 4px 0 var(--line-strong);
+/* پایین تصویر تیره می‌شود تا نوشتهٔ سرصفحه خوانا باشد و بعد در کاغذ محو شود */
+.sky-fade {
+  inset: 0;
+  height: auto;
+  background: linear-gradient(180deg, rgba(6, 12, 30, 0) 22%, rgba(6, 12, 30, 0.62) 58%, rgba(6, 12, 30, 0.86) 86%, var(--bg1) 100%);
 }
-.sky-girih {
-  color: var(--gold);
-  opacity: 0.12;
+.masthead.short .masthead-text {
+  padding-bottom: 34px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
 }
-.masthead .gold-text {
-  color: var(--accent);
+.masthead.short .mast-date {
+  color: #f1dcae;
+}
+.masthead.short h1.mast-hi {
+  color: #fffaf0;
+}
+.masthead.short p {
+  color: #f3ead8;
+}
+:root .masthead.short .gold-text {
+  color: #f3cf8a;
   -webkit-text-fill-color: currentColor;
 }
 
-/* ───── صفحهٔ آغاز و معرفی: کاغذ روشن با شمسه، بدون تصویر تیره ───── */
-.intro {
-  background: var(--bg1);
+/* ───── قاب متن عربی: شمسهٔ طلایی در دو گوشه ───── */
+.ms-frame {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--gold-soft), transparent 60%),
+    var(--card-solid);
 }
-.intro-bg,
-.intro-shade,
-.intro .fx-rays,
-.intro .fx-dust,
-.onboard-art {
-  display: none;
-}
-.intro-verse {
-  color: var(--ink);
-  text-shadow: none;
-}
-.intro-title .gold-text,
-.onboard-panel .gold-text {
-  background: none;
-  color: var(--accent);
-  -webkit-text-fill-color: currentColor;
-  filter: none;
-}
-.intro-title small,
-.intro-skip {
-  color: var(--muted);
-}
-.onboard-full {
-  background: var(--bg1);
-  justify-content: center;
-}
-.onboard-full::after {
-  background: none !important;
-}
-/* شمسهٔ هشت‌پر بالای متن معرفی */
-.onboard-panel::before {
+.ms-frame::before,
+.ms-frame::after {
   content: '';
-  display: block;
-  width: 84px;
-  height: 84px;
-  margin: 0 auto 18px;
+  position: absolute;
+  width: 16px;
+  height: 16px;
   background: var(--gold);
   -webkit-mask: var(--shamsa) center / contain no-repeat;
   mask: var(--shamsa) center / contain no-repeat;
 }
-:root {
-  --shamsa: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23000' stroke-width='3'%3E%3Crect x='22' y='22' width='56' height='56'/%3E%3Crect x='22' y='22' width='56' height='56' transform='rotate(45 50 50)'/%3E%3Ccircle cx='50' cy='50' r='16'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='5'/%3E%3C/svg%3E");
+.ms-frame::before {
+  top: -10px;
+  inset-inline-start: -10px;
 }
-.onboard-panel {
-  color: var(--ink);
-}
-.onboard-panel h1 {
-  color: var(--accent);
-}
-.onboard-panel .lead {
-  color: var(--gold);
-}
-.onboard-panel .body {
-  color: var(--ink-2);
-}
-.onboard-panel .quran,
-.onboard-verse {
-  color: var(--ink) !important;
-  text-shadow: none !important;
-  background: var(--card-solid);
-  border: 1px solid var(--line-strong);
-  outline: 1px solid var(--line-strong);
-  outline-offset: 3px;
-  border-radius: 0;
-}
-.onboard-panel .text-input {
-  background: var(--card-solid);
-  color: var(--ink);
-  border: 1px solid var(--line-strong);
-}
-.onboard-panel .text-input::placeholder {
-  color: var(--muted);
-}
-.dots-nav button {
-  background: var(--line-strong);
-}
-.dots-nav button.on {
-  background: var(--gold);
-}
-.onboard-skip {
-  color: var(--muted) !important;
+.ms-frame::after {
+  bottom: -10px;
+  inset-inline-end: -10px;
 }
