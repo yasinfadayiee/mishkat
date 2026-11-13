@@ -373,7 +373,7 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
   const note = p.notes[ctx.key]
   const [writing, setWriting] = useState(false)
   // بخش‌های بازشونده؛ «شرح ساده» از اول باز است
-  const [open, setOpen] = useState<Set<string>>(() => new Set(['gist']))
+  const [open, setOpen] = useState<Set<string>>(() => new Set([it.ex ? 'ex' : 'gist']))
   const [menu, setMenu] = useState(false)
   const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
   const full = display.mode === 'full'
@@ -422,6 +422,29 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
         <>
           <p className="tb-fa">{it.fa}</p>
           <div className="folds">
+            {it.ex && (
+              <Fold title="شرح این جمله" open={open.has('ex')} onToggle={() => toggle('ex')}>
+                <h4 className="ex-h">امام چه می‌گوید؟</h4>
+                <p>{it.ex.s}</p>
+                <h4 className="ex-h">چرا و برای چه کسی؟</h4>
+                <p>{it.ex.c}</p>
+                {it.ex.k?.length ? (
+                  <>
+                    <h4 className="ex-h">واژه‌ها و تصویرها</h4>
+                    <dl className="ex-words">
+                      {it.ex.k.map(([w, m]) => (
+                        <div key={w}>
+                          <dt lang="ar">{w}</dt>
+                          <dd>{m}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </>
+                ) : null}
+                <h4 className="ex-h">در زندگی امروز</h4>
+                <p>{it.ex.l}</p>
+              </Fold>
+            )}
             {it.sm && (
               <Fold title="شرح ساده" open={open.has('gist')} onToggle={() => toggle('gist')}>
                 <p>{it.sm}</p>
@@ -450,6 +473,58 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
                 <AutoText label="پاسخ من" className="tb-answer" value={note?.answer ?? ''} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" onSave={(v) => save({ answer: v })} autoFocus={!note?.answer} />
               </Fold>
             )}
+            {it.cm?.length ? (
+              <Fold title={`شرح عالمان (${fa(new Set(it.cm.map((c) => c.a)).size)} شارح)`} open={open.has('cm')} onToggle={() => toggle('cm')}>
+                {it.cm.map((c, k) => (
+                  <article key={k} className="cm">
+                    <header>
+                      <b>{c.n}</b>
+                      <span className="cm-school">{c.s}</span>
+                      <span className={`cm-kind ${c.k}`}>{c.k === 'q' ? 'نقل مستقیم' : 'خلاصه'}</span>
+                    </header>
+                    {c.ar && (
+                      <p className="cm-ar" lang="ar">
+                        {c.ar}
+                      </p>
+                    )}
+                    <p>{c.k === 'q' && c.ar ? `ترجمه: ${c.fa}` : c.fa}</p>
+                    <footer>
+                      <a href={c.u} target="_blank" rel="noopener noreferrer">
+                        {c.b}، ج {fa(c.v)}، ص {c.p.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)])} ↗
+                      </a>
+                      {c.c && <small>{c.c}</small>}
+                    </footer>
+                  </article>
+                ))}
+                {it.cj && (
+                  <div className="cm-sum">
+                    <b>جمع‌بندی: کجا هم‌نظرند و کجا نه</b>
+                    <p>{it.cj}</p>
+                  </div>
+                )}
+              </Fold>
+            ) : null}
+            {it.eg?.length ? (
+              <Fold title="مثال از کتاب‌های دیگر" open={open.has('eg')} onToggle={() => toggle('eg')}>
+                {it.eg.map((e, k) => (
+                  <article key={k} className="cm">
+                    <header>
+                      <b>
+                        {e.by}، {e.book}
+                      </b>
+                      <span className={`cm-kind ${e.k}`}>{e.k === 'q' ? 'نقل مستقیم' : 'خلاصه'}</span>
+                    </header>
+                    <p className="eg-text">{e.t}</p>
+                    <p>{e.r}</p>
+                    <footer>
+                      <a href={e.u} target="_blank" rel="noopener noreferrer">
+                        {e.loc} ↗
+                      </a>
+                    </footer>
+                  </article>
+                ))}
+              </Fold>
+            ) : null}
             <button className="ask-btn" onClick={() => askAbout({ title: `${ctx.title}، شمارهٔ ${fa(it.n ?? n)}`, ar: (it.v ?? it.ar).replace(NUM, ''), fa: it.fa, plain: it.sm ?? it.nt, deep: it.dp, words: it.w, source: ctx.source, url: it.u, path: ctx.path })}>
               {Icon.chat} بپرس از هوش مصنوعی
             </button>

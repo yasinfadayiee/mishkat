@@ -18,8 +18,46 @@ export interface BookMeta {
   chapters?: number
   bytes?: number
 }
+/** شرح تازهٔ یک جمله: چه می‌گوید، چرا گفته، واژه‌های کلیدی، و معنایش در زندگی امروز */
+export interface Explain {
+  s: string
+  c: string
+  k?: [string, string][]
+  l: string
+}
+/** شرح یک عالم: نقل مستقیم (q) یا خلاصه (s)، با جلد و صفحه و نشانی منبع */
+export interface Comment {
+  a: string
+  k: 'q' | 's'
+  ar?: string
+  fa: string
+  v: number
+  p: string
+  u: string
+  /** نام، گرایش، کتاب، درگذشت و توضیح لازم دربارهٔ شارح */
+  n: string
+  s: string
+  b: string
+  d?: string
+  c?: string
+}
+/** مثال از کتابی دیگر */
+export interface Example {
+  k: 'q' | 's'
+  t: string
+  by: string
+  book: string
+  loc: string
+  u: string
+  r: string
+}
 export interface Item {
   i: number
+  ex?: Explain
+  cm?: Comment[]
+  /** جمع‌بندی: شارحان کجا هم‌نظرند و کجا اختلاف دارند */
+  cj?: string
+  eg?: Example[]
   /** شمارهٔ رایج متن در کتاب (مثلاً شمارهٔ حکمت) */
   n?: number
   ar: string

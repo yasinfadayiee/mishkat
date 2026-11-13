@@ -62,6 +62,20 @@ const enrichOf = (bookId) => {
   }
   return enrichCache.get(bookId)
 }
+// شرح تازه (ex)، شرح عالمان (cm) با جمع‌بندی (cj) و مثال از کتاب‌های دیگر (eg): content/commentary/<bookId>/*.json
+// نقل‌ها پیش از انتشار با scripts/verify-commentary.mjs با منبع تطبیق داده می‌شوند.
+const commentDir = path.join(root, 'content', 'commentary')
+const commentCache = new Map()
+const WHO = JSON.parse(fs.readFileSync(path.join(commentDir, 'commentators.json'), 'utf8'))
+const commentOf = (bookId) => {
+  if (!commentCache.has(bookId)) {
+    const m = new Map()
+    const dir = path.join(commentDir, bookId)
+    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) for (const x of read(path.join(dir, f))) m.set(x.id, x)
+    commentCache.set(bookId, m)
+  }
+  return commentCache.get(bookId)
+}
 let currentBook = ''
 /** فارسیِ خوانا: کسرهٔ اضافه («زندگیِ مدرنِ ما»، «برایِ») که مترجم ماشینی زیاد می‌گذارد برداشته می‌شود؛
  *  «ه‌یِ / ه‌ی» اضافه به «هٔ» استاندارد برمی‌گردد. متن عربی و واژه‌های عربی دست نمی‌خورند. */
@@ -78,7 +92,13 @@ const rich = (t) => {
   const mirror = faClean(e.mirror || t.mirror)
   const words = t.words ?? e.words
   const tags = t.tags ?? e.tags
-  return { fa: t.fa, nt: faClean(t.note), mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, faClean(x.m)]) }), ...(tags?.length && { tg: tags }) }
+  const cmt = commentOf(currentBook).get(t.id) ?? {}
+  // نام، گرایش و کتاب هر شارح همراه خود نقل می‌آید تا خوانشگر فایل جدایی نخواهد
+  const cm = cmt.cm?.map((c) => {
+    const w = WHO.commentators[c.a]
+    return { ...c, n: w.name, s: w.school, b: w.book, ...(w.died && { d: w.died }), ...(w.caveat && { c: w.caveat }) }
+  })
+  return { ...(cmt.ex && { ex: cmt.ex }), ...(cm?.length && { cm }), ...(cmt.cj && { cj: cmt.cj }), ...(cmt.eg?.length && { eg: cmt.eg }), fa: t.fa, nt: faClean(t.note), mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, faClean(x.m)]) }), ...(tags?.length && { tg: tags }) }
 }
 
 const index = { shelves: SHELVES, books: [] }
