@@ -300,7 +300,7 @@ a {
   color: #f0a65a;
   border-color: rgba(240, 160, 90, 0.3);
 }
-:root[data-theme='parchment'] .chip.warn {
+:root .chip.warn {
   color: #a5561a;
 }
 

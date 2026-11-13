@@ -7,7 +7,7 @@
   color: transparent;
   animation: shimmer 6s linear infinite;
 }
-:root[data-theme='parchment'] .gold-text {
+:root .gold-text {
   background-image: linear-gradient(100deg, #7a5419, #b98b3f 30%, #e0b768 50%, #9a6f27 70%, #7a5419);
 }
 @keyframes shimmer {
@@ -288,8 +288,8 @@
   color: color-mix(in srgb, var(--ink-2) 90%, white);
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
 }
-:root[data-theme='parchment'] .page-hero-body,
-:root[data-theme='parchment'] .page-hero-body p {
+:root .page-hero-body,
+:root .page-hero-body p {
   color: var(--ink);
   text-shadow: none;
 }

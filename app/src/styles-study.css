@@ -155,7 +155,7 @@
   color: transparent;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
 }
-:root[data-theme='parchment'] .study-hero h1 {
+:root .study-hero h1 {
   background: none;
   color: #fff8e6;
 }

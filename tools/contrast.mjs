@@ -4,7 +4,7 @@
 import fs from 'node:fs'
 const file = 'app/src/tokens.css'
 let css = fs.readFileSync(file, 'utf8')
-const themes = ['emerald', 'isfahan', 'parchment', 'dawn', 'noon', 'dusk']
+const themes = ['paper', 'white', 'sage']
 const block = (t) => {
   const re = t === 'emerald' ? /:root,\s*:root\[data-theme='emerald'\]\s*\{([^}]*)\}/ : new RegExp(String.raw`:root\[data-theme='${t}'\]\s*\{([^}]*)\}`)
   return css.match(re)
@@ -44,7 +44,7 @@ for (const t of themes) {
   const light = lum(bg) > 0.4
   for (const name of TEXTS) {
     let c = parse(v[name])
-    const worst = () => Math.min(ratio(c, bg), ratio(c, card), ratio(c, solid))
+    const worst = () => Math.min(ratio(c, bg), ratio(c, card), ratio(c, solid), ratio(c, parse(v['--bg2'])), ratio(c, parse(v['--bg0'])))
     const before = worst()
     if (fix && before < 4.6) {
       // تا رسیدن به ۴٫۶، به سمت سیاه (پوستهٔ روشن) یا سفید (پوستهٔ تیره) برده می‌شود

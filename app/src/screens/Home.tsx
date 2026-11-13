@@ -68,7 +68,7 @@ export function Home({ openPlace }: { openPlace: (p: Place) => void }) {
   return (
     <div className="home2">
       <header className="masthead short">
-        <Sky phase={p.theme === 'auto' ? undefined : THEME_PHASE[p.theme]} />
+        <Sky phase={THEME_PHASE[p.theme]} />
         <div className="masthead-text">
           <div className="mast-date">
             {shamsi}

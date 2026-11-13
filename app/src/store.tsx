@@ -1,6 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
-export type ThemeId = 'auto' | 'emerald' | 'isfahan' | 'parchment' | 'dawn' | 'noon' | 'dusk'
+/** سه پوستهٔ روشن؛ پوسته‌های نسخه‌های پیش از ۰٫۹ هنگام بارگذاری به این‌ها برگردانده می‌شوند */
+export type ThemeId = 'paper' | 'white' | 'sage'
+export const THEME_IDS: ThemeId[] = ['paper', 'white', 'sage']
+/** پوسته‌های قدیمی ← پوستهٔ تازه؛ هر چه این‌جا نیست (خودکار و پوسته‌های تیره) کاغذی می‌شود */
+const OLD_THEME: Record<string, ThemeId> = { parchment: 'paper', noon: 'sage' }
+export const migrateTheme = (t: unknown): ThemeId => (THEME_IDS.includes(t as ThemeId) ? (t as ThemeId) : (OLD_THEME[String(t)] ?? 'paper'))
 
 /** هنگامِ روز؛ پوستهٔ «خودکار» رنگ‌هایش را با آن عوض می‌کند */
 export type Phase = 'sahar' | 'morning' | 'noon' | 'asr' | 'maghrib' | 'night'
@@ -15,10 +20,8 @@ export function phaseOf(d = new Date()): Phase {
   if (h >= 17.5 && h < 20) return 'maghrib'
   return 'night'
 }
-export const PHASE_THEME: Record<Phase, Exclude<ThemeId, 'auto'>> = { sahar: 'dawn', morning: 'parchment', noon: 'noon', asr: 'dusk', maghrib: 'dusk', night: 'isfahan' }
 /** وقتی کاربر پوسته را خودش انتخاب کرده، آسمان خانه هم با همان پوسته هماهنگ می‌شود */
-export const THEME_PHASE: Record<Exclude<ThemeId, 'auto'>, Phase> = { dawn: 'sahar', parchment: 'morning', noon: 'noon', dusk: 'maghrib', isfahan: 'night', emerald: 'night' }
-export const LIGHT_THEMES: ThemeId[] = ['parchment', 'noon']
+export const THEME_PHASE: Record<ThemeId, Phase> = { paper: 'morning', white: 'noon', sage: 'noon' }
 export const PHASE_NAME: Record<Phase, string> = { sahar: 'سحر', morning: 'صبح', noon: 'ظهر', asr: 'عصر', maghrib: 'مغرب', night: 'شب' }
 
 export interface Habit {
@@ -85,7 +88,7 @@ const KEY = 'mishkat.progress.v1'
 const initial: Progress = {
   onboarded: false,
   name: '',
-  theme: 'auto',
+  theme: 'paper',
   completed: {},
   habits: [],
   journal: [],
@@ -100,7 +103,7 @@ function load(): Progress {
     const raw = localStorage.getItem(KEY)
     if (raw) {
       const x: Progress = { ...initial, ...JSON.parse(raw) }
-      return x.themeSet ? x : { ...x, theme: 'auto' }
+      return { ...x, theme: migrateTheme(x.theme) }
     }
   } catch {
     /* حالت خصوصی مرورگر یا ذخیره‌سازی مسدود */
@@ -148,23 +151,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   // پوستهٔ خودکار هر چند دقیقه با هنگامِ روز هماهنگ می‌شود
   useEffect(() => {
     const apply = () => {
-      const phase = phaseOf()
-      document.documentElement.dataset.phase = phase
-      const theme = p.theme === 'auto' ? PHASE_THEME[phase] : p.theme
+      const theme = p.theme
+      document.documentElement.dataset.phase = THEME_PHASE[theme]
       document.documentElement.dataset.theme = theme
       // نوار وضعیت مرورگر و اندروید به رنگ پوسته
       requestAnimationFrame(() => {
         const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg1').trim()
         document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
-        const light = LIGHT_THEMES.includes(theme)
         import('@capacitor/core').then(({ Capacitor, SystemBars, SystemBarsStyle }) => {
-          if (Capacitor.isNativePlatform()) SystemBars.setStyle({ style: light ? SystemBarsStyle.Light : SystemBarsStyle.Dark }).catch(() => {})
+          if (Capacitor.isNativePlatform()) SystemBars.setStyle({ style: SystemBarsStyle.Light }).catch(() => {})
         })
       })
     }
     apply()
-    const t = setInterval(apply, 5 * 60000)
-    return () => clearInterval(t)
   }, [p.theme])
 
   const set = useCallback((fn: (p: Progress) => Progress) => setP((prev) => fn(prev)), [])

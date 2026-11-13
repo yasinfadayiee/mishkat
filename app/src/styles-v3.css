@@ -10,8 +10,8 @@ body {
     linear-gradient(180deg, var(--bg1), var(--bg0)) fixed;
   transition: background-color 1.2s ease;
 }
-:root[data-theme='parchment'] body,
-:root[data-theme='noon'] body {
+:root body,
+:root body {
   background:
     radial-gradient(1200px 600px at 85% -10%, rgba(255, 210, 120, 0.35), transparent 60%) fixed,
     linear-gradient(180deg, var(--bg1), var(--bg0)) fixed;
@@ -127,11 +127,11 @@ body {
 .masthead p {
   color: var(--ink-2, var(--ink));
 }
-:root:not([data-theme='parchment']):not([data-theme='noon']) .masthead-text {
+:root[data-theme='none'] .masthead-text {
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
 }
-:root[data-theme='parchment'] .masthead .gold-text,
-:root[data-theme='noon'] .masthead .gold-text {
+:root .masthead .gold-text,
+:root .masthead .gold-text {
   background: none;
   color: var(--gold);
   animation: none;
@@ -252,8 +252,8 @@ body {
 .book-tile[data-shelf] .bt-meta em {
   color: var(--tone-hi) !important;
 }
-:root[data-theme='parchment'] .book-tile[data-shelf] .bt-meta em,
-:root[data-theme='noon'] .book-tile[data-shelf] .bt-meta em {
+:root .book-tile[data-shelf] .bt-meta em,
+:root .book-tile[data-shelf] .bt-meta em {
   color: var(--tone) !important;
 }
 .book-tile[data-shelf]:hover .medallion {
@@ -325,8 +325,8 @@ body {
   color: var(--tone-hi) !important;
   border-color: color-mix(in srgb, var(--tone-hi) 45%, transparent) !important;
 }
-:root[data-theme='parchment'] .reader[data-shelf] .ayah-badge,
-:root[data-theme='noon'] .reader[data-shelf] .ayah-badge {
+:root .reader[data-shelf] .ayah-badge,
+:root .reader[data-shelf] .ayah-badge {
   background: var(--tone) !important;
   color: var(--tone-ink) !important;
 }

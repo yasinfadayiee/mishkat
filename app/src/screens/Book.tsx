@@ -350,16 +350,38 @@ function Words({ words }: { words: [string, string][] }) {
   )
 }
 
+/** یک بخش بازشونده زیر متن (شرح ساده، واژه‌ها، شرح عمیق‌تر…) */
+function Fold({ title, open, onToggle, mark, children }: { title: string; open: boolean; onToggle: () => void; mark?: boolean; children: React.ReactNode }) {
+  return (
+    <section className={`fold ${open ? 'open' : ''}`}>
+      <button className="fold-h" aria-expanded={open} onClick={onToggle}>
+        <span>
+          {title}
+          {mark && <em> · پاسخ داده‌ای</em>}
+        </span>
+        <i aria-hidden="true">{open ? '−' : '+'}</i>
+      </button>
+      {open && <div className="fold-b">{children}</div>}
+    </section>
+  )
+}
+
 function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number; showAr: boolean; marked: boolean; onMark: () => void; ctx: TextCtx }) {
   const { p, setNote } = useStore()
   const [display] = useDisplay()
   const note = p.notes[ctx.key]
   const [writing, setWriting] = useState(false)
-  const [panel, setPanel] = useState<'words' | 'deep' | 'mirror' | null>(null)
+  // بخش‌های بازشونده؛ «شرح ساده» از اول باز است
+  const [open, setOpen] = useState<Set<string>>(() => new Set(['gist']))
   const [menu, setMenu] = useState(false)
   const save = (patch: { note?: string; answer?: string }) => setNote(ctx.key, { title: ctx.title, text: it.sm ?? it.fa ?? it.ar, question: it.mr, ...patch })
   const full = display.mode === 'full'
-  const toggle = (x: 'words' | 'deep' | 'mirror') => setPanel(panel === x ? null : x)
+  const toggle = (x: string) =>
+    setOpen((s) => {
+      const n = new Set(s)
+      if (!n.delete(x)) n.add(x)
+      return n
+    })
   const plain = `${it.ar.replace(NUM, '')}\n\n${it.fa ?? ''}\n\n${ctx.source}`
   const url = shareUrl(ctx.path)
 
@@ -388,57 +410,46 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
         </button>
       </div>
 
-      {showAr && <ArabicLead text={it.v ?? it.ar} />}
-      {showAr && it.v && <small className="tb-vocal">اعراب از متن نهج‌البلاغه</small>}
+      {showAr && (
+        <div className="ms-frame">
+          <ArabicLead text={it.v ?? it.ar} />
+          {it.v && <small className="tb-vocal">اعراب از متن نهج‌البلاغه</small>}
+        </div>
+      )}
 
       {it.fa ? (
         <>
           <p className="tb-fa">{it.fa}</p>
-          {it.sm && (
-            <div className="tb-gist">
-              <small>یعنی چه؟</small>
-              <p>{it.sm}</p>
-            </div>
-          )}
-          {!it.sm && it.nt && (
-            <div className="tb-note">
-              <b>توضیح</b>
-              <p>{it.nt}</p>
-            </div>
-          )}
-          {full && (it.w?.length || it.dp || it.mr) ? (
-            <div className="tb-more" role="group" aria-label="بیشتر دربارهٔ این متن">
-              {it.w?.length ? (
-                <button className={panel === 'words' ? 'on' : ''} aria-expanded={panel === 'words'} onClick={() => toggle('words')}>
-                  {Icon.dict} واژه‌ها
-                </button>
-              ) : null}
-              {it.dp && (
-                <button className={panel === 'deep' ? 'on' : ''} aria-expanded={panel === 'deep'} onClick={() => toggle('deep')}>
-                  {Icon.teacher} عمیق‌تر
-                </button>
-              )}
-              {it.mr && (
-                <button className={panel === 'mirror' || note?.answer ? 'on' : ''} aria-expanded={panel === 'mirror'} onClick={() => toggle('mirror')}>
-                  {Icon.life} از خودت بپرس
-                </button>
-              )}
-            </div>
-          ) : null}
-          {panel === 'words' && it.w && <Words words={it.w} />}
-          {panel === 'deep' && it.dp && (
-            <div className="tb-deep">
-              {it.dp.split(/\n+/).map((t, k) => (
-                <p key={k}>{t}</p>
-              ))}
-            </div>
-          )}
-          {panel === 'mirror' && it.mr && (
-            <div className="tb-mirror">
-              <p>{it.mr}</p>
-              <AutoText label="پاسخ من" className="tb-answer" value={note?.answer ?? ''} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" onSave={(v) => save({ answer: v })} autoFocus={!note?.answer} />
-            </div>
-          )}
+          <div className="folds">
+            {it.sm && (
+              <Fold title="شرح ساده" open={open.has('gist')} onToggle={() => toggle('gist')}>
+                <p>{it.sm}</p>
+              </Fold>
+            )}
+            {!it.sm && it.nt && (
+              <Fold title="توضیح" open={open.has('gist')} onToggle={() => toggle('gist')}>
+                <p>{it.nt}</p>
+              </Fold>
+            )}
+            {full && it.w?.length ? (
+              <Fold title="واژه‌های کلیدی" open={open.has('words')} onToggle={() => toggle('words')}>
+                <Words words={it.w} />
+              </Fold>
+            ) : null}
+            {full && it.dp && (
+              <Fold title="شرح عمیق‌تر" open={open.has('deep')} onToggle={() => toggle('deep')}>
+                {it.dp.split(/\n+/).map((t, k) => (
+                  <p key={k}>{t}</p>
+                ))}
+              </Fold>
+            )}
+            {full && it.mr && (
+              <Fold title="از خودت بپرس" mark={!!note?.answer} open={open.has('mirror')} onToggle={() => toggle('mirror')}>
+                <p>{it.mr}</p>
+                <AutoText label="پاسخ من" className="tb-answer" value={note?.answer ?? ''} placeholder="پاسخ من… (فقط برای خودت ذخیره می‌شود)" onSave={(v) => save({ answer: v })} autoFocus={!note?.answer} />
+              </Fold>
+            )}
+          </div>
           {it.x?.length ? (
             <div className="tb-cross">
               {it.x.map(([b, s, c, i, label]) => (

@@ -1466,3 +1466,72 @@ select:focus-visible {
     translate: 0 8px;
   }
 }
+
+/* ───── صفحهٔ مطالعه به سبک نسخهٔ خطی (۰٫۹): جدول دوخطه دور متن عربی و بخش‌های بازشونده ───── */
+.text-block {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+.ms-frame {
+  border: 1px solid var(--line-strong);
+  outline: 1px solid var(--line-strong);
+  outline-offset: 3px;
+  background: var(--card-solid);
+  padding: 16px 16px 12px;
+  margin: 8px 4px 16px;
+  text-align: center;
+}
+.ms-frame .tb-vocal {
+  display: block;
+  color: var(--muted);
+}
+.folds {
+  margin-top: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.fold {
+  border-top: 1px solid var(--line);
+}
+.fold-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 2px;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: start;
+}
+.fold-h em {
+  font-style: normal;
+  font-weight: 400;
+  font-size: var(--fs-min);
+  color: var(--muted);
+}
+.fold-h i {
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gold);
+}
+.fold.open .fold-h {
+  color: var(--gold);
+}
+.fold-b {
+  padding: 0 2px 16px;
+  color: var(--ink);
+  font-size: calc(var(--fs-body) * var(--ts, 1));
+  line-height: var(--lh, 2);
+}
+.fold-b p {
+  margin: 0 0 0.7em;
+}
+.fold-b p:last-child {
+  margin-bottom: 0;
+}
