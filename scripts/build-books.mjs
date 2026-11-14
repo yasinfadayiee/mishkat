@@ -71,7 +71,10 @@ const commentOf = (bookId) => {
   if (!commentCache.has(bookId)) {
     const m = new Map()
     const dir = path.join(commentDir, bookId)
-    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) for (const x of read(path.join(dir, f))) m.set(x.id, x)
+    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) if (f !== 'world-examples.json') for (const x of read(path.join(dir, f))) m.set(x.id, x)
+    // مثال‌های جهانی به فهرست مثال‌های همان متن افزوده می‌شوند
+    const wf = path.join(dir, 'world-examples.json')
+    if (fs.existsSync(wf)) for (const [id, eg] of Object.entries(JSON.parse(fs.readFileSync(wf, 'utf8')).items)) { const x = m.get(Number(id)) ?? { id: Number(id) }; x.eg = [...(x.eg ?? []), ...eg]; m.set(Number(id), x) }
     commentCache.set(bookId, m)
   }
   return commentCache.get(bookId)

@@ -45,13 +45,32 @@ async function ganjoor(url) {
   return t
 }
 
+// انگلیسی: حروف کوچک، بدون نشانه‌گذاری و فاصله؛ نقل‌قول‌های خمیده و صاف یکی
+const enNorm = (s) => s.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9]+/g, '')
+async function gutenberg(id) {
+  const f = path.join(cache, 'books', `${id}.txt`)
+  if (fs.existsSync(f)) return fs.readFileSync(f, 'utf8')
+  fs.mkdirSync(path.dirname(f), { recursive: true })
+  const r = await fetch(`https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`, { headers: { 'user-agent': 'Mozilla/5.0' } })
+  if (!r.ok) throw new Error(`گوتنبرگ خوانده نشد: ${id}`)
+  const t = await r.text()
+  fs.writeFileSync(f, t)
+  return t
+}
+
 let ok = 0
 const bad = []
+// مثال‌های جهانی جدا در world-examples.json هر کتاب نگه داشته می‌شوند
+const worldOf = (bdir) => { const f = path.join(bdir, 'world-examples.json'); return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')).items : {} }
 for (const bookId of fs.readdirSync(dir)) {
   const bdir = path.join(dir, bookId)
   if (!fs.statSync(bdir).isDirectory()) continue
-  for (const f of fs.readdirSync(bdir)) {
-    for (const item of JSON.parse(fs.readFileSync(path.join(bdir, f), 'utf8'))) {
+  const world = worldOf(bdir)
+  const files = fs.readdirSync(bdir).filter((x) => x !== 'world-examples.json')
+  files.push('world-examples.json')
+  for (const f of files) {
+    const list = f === 'world-examples.json' ? Object.entries(world).map(([id, eg]) => ({ id, eg })) : JSON.parse(fs.readFileSync(path.join(bdir, f), 'utf8'))
+    for (const item of list) {
       for (const c of item.cm ?? []) {
         const who = commentators[c.a]
         if (!who) bad.push(`${f} #${item.id}: شارح ناشناخته ${c.a}`)
@@ -65,9 +84,16 @@ for (const bookId of fs.readdirSync(dir)) {
       }
       for (const e of item.eg ?? []) {
         if (!e.by || !e.book || !e.loc || !e.u || !e.r) bad.push(`${f} #${item.id}: مثال بدون نویسنده، کتاب، نشانی یا توضیح ربط`)
-        if (e.k !== 'q' || !e.u.startsWith('https://ganjoor.net/')) continue
-        const text = norm(await ganjoor(e.u))
-        for (const line of e.t.split('\n')) (text.includes(norm(line)) ? ok++ : bad.push(`${f} #${item.id} مثال: در منبع نیست ← ${line}`))
+        if (e.k !== 'q') continue
+        if (e.u.startsWith('https://ganjoor.net/')) {
+          const text = norm(await ganjoor(e.u))
+          for (const line of e.t.split('\n')) (text.includes(norm(line)) ? ok++ : bad.push(`${f} #${item.id} مثال: در منبع نیست ← ${line}`))
+        } else if (e.u.startsWith('https://www.gutenberg.org/ebooks/')) {
+          // کتاب‌های آزاد جهانی: متن اصلی انگلیسی (e.t) باید عیناً در فایل گوتنبرگ باشد؛ e.tf ترجمهٔ فارسی است
+          if (!e.tf) bad.push(`${f} #${item.id} مثال: ترجمهٔ فارسی (tf) ندارد`)
+          const text = enNorm(await gutenberg(e.u.split('/').pop()))
+          for (const seg of e.t.split(' ... ')) (text.includes(enNorm(seg)) ? ok++ : bad.push(`${f} #${item.id} مثال: در کتاب نیست ← ${seg.slice(0, 70)}`))
+        } else bad.push(`${f} #${item.id} مثال: منبع قابل‌تطبیق نیست ← ${e.u}`)
       }
     }
   }

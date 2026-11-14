@@ -514,7 +514,12 @@ function TextBlock({ it, n, showAr, marked, onMark, ctx }: { it: Item; n: number
                       </b>
                       <span className={`cm-kind ${e.k}`}>{e.k === 'q' ? 'نقل مستقیم' : 'خلاصه'}</span>
                     </header>
-                    <p className="eg-text">{e.t}</p>
+                    <p className="eg-text">{e.tf ?? e.t}</p>
+                    {e.tf && (
+                      <p className="eg-orig" dir="ltr" lang="en">
+                        {e.t}
+                      </p>
+                    )}
                     <p>{e.r}</p>
                     <footer>
                       <a href={e.u} target="_blank" rel="noopener noreferrer">

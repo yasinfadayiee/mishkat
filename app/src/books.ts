@@ -44,7 +44,10 @@ export interface Comment {
 /** مثال از کتابی دیگر */
 export interface Example {
   k: 'q' | 's'
+  /** متن اصلی (فارسی، یا زبان اصلی کتاب) */
   t: string
+  /** ترجمهٔ فارسی، وقتی متن اصلی فارسی نیست */
+  tf?: string
   by: string
   book: string
   loc: string

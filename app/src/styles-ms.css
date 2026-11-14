@@ -412,3 +412,13 @@
   background: var(--card-solid);
   margin: 6px 4px 18px;
 }
+.eg-orig {
+  margin: -4px 0 8px;
+  padding-inline-start: 12px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: var(--fs-min);
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: left;
+}
