@@ -30,7 +30,7 @@ function normMap(s) {
     let c = s[k]
     if (/[ً-ٰٟـ‌-‏]/.test(c)) continue
     c = strip(c)
-    if (/[\s()«»\-–]/.test(c)) {
+    if (/[\s()«»\-–،؛:.,]/.test(c)) {
       if (o.endsWith(' ')) continue
       c = ' '
     }
