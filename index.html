@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="paper">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbf6ea" />
+    <meta name="description" content="مشکات — آموزش ساده و مستند قرآن، نهج‌البلاغه و احادیث برای زندگی روزمره" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="مشکات" />
+    <link rel="icon" type="image/png" href="icons/icon-64.png" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title>مشکات</title>
+    <!-- قلم‌های صفحهٔ خانه و فایل‌های امروز پیش از اجرای برنامه گرفته می‌شوند -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="./assets/vazirmatn-arabic-400-normal-DMZFCm7K.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="./assets/vazirmatn-arabic-900-normal-BVDx3pOU.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="./assets/amiri-arabic-400-normal-D0NIBXga.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="./assets/amiri-quran-arabic-400-normal-wRcqfVJx.woff2" />
+    <script>
+      ;(function () {
+        try {
+          var day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000) % 365
+          ;['books/index.json', 'books/daily/' + Math.floor(day / 30) + '.json'].forEach(function (h) {
+            var l = document.createElement('link')
+            l.rel = 'preload'
+            l.as = 'fetch'
+            l.crossOrigin = 'anonymous'
+            l.href = h
+            document.head.appendChild(l)
+          })
+        } catch (e) {}
+      })()
+    </script>
+    <script type="module" crossorigin src="./assets/index-D3of6Ej9.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-XKyaHtl9.js">
+    <link rel="modulepreload" crossorigin href="./assets/is-svg-component-BdopSPiB.js">
+    <link rel="modulepreload" crossorigin href="./assets/dist-BLmgc4Bi.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-kVAHeGSa.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "مشکات — نور کلام برای زندگی",
+  "short_name": "مشکات",
+  "description": "آموزش ساده و مستند قرآن، نهج‌البلاغه و احادیث برای زندگی روزمره",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbf6ea",
+  "theme_color": "#fbf6ea",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
