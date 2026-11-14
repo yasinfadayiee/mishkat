@@ -13,7 +13,7 @@ function createWindow() {
     height: 820,
     minWidth: 380,
     minHeight: 600,
-    backgroundColor: '#03100d',
+    backgroundColor: '#fbf6ea',
     title: 'مشکات',
     icon: path.join(web, 'icons', 'icon-512.png'),
     autoHideMenuBar: true,
