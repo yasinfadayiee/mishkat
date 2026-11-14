@@ -13,4 +13,4 @@ DAILY_TOTAL = "400"
 # شمارندهٔ روزانه. شناسه را با «npx wrangler kv namespace create LIMITS» بساز و این‌جا بگذار
 [[kv_namespaces]]
 binding = "LIMITS"
-id = "REPLACE_WITH_KV_ID"
+id = "4579687db30243ecb4d0615f417379cb"
