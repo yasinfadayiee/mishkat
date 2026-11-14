@@ -45,7 +45,7 @@ export function Me({ openMark }: { openMark: (key: string) => void }) {
 
   return (
     <div className="fade-up">
-      <header className="quiet-head with-tool">
+      <header className="quiet-head with-tool" data-art="notes">
         <div>
           <div className="eyebrow">دفتر من</div>
           <h1 className="h1">{p.name ? `دفتر ${p.name}` : 'دفتر من'}</h1>
@@ -257,7 +257,7 @@ export function Settings() {
 
   return (
     <div className="fade-up settings">
-      <header className="quiet-head with-tool">
+      <header className="quiet-head with-tool" data-art="settings">
         <div>
           <div className="eyebrow">دفتر من</div>
           <h1 className="h1">تنظیمات</h1>

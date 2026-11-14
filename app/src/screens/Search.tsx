@@ -104,7 +104,7 @@ export function SearchPage({ initial = '' }: { initial?: string }) {
 
   return (
     <div className="search-page fade-up">
-      <header className="quiet-head">
+      <header className="quiet-head" data-art="search">
         <div className="eyebrow">جست‌وجو</div>
         <h1 className="h1">در همهٔ کتاب‌ها</h1>
       </header>

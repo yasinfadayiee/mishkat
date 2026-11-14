@@ -56,7 +56,7 @@ export function Library({ sub }: { sub?: string }) {
 
   return (
     <div className="fade-up">
-      <header className="quiet-head">
+      <header className="quiet-head" data-art="library">
         <div className="eyebrow">کتابخانه</div>
         <h1 className="h1">{idx.data ? `${fa(books.length)} کتاب، ${fa(full)} با ترجمهٔ کامل` : 'کتابخانه'}</h1>
         <p className="muted">متن عربی همهٔ کتاب‌ها کامل و از منبع است. ترجمهٔ فارسی و توضیح ساده کتاب‌به‌کتاب افزوده می‌شود.</p>

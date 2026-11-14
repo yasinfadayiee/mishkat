@@ -59,7 +59,7 @@ export function Quran() {
 
   return (
     <div className="fade-up">
-      <header className="quiet-head">
+      <header className="quiet-head" data-art="quran">
         <div className="eyebrow">قرآن کریم</div>
         <h1 className="h1">۱۱۴ سوره، با ترجمهٔ کامل</h1>
         <p className="muted">متن عثمانی «تنزیل»، ترجمهٔ آیت‌الله مکارم شیرازی، تلاوت با پنج قاری</p>

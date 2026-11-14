@@ -106,7 +106,7 @@
   font-weight: 900;
   color: var(--ink);
 }
-.chat-head p,
+.chat-note,
 .chat-foot {
   margin: 0;
   color: var(--muted);
@@ -328,4 +328,87 @@
   padding-inline-start: 12px;
   border-inline-start: 2px solid var(--gold);
   color: var(--ink);
+}
+
+/* ───── سربرگ تصویری صفحه‌ها: نگارگری در قاب دوخطه، نوشته روی آن ───── */
+.quiet-head[data-art] {
+  position: relative;
+  isolation: isolate;
+  min-height: 190px;
+  margin: calc(var(--safe-top, 0px) + 10px) 4px 18px;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  outline: 1px solid var(--line-strong);
+  outline-offset: 4px;
+  background: #0b1a3a var(--art) center 40% / cover no-repeat;
+  color: #fffaf0;
+}
+.quiet-head[data-art]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(6, 12, 30, 0.05) 15%, rgba(6, 12, 30, 0.55) 55%, rgba(6, 12, 30, 0.85));
+}
+.quiet-head[data-art].with-tool {
+  flex-direction: row;
+  align-items: flex-end;
+}
+.quiet-head[data-art] .h1,
+.quiet-head[data-art] h1 {
+  color: #fffaf0;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+.quiet-head[data-art] p,
+.quiet-head[data-art] .muted {
+  color: #f1e7d2;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+.quiet-head[data-art] .eyebrow {
+  color: #f3cf8a;
+}
+.quiet-head[data-art] .icon-btn,
+.quiet-head[data-art] .mini-btn {
+  color: #fffaf0;
+  background: rgba(6, 12, 30, 0.35);
+  border-color: rgba(255, 250, 240, 0.35);
+}
+.quiet-head[data-art='library'] { --art: url('/covers/c9.webp'); }
+.quiet-head[data-art='quran'] { --art: url('/covers/c11.webp'); }
+.quiet-head[data-art='search'] { --art: url('/covers/c12.webp'); }
+.quiet-head[data-art='notes'] { --art: url('/covers/c15.webp'); }
+.quiet-head[data-art='settings'] { --art: url('/covers/c6.webp'); }
+.quiet-head[data-art='chat'] { --art: url('/covers/c5.webp'); }
+
+/* ───── عنوان بخش‌ها: شمسهٔ کوچک طلایی کنار عنوان ───── */
+.shelf-head h2,
+.set-h,
+.hs-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shelf-head h2::before,
+.set-h::before,
+.hs-head h2::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background: var(--gold);
+  -webkit-mask: var(--shamsa) center / contain no-repeat;
+  mask: var(--shamsa) center / contain no-repeat;
+}
+
+/* ───── سربرگ سوره: قاب دوخطه مثل صفحهٔ مطالعه ───── */
+.surah-head {
+  border: 1px solid var(--line-strong);
+  outline: 1px solid var(--line-strong);
+  outline-offset: 3px;
+  background: var(--card-solid);
+  margin: 6px 4px 18px;
 }

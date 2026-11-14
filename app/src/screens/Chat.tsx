@@ -106,11 +106,11 @@ export default function ChatScreen({ sub }: { sub?: string }) {
   if (!chat)
     return (
       <div className="chat-page">
-        <header className="chat-head">
+        <header className="chat-head quiet-head" data-art="chat">
           <span className="eyebrow">گفت‌وگو</span>
           <h1>هر جا گیر کردی، بپرس</h1>
-          <p>پاسخ‌ها را هوش مصنوعی می‌نویسد و ممکن است خطا داشته باشد. برای حکم شرعی به مرجع خودت مراجعه کن. گفت‌وگوها روی همین دستگاه می‌مانند، ولی پرسش‌ها برای پاسخ به سرویس Google Gemini فرستاده می‌شوند؛ اطلاعات شخصی ننویس.</p>
         </header>
+        <p className="chat-note">پاسخ‌ها را هوش مصنوعی می‌نویسد و ممکن است خطا داشته باشد. برای حکم شرعی به مرجع خودت مراجعه کن. گفت‌وگوها روی همین دستگاه می‌مانند، ولی پرسش‌ها برای پاسخ به سرویس Google Gemini فرستاده می‌شوند؛ اطلاعات شخصی ننویس.</p>
         <div className="chat-chips">
           {GENERAL.map((s) => (
             <button key={s} onClick={() => void send(s)} disabled={busy}>
