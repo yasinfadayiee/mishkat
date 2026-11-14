@@ -20,7 +20,7 @@ const norm = (s) =>
     .replace(/[ىی]/g, 'ي')
     .replace(/ة/g, 'ه')
     .replace(/ک/g, 'ك')
-    .replace(/[\s،,.:؛«»()[\]\-–]+/g, '')
+    .replace(/[\s،,.:؛«»()[\]\-–!?؟]+/g, '')
 
 async function eshiaPage(book, vol, page) {
   const f = path.join(cache, `${book}-${vol}-${page}.txt`)

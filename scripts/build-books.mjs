@@ -98,7 +98,7 @@ const rich = (t) => {
     const w = WHO.commentators[c.a]
     return { ...c, n: w.name, s: w.school, b: w.book, ...(w.died && { d: w.died }), ...(w.caveat && { c: w.caveat }) }
   })
-  return { ...(cmt.ex && { ex: cmt.ex }), ...(cm?.length && { cm }), ...(cmt.cj && { cj: cmt.cj }), ...(cmt.eg?.length && { eg: cmt.eg }), fa: t.fa, nt: faClean(t.note), mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, faClean(x.m)]) }), ...(tags?.length && { tg: tags }) }
+  return { ...(cmt.ex && { ex: cmt.ex }), ...(cm?.length && { cm }), ...(cmt.cj && { cj: cmt.cj }), ...(cmt.eg?.length && { eg: cmt.eg }), fa: cmt.fa ?? t.fa, nt: faClean(t.note), mr: mirror, ...(gist && { sm: gist }), ...(deep && { dp: deep }), ...(words?.length && { w: words.map((x) => [x.w, faClean(x.m)]) }), ...(tags?.length && { tg: tags }) }
 }
 
 const index = { shelves: SHELVES, books: [] }
